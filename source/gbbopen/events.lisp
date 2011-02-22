@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr 18 06:13:56 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon Feb 21 17:32:03 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -40,6 +40,7 @@
 	    describe-all-event-functions ; not yet documented
 	    describe-event-function	; not yet documented
 	    describe-event-printing
+	    describe-mirroring
 	    disable-event-printing
 	    enable-event-printing
 	    ensure-event-class		; not yet implemented/documented
@@ -64,6 +65,12 @@
 ;; Indicates when an instance is being initialized:
 (defvar *%%doing-initialize-instance%%* nil)
 
+;;; ---------------------------------------------------------------------------
+;;;  Trivial streamer class (used by :streaming module)
+
+(define-class %trivial-streamer% (standard-gbbopen-instance)
+  ())
+  
 ;;; ===========================================================================
 ;;;   Event disable/enable macros
 
@@ -144,11 +151,62 @@
                   all-slots-p permanent priority)
   (check-type priority evfn-priority)
   (let ((flags (+& priority 127)))
+    ;; Flags start after the priority field:
     (when propagate-event-classes (setf flags (set-flag flags 8)))
     (when propagate-unit-classes (setf flags (set-flag flags 9)))
     (when all-slots-p (setf flags (set-flag flags 10)))
     (when permanent (setf flags (set-flag flags 11)))
     (cons function flags)))
+
+;;; ===========================================================================
+;;;   EVSTREAMER -- Event-streamer descriptor
+;;;
+;;;  A dotted pair (streamer . flags), where flags are:
+;;;     propagate-event-classes 
+;;;     propagate-unit-classes
+;;;     all-slots-p
+
+(defun evstreamer.streamer (evstreamer)
+  (car evstreamer))
+
+(defcm evstreamer.streamer (evstreamer)
+  `(car (the cons ,evstreamer)))
+
+;;; ---------------------------------------------------------------------------
+;;; The flag accessors:
+
+(macrolet 
+    ((do-flag (flag index)
+       `(progn
+          (defun ,flag (evstreamer)
+            (declare (cons evstreamer))
+            (flag-set-p (cdr evstreamer) ,index))
+
+          (defcm ,flag (evstreamer)
+            `(flag-set-p (cdr (the cons ,evstreamer)) ,,index))
+          
+          (defun (setf ,flag) (nv evstreamer)
+            (declare (cons evstreamer))
+            (setf (cdr evstreamer)
+                  (if nv
+                      (set-flag (cdr evstreamer) ,index)
+                      (clear-flag (cdr evstreamer) ,index)))
+            nv))))
+
+  (do-flag evstreamer.propagate-event-classes 8)
+  (do-flag evstreamer.propagate-unit-classes 9)
+  (do-flag evstreamer.all-slots-p 10))
+
+;;; ---------------------------------------------------------------------------
+
+(defun make-evstreamer (streamer propagate-event-classes
+                        propagate-unit-classes all-slots-p)
+  (let ((flags 0))
+    ;; Use the same flag indexes as MAKE-EVFN:
+    (when propagate-event-classes (setf flags (set-flag flags 8)))
+    (when propagate-unit-classes (setf flags (set-flag flags 9)))
+    (when all-slots-p (setf flags (set-flag flags 10)))
+    (cons streamer flags)))
 
 ;;; ===========================================================================
 ;;;   Event metaclass validation
@@ -565,8 +623,9 @@
 ;;;   Add event function
 ;;;
 ;;; The add/remove-event-function machinery also provides (undocumented)
-;;; services for controling event printing and to a control shell when the
-;;; supplied `fn' is nil.
+;;; services for controling event printing and to control-shell triggering
+;;; when the supplied `fn' is nil.  When the `fn' is a streamer, mirroring
+;;; support is performed.
 ;;;
 ;;; TODO: Still need to deal with propagation to post-add event/unit class
 ;;;       creation
@@ -579,26 +638,37 @@
                     (and (eq fn (evfn.function evfn))
                          (or permanent
                              (not (evfn.permanent evfn))
-                             (error "Permanent event-function ~s cannot be ~
-                                    redefined for event-class ~s."
+                             (error "Permanent event-function ~s cannot ~
+                                        be redefined for event-class ~s."
                                     fn
                                     (class-name event-class))))))
              (declare (dynamic-extent #'do-fn))
              (delete-if #'do-fn (evfn-blk.evfns evfn-blk)))))
       (setf (evfn-blk.evfns evfn-blk)
-	    (nsorted-insert
-	     (make-evfn fn plus-subevents plus-subclasses all-slots-p
-			permanent priority)
-	     evfns
-	     #'>
-	     #'evfn.priority)))))
+            (nsorted-insert
+             (make-evfn fn plus-subevents plus-subclasses all-slots-p
+                        permanent priority)
+             evfns
+             #'>
+             #'evfn.priority)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun streamer-adder (evfn-blk streamer plus-subevents plus-subclasses
+                       all-slots-p)
+  (setf (evfn-blk.evstreamers evfn-blk)
+        (cons 
+         (make-evstreamer streamer plus-subevents plus-subclasses all-slots-p)
+         (delete streamer (evfn-blk.evstreamers evfn-blk) 
+                 :key #'evstreamer.streamer))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod addto-evfn-using-class (fn (event-class non-instance-event-class)
                                    plus-subevents
                                    unit-class/instance plus-subclasses
-                                   slot-names paths permanent priority printing 
+                                   slot-names paths permanent priority
+                                   printing streamer
                                    evfn-blk-fn evfn-blk-fn-args)
   (declare (ignore unit-class/instance paths))
   (let ((evfn-blk (non-instance-event-class.evfn-blk event-class)))
@@ -611,6 +681,11 @@
      (printing
       (set-evfn-printing-flags evfn-blk printing 
                                plus-subevents plus-subclasses))
+     ;; nil `fn' with `streamer':
+     (streamer
+      (streamer-adder evfn-blk streamer
+                      plus-subevents plus-subclasses 
+                      (eq slot-names 't)))
      ;; nil `fn' with `evfn-blk-fn':
      (evfn-blk-fn (apply (the function (symbol-function evfn-blk-fn))
                          evfn-blk plus-subevents plus-subclasses
@@ -621,7 +696,8 @@
 (defmethod addto-evfn-using-class (fn (event-class instance-event-class) 
                                    plus-subevents 
                                    unit-class/instance plus-subclasses
-                                   slot-names paths permanent priority printing 
+                                   slot-names paths permanent priority 
+                                   printing streamer
                                    evfn-blk-fn evfn-blk-fn-args)
   (declare (ignore paths))
   (flet ((add-it (unit-class)
@@ -644,6 +720,11 @@
               (printing
                (set-evfn-printing-flags evfn-blk printing
                                         plus-subevents plus-subclasses))
+              ;; nil `fn' with `streamer':
+              (streamer
+               (streamer-adder evfn-blk streamer 
+                               plus-subevents plus-subclasses 
+                               (eq slot-names 't)))
               ;; nil `fn' with `evfn-blk-fn':
               (evfn-blk-fn
                (apply (the function (symbol-function evfn-blk-fn))
@@ -664,7 +745,8 @@
 (defmethod addto-evfn-using-class (fn (event-class space-instance-event-class)
                                    plus-subevents 
                                    unit-class/instance plus-subclasses
-                                   slot-names paths permanent priority printing 
+                                   slot-names paths permanent priority 
+                                   printing streamer
                                    evfn-blk-fn evfn-blk-fn-args)
   (flet ((do-space-instance (space-instance)
            (flet
@@ -696,6 +778,11 @@
                       (set-evfn-printing-flags 
                        evfn-blk printing
                        plus-subevents plus-subclasses))
+                     ;; nil `fn' with `streamer':
+                     (streamer
+                      (streamer-adder evfn-blk streamer
+                                      plus-subevents plus-subclasses 
+                                      (eq slot-names 't)))
                      ;; nil `fn' with `evfn-blk-fn':
                      (evfn-blk-fn
                       (apply (the function (symbol-function evfn-blk-fn))
@@ -718,7 +805,8 @@
                             fn event-class
                             plus-subevents 
                             unit-class/instance plus-subclasses
-                            slot-names paths permanent priority printing 
+                            slot-names paths permanent priority
+                            printing streamer
                             evfn-blk-fn evfn-blk-fn-args)))
                  #+this-does-not-work-correctly
                  (pushnew addto-form
@@ -736,7 +824,8 @@
 (defun slot-evfn-adder (fn event-class                  
                         plus-subevents 
                         unit-class/instance plus-subclasses
-                        slot-names paths permanent priority printing 
+                        slot-names paths permanent priority
+                        printing streamer
                         evfn-blk-fn evfn-blk-fn-args)
   (declare (ignore paths))
   (flet
@@ -768,6 +857,11 @@
                         (set-evfn-printing-flags 
                          evfn-blk printing
                          plus-subevents plus-subclasses))
+                       ;; nil `fn' with `streamer':
+                       (streamer
+                        (streamer-adder evfn-blk streamer 
+                                        plus-subevents plus-subclasses 
+                                        (eq slot-names 't)))
                        ;; nil `fn' with `evfn-blk-fn':
                        (evfn-blk-fn
                         (apply (the function (symbol-function evfn-blk-fn))
@@ -788,12 +882,14 @@
 (defmethod addto-evfn-using-class (fn (event-class nonlink-slot-event-class) 
                                    plus-subevents 
                                    unit-class/instance plus-subclasses
-                                   slot-names paths permanent priority printing 
+                                   slot-names paths permanent priority 
+                                   printing streamer
                                    evfn-blk-fn evfn-blk-fn-args)
   (slot-evfn-adder fn event-class 
                    plus-subevents 
                    unit-class/instance plus-subclasses
-                   slot-names paths permanent priority printing 
+                   slot-names paths permanent priority
+                   printing streamer
                    evfn-blk-fn evfn-blk-fn-args))
 
 ;;; ---------------------------------------------------------------------------
@@ -801,23 +897,25 @@
 (defmethod addto-evfn-using-class (fn (event-class link-slot-event-class)
                                    plus-subevents 
                                    unit-class/instance plus-subclasses
-                                   slot-names paths permanent priority printing 
+                                   slot-names paths permanent priority 
+                                   printing streamer
                                    evfn-blk-fn evfn-blk-fn-args)
   (slot-evfn-adder fn event-class 
                    plus-subevents 
                    unit-class/instance plus-subclasses
-                   slot-names paths permanent priority printing 
+                   slot-names paths permanent priority 
+                   printing streamer
                    evfn-blk-fn evfn-blk-fn-args))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun add-event-function (fn &optional (event-classes-spec 't)
-                           &rest args)
+                           &rest args &aux streamer)
   ;;; Adds `fn' to the specified event signature(s).
   ;;; Also provides (undocumented) services for enabling/resuming event
   ;;; printing or adding KS triggers when the supplied `fn' is nil.
   (declare (dynamic-extent args))
-  (unless (or (symbolp fn) (functionp fn))
+  (unless (or (symbolp fn) (functionp fn) (typep fn '%trivial-streamer%))
     (error "~s is not a function." fn))
   (multiple-value-bind (unit-class-spec slot-names paths permanent priority
 			printing evfn-blk-fn evfn-blk-fn-args)
@@ -829,10 +927,13 @@
 				 '(:evfn-blk-fn nil) '(:evfn-blk-fn-args nil))
     (multiple-value-bind (unit-class/instance plus-subclasses)
         (parse-unit-class/instance-specifier unit-class-spec)
+      (when (typep fn '%trivial-streamer%)
+        (setf streamer fn 
+              fn nil))
       (flet ((do-fn (event-class plus-subevents) 
                (addto-evfn-using-class 
                 fn event-class plus-subevents unit-class/instance plus-subclasses
-                slot-names paths permanent priority printing 
+                slot-names paths permanent priority printing streamer
                 evfn-blk-fn evfn-blk-fn-args)))
         (declare (dynamic-extent #'do-fn))
         (map-extended-event-classes #'do-fn event-classes-spec))))
@@ -865,10 +966,19 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun streamer-remover (evfn-blk streamer)
+  (when evfn-blk
+    (setf (evfn-blk.evstreamers evfn-blk) 
+          (delete streamer (evfn-blk.evstreamers evfn-blk) 
+                  :key #'evstreamer.streamer))))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod rmfrom-evfn-using-class (fn (event-class non-instance-event-class)
                                     plus-subevents 
                                     unit-class plus-subclasses
-                                    slot-names paths permanent printing 
+                                    slot-names paths permanent 
+                                    printing streamer
                                     evfn-blk-fn evfn-blk-fn-args)
   (declare (ignore plus-subevents unit-class plus-subclasses
                    slot-names paths))
@@ -880,6 +990,8 @@
        ;; nil `fn' with `printing':
        (printing
         (clear-evfn-printing-flags evfn-blk printing))
+       ;; nil `fn' with `streamer':
+       (streamer (streamer-remover evfn-blk streamer))
        ;; nil `fn' with `evfn-blk-fn':
        (evfn-blk-fn
         (apply (the function (symbol-function evfn-blk-fn))
@@ -890,7 +1002,8 @@
 (defmethod rmfrom-evfn-using-class (fn (event-class instance-event-class)
                                     plus-subevents 
                                     unit-class plus-subclasses
-                                    slot-names paths permanent printing 
+                                    slot-names paths permanent 
+                                    printing streamer
                                     evfn-blk-fn evfn-blk-fn-args)
   (declare (ignore plus-subevents slot-names paths))
   (flet ((remove-it (unit-class)
@@ -903,6 +1016,8 @@
                 ;; nil `fn' with `printing':
                 (printing
                  (clear-evfn-printing-flags evfn-blk printing))
+                ;; nil `fn' with `streamer':
+                (streamer (streamer-remover evfn-blk streamer))
                 ;; nil `fn' with `evfn-blk-fn':
                 (evfn-blk-fn
                  (apply (the function (symbol-function evfn-blk-fn))
@@ -920,7 +1035,8 @@
 (defmethod rmfrom-evfn-using-class (fn (event-class space-instance-event-class)
                                     plus-subevents 
                                     unit-class plus-subclasses
-                                    slot-names paths permanent printing 
+                                    slot-names paths permanent
+                                    printing streamer
                                     evfn-blk-fn evfn-blk-fn-args)
   (declare (ignore slot-names plus-subevents))
   (flet ((do-space-instance (space-instance)
@@ -934,11 +1050,14 @@
                       (when evfn-blk
                         (cond
                          ;; non-nil `fn':
-                         (fn (evfn-remover evfn-blk fn event-class 
-                                           permanent))
+                         (fn 
+                          (evfn-remover evfn-blk fn event-class permanent))
                          ;; nil `fn' with `printing':
                          (printing
                           (clear-evfn-printing-flags evfn-blk printing))
+                         ;; nil `fn' with `streamer':
+                         (streamer
+                          (streamer-remover evfn-blk streamer))
                          ;; nil `fn' with `evfn-blk-fn':
                          (evfn-blk-fn
                           (apply (the function (symbol-function evfn-blk-fn))
@@ -983,7 +1102,8 @@
                (push (list paths 'rmfrom-evfn-using-class
                            fn event-class plus-subevents 
                            unit-class plus-subclasses
-                           slot-names paths permanent printing 
+                           slot-names paths permanent 
+                           printing streamer
                            evfn-blk-fn evfn-blk-fn-args)
                      (space-instance-event-class.path-event-functions
                       event-class)))))))
@@ -992,7 +1112,8 @@
 
 (defun slot-evfn-remover (fn event-class plus-subevents
                           unit-class plus-subclasses
-                          slot-names paths permanent printing 
+                          slot-names paths permanent 
+                          printing streamer
                           evfn-blk-fn evfn-blk-fn-args)
   (declare (ignore plus-subevents paths))
   (flet
@@ -1008,10 +1129,14 @@
                         (when evfn-blk
                           (cond
                            ;; non-nil `fn':
-                           (fn (evfn-remover evfn-blk fn event-class permanent))
+                           (fn
+                            (evfn-remover evfn-blk fn event-class permanent))
                            ;; nil `fn' with `printing':
                            (printing
                             (clear-evfn-printing-flags evfn-blk printing))
+                           ;; nil `fn' with `streamer':
+                           (streamer
+                            (streamer-remover evfn-blk streamer))
                            ;; nil `fn' with `evfn-blk-fn':
                            (evfn-blk-fn
                             (apply (the function (symbol-function evfn-blk-fn))
@@ -1031,11 +1156,13 @@
 (defmethod rmfrom-evfn-using-class (fn (event-class nonlink-slot-event-class) 
                                     plus-subevents 
                                     unit-class plus-subclasses
-                                    slot-names paths permanent printing 
+                                    slot-names paths permanent 
+                                    printing streamer
                                     evfn-blk-fn evfn-blk-fn-args)
   (slot-evfn-remover fn event-class plus-subevents
                      unit-class plus-subclasses
-                     slot-names paths permanent printing 
+                     slot-names paths permanent 
+                     printing streamer
                      evfn-blk-fn evfn-blk-fn-args))
 
 ;;; ---------------------------------------------------------------------------
@@ -1043,22 +1170,24 @@
 (defmethod rmfrom-evfn-using-class (fn (event-class link-slot-event-class) 
                                     plus-subevents 
                                     unit-class plus-subclasses
-                                    slot-names paths permanent printing 
+                                    slot-names paths permanent 
+                                    printing streamer
                                     evfn-blk-fn evfn-blk-fn-args)
   (slot-evfn-remover fn event-class plus-subevents
                      unit-class plus-subclasses
-                     slot-names paths permanent printing 
+                     slot-names paths permanent 
+                     printing streamer
                      evfn-blk-fn evfn-blk-fn-args))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun remove-event-function (fn &optional (event-classes-spec 't)
-                              &rest args)
+                              &rest args &aux streamer)
   ;;; Removes `fn' from the specified event signature(s).
   ;;; Also provides (undocumented) services for disabling/suspending event
   ;;; printing or removing KS triggers when the supplied `fn' is nil.
   (declare (dynamic-extent args))
-  (unless (or (symbolp fn) (functionp fn))
+  (unless (or (symbolp fn) (functionp fn) (typep fn '%trivial-streamer%))
     (error "~s is not a function." fn))
   (multiple-value-bind (unit-class-spec slot-names paths permanent 
 			printing evfn-blk-fn evfn-blk-fn-args)
@@ -1070,10 +1199,13 @@
 				 '(:evfn-blk-fn nil) '(:evfn-blk-fn-args nil))
     (multiple-value-bind (unit-class/instance plus-subclasses)
         (parse-unit-class/instance-specifier unit-class-spec)
+      (when (typep fn '%trivial-streamer%)
+        (setf streamer fn 
+              fn nil))
       (flet ((do-fn (event-class plus-subevents) 
                (rmfrom-evfn-using-class 
                 fn event-class plus-subevents unit-class/instance plus-subclasses
-                slot-names paths permanent printing 
+                slot-names paths permanent printing streamer
                 evfn-blk-fn evfn-blk-fn-args)))
         (declare (dynamic-extent #'do-fn))
         (map-extended-event-classes #'do-fn event-classes-spec))))
@@ -1152,6 +1284,12 @@
        (when (evfn-blk.event-printing-suspended evfn-blk) 
 	 (princ " [suspended]"))
        (terpri)))
+    ;; called by describe-mirroring:
+    (describe-mirroring
+     (let ((evstreamers (evfn-blk.evstreamers evfn-blk)))
+       (when evstreamers
+         (show-evfn-describer-headers)
+	 (format t "~&~4t~s~%" (mapcar #'evstreamer.streamer evstreamers)))))
     ;; called by describe-event-functions/describe-all-event-functions:
     (otherwise
      (dolist (evfn (evfn-blk.evfns evfn-blk))
@@ -1335,6 +1473,25 @@
         (map-extended-event-classes #'fn event-classes-spec))))
   (values))
 
+;;; ---------------------------------------------------------------------------
+
+(defun describe-mirroring (&optional (event-classes-spec 't)
+                           &rest args)
+  ;;; Prints streamers for the specified event signature(s).
+  (declare (dynamic-extent args))
+  (multiple-value-bind (unit-class-spec slot-names paths)
+      (parse-event-function-args args)
+    (multiple-value-bind (unit-class/instance plus-subclasses)
+        (parse-unit-class/instance-specifier unit-class-spec)
+      (flet ((fn (event-class plus-subevents) 
+               (ds-evfn-using-class 'describe-mirroring
+                                    event-class plus-subevents 
+                                    unit-class/instance plus-subclasses
+                                    slot-names paths)))
+        (declare (dynamic-extent #'fn))
+        (map-extended-event-classes #'fn event-classes-spec))))
+  (values))
+
 ;;; ===========================================================================
 ;;;   Signal Event
 
@@ -1394,7 +1551,11 @@
 	   (evfn-blks (standard-unit-class.evfn-blks unit-class))
 	   (evfn-blk (cdr (assq event-class evfn-blks))))
       (when evfn-blk
-	(do-event-printing-and-evfns evfn-blk event-class args)))))
+	(do-event-printing-and-evfns evfn-blk event-class args)
+        (let ((evstreamers (evfn-blk.evstreamers evfn-blk)))
+          (when evstreamers
+            (apply-when-fboundp
+             'do-instance-mirroring evstreamers event-class args)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1410,7 +1571,11 @@
 	   (evfn-blks (get-et unit-class evfn-unit-ht))
 	   (evfn-blk (cdr (assq event-class evfn-blks))))
       (when evfn-blk	
-	(do-event-printing-and-evfns evfn-blk event-class args)))))
+	(do-event-printing-and-evfns evfn-blk event-class args)
+        (let ((evstreamers (evfn-blk.evstreamers evfn-blk)))
+          (when evstreamers
+            (apply-when-fboundp 
+             'do-space-instance-mirroring evstreamers event-class args)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1423,7 +1588,11 @@
     (let* ((evfn-blks (gbbopen-effective-slot-definition.evfn-blks slot))
 	   (evfn-blk (cdr (assq event-class evfn-blks))))
       (when evfn-blk
-	(do-event-printing-and-evfns evfn-blk event-class args)))))
+	(do-event-printing-and-evfns evfn-blk event-class args)
+        (let ((evstreamers (evfn-blk.evstreamers evfn-blk)))
+          (when evstreamers
+            (apply-when-fboundp 
+             'do-nonlink-slot-mirroring evstreamers event-class args)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1436,7 +1605,11 @@
     (let* ((evfn-blks (gbbopen-effective-slot-definition.evfn-blks slot))
 	   (evfn-blk (cdr (assq event-class evfn-blks))))
       (when evfn-blk
-	(do-event-printing-and-evfns evfn-blk event-class args)))))
+	(do-event-printing-and-evfns evfn-blk event-class args)
+        (let ((evstreamers (evfn-blk.evstreamers evfn-blk)))
+          (when evstreamers
+            (apply-when-fboundp 
+             'do-link-slot-mirroring evstreamers event-class args)))))))
 
 ;;; ---------------------------------------------------------------------------
 

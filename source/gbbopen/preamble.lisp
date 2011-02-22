@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 30 09:24:22 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon Feb 21 14:01:40 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -25,6 +25,8 @@
 ;;;           INSTANCE-NAME-COMPARISON-TEST.  (Corkill)
 ;;;  11-05-05 Added *COERCE-INTERVAL-RATIONALS-TO-FLOATS*.  (Corkill)
 ;;;  07-30-10 Added WITH-BLACKBOARD-REPOSITORY-LOCKED.  (Corkill)
+;;;  02-21-11 Added streamer argument to ADDTO-/RMFROM-EVFN-BLOCK-USING-CLASS.
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -119,7 +121,8 @@
 (defgeneric addto-evfn-using-class (fn event-class plus-subevents 
                                     unit-class/instance plus-subclasses
                                     slot-names paths 
-                                    permanent priority printing 
+                                    permanent priority
+                                    printing streamer
                                     evfn-blk-fn evfn-blk-fn-args))
 (defgeneric add-instance-to-space-instance (instance space-instance))
 (defgeneric add-instance-to-storage (instance storage verbose))
@@ -162,7 +165,8 @@
 (defgeneric reset-unit-class (unit-class-name-or-class))
 (defgeneric rmfrom-evfn-using-class (fn event-class plus-subevents 
                                      unit-class/instance plus-subclasses
-                                     slot-names paths permanent printing 
+                                     slot-names paths permanent 
+                                     printing streamer
                                      evfn-blk-fn evfn-blk-fn-args))
 (defgeneric setup-instance-storage (space-instance instance-mapping))
 (defgeneric signal-event-using-class (event-class &rest args))
