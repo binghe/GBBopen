@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 11 09:57:55 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 21 18:03:48 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -105,8 +105,8 @@
 ;;;      instances.lisp)
 
 (setf *internal-unit-instance-slot-names* 
-      (union (list '%%evfn-unit-ht%% 
-                   '%%bb-widgets%% 
+      (union (list '%%bb-widgets%% 
+                   '%%evfn-unit-ht%% 
                    '%%storage-spec%% 
                    '%%storage%%)
              *internal-unit-instance-slot-names*))
@@ -665,8 +665,9 @@
 (defmethod omitted-slots-for-saving/sending ((instance standard-space-instance))
   (list* 'instance-counts
          'space-name                    ; recomputed from instance-name
-         '%%storage%%
          '%%bb-widgets%%
+         '%%evfn-unit-ht%%
+         '%%storage%%
          (call-next-method)))
 
 ;;; ---------------------------------------------------------------------------

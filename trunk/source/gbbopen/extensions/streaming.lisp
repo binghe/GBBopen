@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 20 12:55:36 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 21 19:13:00 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -62,6 +62,7 @@
             network-streamer            ; class-name
             port-of
             remove-from-broadcast-streamer
+            remove-mirroring
             start-network-stream-server
             stream-command-form
             stream-delete-instance
@@ -150,6 +151,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defstruct (streamer-queue 
+            (:conc-name #.(dotted-conc-name 'streamer-queue))
             (:copier nil))
   stream
   tag
@@ -159,7 +161,7 @@
 ;;; ===========================================================================
 ;;;   Streamers
 
-(define-class basic-streamer (standard-gbbopen-instance)
+(define-class basic-streamer (%trivial-streamer%)
   (streamer-lock
    (streamer-stream :initform nil)
    streamer-package
@@ -322,7 +324,7 @@
              (recorded-class-descriptions-ht-of streamer)))
         (if streamer-queue
             ;; queued streaming:
-            (funcall body-form-fn (streamer-queue-stream streamer-queue))
+            (funcall body-form-fn (streamer-queue.stream streamer-queue))
             ;; regular streaming:
             (with-lock-held ((streamer-lock-of streamer))
               (let ((stream (streamer-stream-of streamer)))
@@ -363,7 +365,7 @@
       ;; Push the new streamer-queue for this streamer:
       (push-acons streamer streamer-queue *%%streamer-queues%%*)
       ;; Stash the tag-string:
-      (setf (streamer-queue-tag-string streamer-queue)
+      (setf (streamer-queue.tag-string streamer-queue)
             (get-output-stream-string queue-stream)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -377,22 +379,22 @@
   (let* ((streamer-queue 
           (or (cdr (assq streamer *%%streamer-queues%%*))
               (no-streamer-queue-error streamer)))
-         (queue-stream (streamer-queue-stream streamer-queue))
+         (queue-stream (streamer-queue.stream streamer-queue))
          (stream (streamer-stream-of streamer)))
     (let ((string (get-output-stream-string queue-stream)))
       ;; Leave evidence that this queue has ended:
-      (setf (streamer-queue-stream streamer-queue) ':ended)
+      (setf (streamer-queue.stream streamer-queue) ':ended)
       (cond
        ;; Empty queue:
        ((zerop& (length string))
-        (when (streamer-queue-write-empty-queue-p streamer-queue)
+        (when (streamer-queue.write-empty-queue-p streamer-queue)
           (with-lock-held ((streamer-lock-of streamer))
-            (write-sequence (streamer-queue-tag-string streamer-queue) stream)
+            (write-sequence (streamer-queue.tag-string streamer-queue) stream)
             (princ "#G!(:EB) " stream)
             (force-output stream))))
        ;; Non-empty queue:
        (t (with-lock-held ((streamer-lock-of streamer))
-            (write-sequence (streamer-queue-tag-string streamer-queue) stream)
+            (write-sequence (streamer-queue.tag-string streamer-queue) stream)
             (write-sequence string stream)
             (princ "#G!(:EB) " stream)
             (force-output stream)))))))
@@ -415,34 +417,34 @@
   (let* ((streamer-queue 
           (or (cdr (assq streamer *%%streamer-queues%%*))
               (no-streamer-queue-error streamer)))
-         (queue-stream (streamer-queue-stream streamer-queue))
+         (queue-stream (streamer-queue.stream streamer-queue))
          (stream (streamer-stream-of streamer)))
     ;; End the current queuing block:
     (let ((string (get-output-stream-string queue-stream)))
       (cond
        ;; Empty queue:
        ((zerop& (length string))
-        (when (streamer-queue-write-empty-queue-p streamer-queue)
+        (when (streamer-queue.write-empty-queue-p streamer-queue)
           (with-lock-held ((streamer-lock-of streamer))
-            (write-sequence (streamer-queue-tag-string streamer-queue) stream)
+            (write-sequence (streamer-queue.tag-string streamer-queue) stream)
             (princ "#G!(:EB) " stream)
             (force-output stream))))
        ;; Non-empty queue:
        (t (with-lock-held ((streamer-lock-of streamer))
-            (write-sequence (streamer-queue-tag-string streamer-queue) stream)
+            (write-sequence (streamer-queue.tag-string streamer-queue) stream)
             (write-sequence string stream)
             (princ "#G!(:EB) " stream)
             (force-output stream)))))
     ;; Setup tag & write-empty-queue-p values, using the previous tag and
     ;; write-empty-queue-p values if they weren't supplied:
     (if tag-supplied-p
-        (setf (streamer-queue-tag streamer-queue) tag)
-        (setf tag (streamer-queue-tag streamer-queue)))
+        (setf (streamer-queue.tag streamer-queue) tag)
+        (setf tag (streamer-queue.tag streamer-queue)))
     (if weqp-supplied-p
-        (setf (streamer-queue-write-empty-queue-p streamer-queue) 
+        (setf (streamer-queue.write-empty-queue-p streamer-queue) 
               write-empty-queue-p)
         (setf write-empty-queue-p 
-              (streamer-queue-write-empty-queue-p streamer-queue)))
+              (streamer-queue.write-empty-queue-p streamer-queue)))
     ;; Begin a new queuing block:    
     (let ((*recorded-class-descriptions-ht* 
            (recorded-class-descriptions-ht-of streamer)))
@@ -454,7 +456,7 @@
         (print-object-for-saving/sending tag queue-stream)
         (princ ") " queue-stream)))
       ;; Stash the tag-string:
-      (setf (streamer-queue-tag-string streamer-queue)
+      (setf (streamer-queue.tag-string streamer-queue)
             (get-output-stream-string queue-stream))))
 
 ;;; ---------------------------------------------------------------------------
@@ -849,72 +851,93 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Mirroring setup
 
-(defvar *mirroring-evfns-ht* (make-hash-table :test 'eq))
+(defun add-mirroring (streamer unit-class-spec &optional (slot-names 't))
+  (add-event-function streamer '(create-instance-event +) unit-class-spec)
+  (add-event-function streamer '(instance-deleted-event +) unit-class-spec)
+  (add-event-function streamer '(update-nonlink-slot-event +) unit-class-spec)
+  (add-event-function streamer '(link-event +) unit-class-spec 
+                      :slot-names slot-names)
+  (add-event-function streamer '(unlink-event +) unit-class-spec
+                      :slot-names slot-names)
+  (add-event-function streamer '(add-instance-to-space-instance-event +)
+                      unit-class-spec)
+  (add-event-function streamer '(remove-instance-from-space-instance-event +)
+                      unit-class-spec))
 
 ;;; ---------------------------------------------------------------------------
 
-(defstruct (mirroring-evfns
-            (:copier nil))
-  create-instance
-  deleted-instance
-  nonlink-slot-update
-  added-links
-  removed-links
-  add-to-space
-  remove-from-space)
+(defun remove-mirroring (streamer unit-class-spec &optional (slot-names 't))
+  (remove-event-function streamer '(create-instance-event +) unit-class-spec)
+  (remove-event-function streamer '(instance-deleted-event +) unit-class-spec)
+  (remove-event-function streamer '(update-nonlink-slot-event +) unit-class-spec)
+  (remove-event-function streamer '(link-event +) unit-class-spec
+                         :slot-names slot-names)
+  (remove-event-function streamer '(unlink-event +) unit-class-spec
+                         :slot-names slot-names)
+  (remove-event-function streamer '(add-instance-to-space-instance-event +)
+                         unit-class-spec)
+  (remove-event-function streamer '(remove-instance-from-space-instance-event +)
+                         unit-class-spec))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun add-mirroring (streamer unit-class-spec &optional (slots 't))
-  ;; Instance creation:
-  (add-event-function
-   #'(lambda (event-name &key instance &allow-other-keys)
-       (declare (ignore event-name))
-       (when *%%mirroring-enabled%%*
-         (stream-instance instance streamer)))
-   'create-instance-event
-   unit-class-spec)
-  ;; Instance deletion:
-  (add-event-function
-   #'(lambda (event-name &key instance &allow-other-keys)
-       (declare (ignore event-name))
-       (when *%%mirroring-enabled%%*
-         (stream-delete-instance instance streamer)))
-   'instance-deleted-event
-   unit-class-spec)
-  ;; Add/remove-instance-to/from-space [NEEDED]:  
-  ;; Slots:
-  (cond
-   ((eq slots 't)
-    ;; Nonlink-slot-updates
-    (add-event-function
-     #'(lambda (event-name &key instance slot current-value initialization
-                &allow-other-keys)
-         (declare (ignore event-name))
-         (when (and (not initialization) *%%mirroring-enabled%%*)
-           (stream-slot-update instance slot current-value streamer)))
-     'update-nonlink-slot-event
-     unit-class-spec)
-    ;; added-links
-    (add-event-function
-     #'(lambda (event-name &key instance slot added-instances initialization
-                &allow-other-keys)
-         (declare (ignore event-name))
-         (when (and (not initialization) *%%mirroring-enabled%%*)
-           (stream-link instance slot added-instances streamer)))
-     'link-event
-     unit-class-spec)
-    ;; removed-links
-    (add-event-function
-     #'(lambda (event-name &key instance slot removed-instances initialization
-                &allow-other-keys)
-         (declare (ignore event-name))
-         (when (and (not initialization) *%%mirroring-enabled%%*)
-           (stream-unlink instance slot removed-instances streamer)))
-     'unlink-event
-     unit-class-spec))
-   ;; STILL TO DO: specified slots/excluded slots
-   (t (nyi))))
+(defun do-instance-mirroring (evstreamers event-class 
+                              &key instance &allow-other-keys)
+  (when *%%mirroring-enabled%%*
+    ;; TODO: Deal with subevents in ecase:
+    (ecase (class-name event-class)
+      (create-instance-event
+       (dolist (evstreamer evstreamers)
+         (stream-instance instance (evstreamer.streamer evstreamer))))
+      (instance-deleted-event
+       (dolist (evstreamer evstreamers)
+         (stream-delete-instance instance (evstreamer.streamer evstreamer)))))))
+
+;;; ---------------------------------------------------------------------------
+
+#+SOON
+(defun do-space-instance-mirroring (evstreamers event-class 
+                                    &key instance &allow-other-keys)
+  (when *%%mirroring-enabled%%*
+    ;; TODO: Deal with subevents in ecase:
+    (ecase (class-name event-class)
+      (add-instance-to-space-instance-event
+       (dolist (evstreamer evstreamers)
+         (stream-add-instance-to-space-instance
+          instance (evstreamer.streamer evstreamer))))
+      (remove-instance-from-space-instance-event
+       (dolist (evstreamer evstreamers)
+         (stream-remove-instance-from-space-instance
+          instance (evstreamer.streamer evstreamer)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun do-nonlink-slot-mirroring (evstreamers event-class 
+                                  &key instance slot current-value
+                                       initialization
+                                  &allow-other-keys)
+  (when (and (not initialization) *%%mirroring-enabled%%*)
+    (dolist (evstreamer evstreamers)
+      (stream-slot-update 
+       instance slot current-value (evstreamer.streamer evstreamer)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun do-link-slot-mirroring (evstreamers event-class 
+                               &key instance slot added-instances
+                                    removed-instances initialization
+                               &allow-other-keys)
+  (when (and (not initialization) *%%mirroring-enabled%%*)
+    ;; TODO: Deal with subevents in ecase:
+    (ecase (class-name event-class)
+      (link-event
+       (dolist (evstreamer evstreamers)
+         (stream-link 
+          instance slot added-instances (evstreamer.streamer evstreamer))))
+      (unlink-event
+       (dolist (evstreamer evstreamers)
+         (stream-unlink
+          instance slot removed-instances (evstreamer.streamer evstreamer)))))))
 
 ;;; ---------------------------------------------------------------------------
 

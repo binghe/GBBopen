@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 21 16:10:28 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 21 17:32:20 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -28,6 +28,7 @@
 ;;;  01-26-08 Added ENSURE-PACKAGE.  (Corkill)
 ;;;  02-24-08 Added OBJECT-ADDRESS.  (Corkill)
 ;;;  01-30-11 Export ENSURE-PACKAGE.  (Corkill)
+;;;  02-21-11 Added APPLY-WHEN-FBOUNDP and FUNCALL-WHEN-FBOUNDP.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -66,8 +67,9 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*gbbopen-install-root*      ; re-export, not documented
             add-package-nickname        ; not documented
+            apply-when-fboundp          ; not yet documented
             ensure-package              ; not documented
-            funcall-when-fboundp        ; in module-manager, but part of tools
+            funcall-when-fboundp        ; not yet documented
             gbbopen-tools-implementation-version
             hyperdoc-filename           ; not yet documented
             hyperdoc-url                ; not yet documented
@@ -155,22 +157,37 @@
 ;;;
 ;;; Placed here to make this macro available ASAP
 
-(defmacro with-once-only-bindings ((&rest symbols) &body body)
-  (let ((gensyms (flet ((fn (symbol)
-                             (declare (ignore symbol))
-                             (gensym)))
-                   (declare (dynamic-extent #'fn))
-                   (mapcar #'fn symbols))))
-    `(let (,.(flet ((fn (gensym) `(,gensym (gensym))))
-               (declare (dynamic-extent #'fn))
-               (mapcar #'fn gensyms)))
-       `(let (,,.(flet ((fn (symbol gensym) ``(,,gensym ,,symbol)))
-                   (declare (dynamic-extent #'fn))
-                   (mapcar #'fn symbols gensyms)))
-          ,(let (,.(flet ((fn (symbol gensym) `(,symbol ,gensym)))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro with-once-only-bindings ((&rest symbols) &body body)
+    (let ((gensyms (flet ((fn (symbol)
+                            (declare (ignore symbol))
+                            (gensym)))
+                     (declare (dynamic-extent #'fn))
+                     (mapcar #'fn symbols))))
+      `(let (,.(flet ((fn (gensym) `(,gensym (gensym))))
+                 (declare (dynamic-extent #'fn))
+                 (mapcar #'fn gensyms)))
+         `(let (,,.(flet ((fn (symbol gensym) ``(,,gensym ,,symbol)))
                      (declare (dynamic-extent #'fn))
                      (mapcar #'fn symbols gensyms)))
-             ,@body)))))
+            ,(let (,.(flet ((fn (symbol gensym) `(,symbol ,gensym)))
+                       (declare (dynamic-extent #'fn))
+                       (mapcar #'fn symbols gensyms)))
+               ,@body))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro funcall-when-fboundp (symbol &rest args)
+  (with-once-only-bindings (symbol)
+    `(when (fboundp ,symbol)
+       (funcall ,symbol ,@args))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmacro apply-when-fboundp (symbol &rest args)
+  (with-once-only-bindings (symbol)
+    `(when (fboundp ,symbol)
+       (apply ,symbol ,@args))))
 
 ;;; ===========================================================================
 ;;;  Object-address (can be useful in conjunction with printv)
