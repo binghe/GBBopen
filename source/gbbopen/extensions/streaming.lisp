@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 21 19:47:06 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 03:28:58 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -60,6 +60,7 @@
             network-stream-receiver
             network-stream-server-running-p
             network-streamer            ; class-name
+            open-streamer-p
             port-of
             remove-from-broadcast-streamer
             remove-mirroring
@@ -162,12 +163,17 @@
 ;;;   Streamers
 
 (define-class basic-streamer (%trivial-streamer%)
-  (streamer-lock
-   (streamer-stream :initform nil)
-   streamer-package
+  (lock
+   (stream :initform nil)
+   package
    read-default-float-format 
-   (recorded-class-descriptions-ht
-    :initform (make-hash-table :test 'eq))))
+   (recorded-class-descriptions-ht :initform (make-hash-table :test 'eq))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun open-streamer-p (streamer)
+  (let ((stream (stream-of streamer)))
+    (when stream (open-stream-p stream))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -208,20 +214,19 @@
     (&key (package ':cl-user)
           (read-default-float-format *read-default-float-format*))
   (make-instance 'broadcast-streamer
-    :streamer-lock (make-recursive-lock 
-                    :name "Broadcast streamer lock")
-    :streamer-package (ensure-package package)
+    :lock (make-recursive-lock :name "Broadcast streamer lock")
+    :package (ensure-package package)
     :read-default-float-format read-default-float-format))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun set-broadcast-streamers (broadcast-streamer streamers)
-  (setf (streamer-stream-of broadcast-streamer)
+  (setf (stream-of broadcast-streamer)
         (apply #'make-broadcast-stream 
                (flet ((add-it (streamer)
                         (setf (broadcast-streamer-of streamer)
                               broadcast-streamer)
-                        (streamer-stream-of streamer)))
+                        (stream-of streamer)))
                  (declare (dynamic-extent #'add-it))
                  (mapcar #'add-it streamers))))
   (setf (streamers-of broadcast-streamer) streamers))
@@ -240,7 +245,7 @@
   (let ((broadcast-streamer
          (make-broadcast-streamer-given-initargs
           ;; For now, use the attributes of the 1st streamer:
-          :package (streamer-package-of (car streamers))
+          :package (package-of (car streamers))
           :read-default-float-format (read-default-float-format-of (car streamers)))))
     (set-broadcast-streamers broadcast-streamer streamers)
     ;; Return the broadcast streamer:
@@ -257,9 +262,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun check-broadcast-streamer-compatibility (streamer broadcast-streamer)
-  ;; Check :streamer-package:
-  (let ((streamer-package (streamer-package-of streamer))
-        (broadcast-package (streamer-package-of broadcast-streamer)))
+  ;; Check :package:
+  (let ((streamer-package (package-of streamer))
+        (broadcast-package (package-of broadcast-streamer)))
     (unless (eq streamer-package broadcast-package)
     (error "The ~s ~s of ~s does not match ~s of ~s"
            ':package 
@@ -285,7 +290,7 @@
    ((broadcast-streamer-of streamer)
     (error "Streamer ~s is a member of broadcast streamer ~s"
            streamer broadcast-streamer))
-   (t (with-lock-held ((streamer-lock-of broadcast-streamer))
+   (t (with-lock-held ((lock-of broadcast-streamer))
         (let ((streamers (cons streamer (streamers-of broadcast-streamer))))
           (check-broadcast-streamer-compatibility streamer broadcast-streamer)
           (setf (broadcast-streamer-of streamer) broadcast-streamer)
@@ -296,7 +301,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun remove-from-broadcast-streamer (streamer broadcast-streamer)
-  (with-lock-held ((streamer-lock-of broadcast-streamer))
+  (with-lock-held ((lock-of broadcast-streamer))
     (let ((streamers (streamers-of broadcast-streamer)))
       (when (memq streamer streamers)
         (setf (broadcast-streamer-of streamer) nil)
@@ -317,7 +322,7 @@
         (setf streamer broadcast-streamer))))
   (let ((streamer-queue (cdr (assq streamer *%%streamer-queues%%*))))
     (with-standard-io-syntax 
-      (setf *package* (streamer-package-of streamer))
+      (setf *package* (package-of streamer))
       (setf *read-default-float-format* 
             (read-default-float-format-of streamer))
       (let ((*recorded-class-descriptions-ht* 
@@ -326,8 +331,8 @@
             ;; queued streaming:
             (funcall body-form-fn (streamer-queue.stream streamer-queue))
             ;; regular streaming:
-            (with-lock-held ((streamer-lock-of streamer))
-              (let ((stream (streamer-stream-of streamer)))
+            (with-lock-held ((lock-of streamer))
+              (let ((stream (stream-of streamer)))
                 (funcall body-form-fn stream)
                 (force-output stream))))))))
     
@@ -345,8 +350,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun begin-queued-streaming (streamer tag write-empty-queue-p)
-  (with-lock-held ((streamer-lock-of streamer))
-    (force-output (streamer-stream-of streamer))
+  (with-lock-held ((lock-of streamer))
+    (force-output (stream-of streamer))
     (let* ((queue-stream (make-string-output-stream))
            (streamer-queue
             (make-streamer-queue
@@ -356,7 +361,7 @@
       (let ((*recorded-class-descriptions-ht* 
              (recorded-class-descriptions-ht-of streamer)))
         (with-standard-io-syntax 
-          (setf *package* (streamer-package-of streamer))
+          (setf *package* (package-of streamer))
           (setf *read-default-float-format* 
                 (read-default-float-format-of streamer))
           (princ "#G!(:BB " queue-stream)
@@ -380,7 +385,7 @@
           (or (cdr (assq streamer *%%streamer-queues%%*))
               (no-streamer-queue-error streamer)))
          (queue-stream (streamer-queue.stream streamer-queue))
-         (stream (streamer-stream-of streamer)))
+         (stream (stream-of streamer)))
     (let ((string (get-output-stream-string queue-stream)))
       ;; Leave evidence that this queue has ended:
       (setf (streamer-queue.stream streamer-queue) ':ended)
@@ -388,12 +393,12 @@
        ;; Empty queue:
        ((zerop& (length string))
         (when (streamer-queue.write-empty-queue-p streamer-queue)
-          (with-lock-held ((streamer-lock-of streamer))
+          (with-lock-held ((lock-of streamer))
             (write-sequence (streamer-queue.tag-string streamer-queue) stream)
             (princ "#G!(:EB) " stream)
             (force-output stream))))
        ;; Non-empty queue:
-       (t (with-lock-held ((streamer-lock-of streamer))
+       (t (with-lock-held ((lock-of streamer))
             (write-sequence (streamer-queue.tag-string streamer-queue) stream)
             (write-sequence string stream)
             (princ "#G!(:EB) " stream)
@@ -418,19 +423,19 @@
           (or (cdr (assq streamer *%%streamer-queues%%*))
               (no-streamer-queue-error streamer)))
          (queue-stream (streamer-queue.stream streamer-queue))
-         (stream (streamer-stream-of streamer)))
+         (stream (stream-of streamer)))
     ;; End the current queuing block:
     (let ((string (get-output-stream-string queue-stream)))
       (cond
        ;; Empty queue:
        ((zerop& (length string))
         (when (streamer-queue.write-empty-queue-p streamer-queue)
-          (with-lock-held ((streamer-lock-of streamer))
+          (with-lock-held ((lock-of streamer))
             (write-sequence (streamer-queue.tag-string streamer-queue) stream)
             (princ "#G!(:EB) " stream)
             (force-output stream))))
        ;; Non-empty queue:
-       (t (with-lock-held ((streamer-lock-of streamer))
+       (t (with-lock-held ((lock-of streamer))
             (write-sequence (streamer-queue.tag-string streamer-queue) stream)
             (write-sequence string stream)
             (princ "#G!(:EB) " stream)
@@ -449,7 +454,7 @@
     (let ((*recorded-class-descriptions-ht* 
            (recorded-class-descriptions-ht-of streamer)))
       (with-standard-io-syntax 
-        (setf *package* (streamer-package-of streamer))
+        (setf *package* (package-of streamer))
         (setf *read-default-float-format* 
               (read-default-float-format-of streamer))
         (princ "#G!(:BB " queue-stream)
@@ -576,14 +581,14 @@
                (apply #'make-instance
                       (streamer-class-of streamer-node)
                       :streamer-node streamer-node
-                      :streamer-lock (make-recursive-lock 
-                                      :name (concatenate 'simple-string 
-                                              (name-of streamer-node) 
-                                              " lock"))
-                      :streamer-package package
+                      :lock (make-recursive-lock 
+                             :name (concatenate 'simple-string 
+                                     (name-of streamer-node) 
+                                     " lock"))
+                      :package package
                       :external-format external-format
                       :read-default-float-format read-default-float-format 
-                      :streamer-stream connection
+                      :stream connection
                       :connection-thread (spawn-thread
                                           "Network streamer connection endpoint"
                                           #'start-streaming-connection-endpoint
@@ -685,15 +690,15 @@
                          #'make-instance
                          (streamer-class-of streamer-node)
                          :streamer-node streamer-node
-                         :streamer-lock (make-recursive-lock 
-                                         :name (concatenate 'simple-string 
-                                                 (name-of streamer-node) 
-                                                 " lock"))
-                         :streamer-package (package-of streamer-node)
+                         :lock (make-recursive-lock 
+                                :name (concatenate 'simple-string 
+                                        (name-of streamer-node) 
+                                        " lock"))
+                         :package (package-of streamer-node)
                          :external-format (external-format-of streamer-node)
                          :read-default-float-format (read-default-float-format-of 
                                                      streamer-node)
-                         :streamer-stream connection
+                         :stream connection
                          :connection-thread (current-thread)
                          nil))
                   (start-streaming-connection-endpoint 
@@ -972,14 +977,14 @@
     ;; Make and return the streamer:
     (apply #'make-instance
            streamer-class
-           :streamer-lock (make-recursive-lock 
-                           :name (concatenate 'simple-string 
-                                   (enough-namestring pathname)
-                                   " lock"))
-           :streamer-package *package*
+           :lock (make-recursive-lock 
+                  :name (concatenate 'simple-string 
+                          (enough-namestring pathname)
+                          " lock"))
+           :package *package*
            :external-format external-format
            :read-default-float-format read-default-float-format 
-           :streamer-stream stream
+           :stream stream
            (remove-properties initargs
                               '(:if-exists :package :streamer-class)))))
 
