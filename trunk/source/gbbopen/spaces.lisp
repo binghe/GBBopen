@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 21 18:03:48 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 04:52:35 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -36,6 +36,8 @@
 ;;;  08-20-06 Added do-space-instances syntactic sugar.  (Corkill)
 ;;;  10-05-06 Added space-class metaclass check.  (Corkill)
 ;;;  05-21-06 Added change-space-instance.  (Corkill)
+;;;  02-22-11 Added INSTANCE-ADDED-TO-SPACE-INSTANCE-EVENT and
+;;;           INSTANCE-REMOVED-FROM-SPACE-INSTANCE-EVENT.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -938,6 +940,10 @@
                       instance 
                       space-instance))))))
       ;; do the add:
+      (signal-event-using-class
+       (load-time-value (find-class 'add-instance-to-space-instance-event))
+       :instance instance
+       :space-instance space-instance)
       (dolist (storage (storage-objects-for-add/move/remove
                         (class-of instance) space-instance))
         (add-instance-to-storage instance storage nil))      
@@ -947,10 +953,11 @@
        (type-of instance) 1 
        (standard-space-instance.instance-counts space-instance)
        :test #'eq)
-      (signal-event-using-class
-       (load-time-value (find-class 'add-instance-to-space-instance-event))
-       :instance instance
-       :space-instance space-instance)
+      (unless *%%doing-initialize-instance%%*
+        (signal-event-using-class
+         (load-time-value (find-class 'instance-added-to-space-instance-event))
+         :instance instance
+         :space-instance space-instance))
       #+someday
       (dolist (bb-widget 
                   (standard-space-instance.%%bb-widgets%% space-instance))
@@ -992,7 +999,12 @@
                 'remove-instance-from-space-instance
                 instance 
                 space-instance)))
-       (t (dolist (storage (storage-objects-for-add/move/remove
+       (t (signal-event-using-class
+           (load-time-value
+            (find-class 'remove-instance-from-space-instance-event))
+           :instance instance
+           :space-instance space-instance)
+          (dolist (storage (storage-objects-for-add/move/remove
                             (class-of instance) space-instance))
             (remove-instance-from-storage instance storage nil nil nil))
           ;; Decf/delete the instance-count:
@@ -1002,7 +1014,7 @@
                              :test #'eq)
           (signal-event-using-class
            (load-time-value
-            (find-class 'remove-instance-from-space-instance-event))
+            (find-class 'instance-removed-from-space-instance-event))
            :instance instance
            :space-instance space-instance)))))
   instance)

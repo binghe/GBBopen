@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/system-events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:08:18 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Tue Feb 22 04:22:48 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,19 +14,21 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  03-16-04 File created.  (Corkill)
-;;;  03-19-04 Moved standard-event-instance to events.lisp.  (Corkill)
+;;;  03-19-04 Moved STANDARD-EVENT-INSTANCE to events.lisp.  (Corkill)
 ;;;  07-05-04 Remove link/nonlink-slot initialization events.  (Corkill)
 ;;;  07-20-04 Add :metaclass specifiers to all system event-class definitions
 ;;;           to eliminate the need for load-time class changes.  (Corkill)
 ;;;  08-22-05 Add print-instance-slots support for event instances.  (Corkill)
 ;;;  09-06-06 Add instance change-class events.  (Corkill)
+;;;  02-22-11 Added INSTANCE-ADDED-TO-SPACE-INSTANCE-EVENT and
+;;;           INSTANCE-REMOVED-FROM-SPACE-INSTANCE-EVENT.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -154,6 +156,23 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-event-class add-instance-to-space-instance-event (space-instance-event)
+  ()
+  (:metaclass space-instance-event-class)
+  (:export-class-name t)
+  (:system-event t))
+
+;;; ---------------------------------------------------------------------------
+
+(define-event-class instance-added-to-space-instance-event (space-instance-event)
+  ()
+  (:metaclass space-instance-event-class)
+  (:export-class-name t)
+  (:system-event t))
+
+;;; ---------------------------------------------------------------------------
+
+(define-event-class instance-removed-from-space-instance-event
+    (space-instance-event)
   ()
   (:metaclass space-instance-event-class)
   (:export-class-name t)
