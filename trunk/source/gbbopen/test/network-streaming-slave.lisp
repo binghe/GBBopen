@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 11:35:48 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 04:46:22 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -80,7 +80,9 @@
      (declare (ignore args))
      (enable-event-printing 'update-nonlink-slot-event 'location :slot-name 'time)
      (enable-event-printing '(link-slot-event +) 'location :slot-name 'previous-location)
-     (enable-event-printing '(link-slot-event +) 'location :slot-name 'next-location))
+     (enable-event-printing '(link-slot-event +) 'location :slot-name 'next-location)
+     (enable-event-printing 'add-instance-to-space-instance-event 'location)
+     (enable-event-printing 'remove-instance-from-space-instance-event 'location))
  'delete-instance-event 'location)
 
 ;; Don't warn that the Agenda Shell isn't running to process trigger events on

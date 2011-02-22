@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 11 09:33:35 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 04:38:28 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -341,6 +341,15 @@
      new-instance slots space-instances space-instances-p)))
 
 ;;; ---------------------------------------------------------------------------
+
+(defun do-instance-added-to-space-instance-events (instance)
+  (dolist (space-instance (space-instances-of instance))
+    (signal-event-using-class
+     (load-time-value (find-class 'instance-added-to-space-instance-event))
+     :instance instance
+     :space-instance space-instance)))
+
+;;; ---------------------------------------------------------------------------
 ;;; Create-instance-event signaling is done in these :around methods to follow
 ;;; the activities performed by the primary and :before/:after methods.
 
@@ -356,6 +365,8 @@
     (signal-event-using-class
      (load-time-value (find-class 'create-instance-event))
      :instance new-instance)
+    ;; signal the instance-added events:
+    (do-instance-added-to-space-instance-events new-instance)
     (values new-instance slots)))
 
 ;;; ---------------------------------------------------------------------------
@@ -374,6 +385,8 @@
     (signal-event-using-class
      (load-time-value (find-class 'create-instance-event))
      :instance new-instance)
+    ;; signal the instance-added events:
+    (do-instance-added-to-space-instance-events new-instance)
     (values new-instance slots)))
 
 ;;; ===========================================================================
@@ -833,6 +846,8 @@
   (signal-event-using-class
    (load-time-value (find-class 'create-instance-event))
    :instance instance)
+    ;; signal the instance-added events:
+    (do-instance-added-to-space-instance-events instance)
   instance)
 
 ;;; ---------------------------------------------------------------------------

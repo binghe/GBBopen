@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 19 17:23:46 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 04:13:26 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -58,6 +58,21 @@
 ;; Perform a link:
 (linkf (next-location-of (find-instance-by-name 8 'location))
        (find-instance-by-name 9 'location))
+
+;; Remove a location from the known-world:
+(stream-remove-from-space (find-instance-by-name 8 'location) 
+                          (find-space-instance-by-path '(known-world))
+                          *streamer*)
+
+;; Add the location back to the known-world:
+(stream-add-to-space (find-instance-by-name 8 'location) 
+                     (find-space-instance-by-path '(known-world))
+                     *streamer*)
+
+;; Remove another location from the known-world:
+(stream-remove-from-space (find-instance-by-name 5 'location) 
+                          (find-space-instance-by-path '(known-world))
+                          *streamer*)
 
 ;; Journal a silly command:
 (stream-command-form '(:print "All done!") *streamer*)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 03:28:58 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 04:49:04 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -66,10 +66,12 @@
             remove-mirroring
             start-network-stream-server
             stream-command-form
+            stream-add-to-space
             stream-delete-instance
             stream-instance
             stream-instances
             stream-link
+            stream-remove-from-space
             stream-slot-update
             stream-unlink
             streamer                    ; class-name
@@ -508,6 +510,36 @@
       (unlinkf (slot-value instance slot-name) other-instances))))
         
 ;;; ---------------------------------------------------------------------------
+;;;  Add instance to space-instance reader
+
+(defmethod saved/sent-object-reader ((char (eql #\a)) stream)
+  (destructuring-bind (class-name instance-name 
+                       space-instance-class-name space-instance-name)
+      (read stream t nil 't)
+    (setf class-name (possibly-translate-class-name class-name))
+    (setf space-instance-class-name
+          (possibly-translate-class-name space-instance-class-name))
+    (let ((instance (find-instance-by-name instance-name class-name 't))
+          (space-instance (find-instance-by-name 
+                           space-instance-name space-instance-class-name 't)))
+      (add-instance-to-space-instance instance space-instance))))
+        
+;;; ---------------------------------------------------------------------------
+;;;  Remove instance from space-instance reader
+
+(defmethod saved/sent-object-reader ((char (eql #\r)) stream)
+  (destructuring-bind (class-name instance-name 
+                       space-instance-class-name space-instance-name)
+      (read stream t nil 't)
+    (setf class-name (possibly-translate-class-name class-name))
+    (setf space-instance-class-name
+          (possibly-translate-class-name space-instance-class-name))
+    (let ((instance (find-instance-by-name instance-name class-name 't))
+          (space-instance (find-instance-by-name 
+                           space-instance-name space-instance-class-name 't)))
+      (remove-instance-from-space-instance instance space-instance))))
+        
+;;; ---------------------------------------------------------------------------
 ;;;  Command form reader
 
 (defmethod saved/sent-object-reader ((char (eql #\.)) stream)
@@ -826,6 +858,26 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun stream-add-to-space (instance space-instance streamer)
+  (%with-streamer-stream (stream streamer)
+    (format stream "#Ga(~s " (type-of instance))
+    (print-object-for-saving/sending (instance-name-of instance) stream)
+    (format stream " ~s " (type-of space-instance))
+    (print-object-for-saving/sending (instance-name-of space-instance) stream)
+    (princ ")" stream)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun stream-remove-from-space (instance space-instance streamer)
+  (%with-streamer-stream (stream streamer)
+    (format stream "#Gr(~s " (type-of instance))
+    (print-object-for-saving/sending (instance-name-of instance) stream)
+    (format stream " ~s " (type-of space-instance))
+    (print-object-for-saving/sending (instance-name-of space-instance) stream)
+    (princ ")" stream)))
+
+;;; ---------------------------------------------------------------------------
+
 (defun stream-command-form (form streamer)
   (%with-streamer-stream (stream streamer)
     (format stream "#G.(")
@@ -863,9 +915,9 @@
                       :slot-names slot-names)
   (add-event-function streamer '(unlink-event +) unit-class-spec
                       :slot-names slot-names)
-  (add-event-function streamer '(add-instance-to-space-instance-event +)
+  (add-event-function streamer '(instance-added-to-space-instance-event +)
                       unit-class-spec)
-  (add-event-function streamer '(remove-instance-from-space-instance-event +)
+  (add-event-function streamer '(instance-removed-from-space-instance-event +)
                       unit-class-spec))
 
 ;;; ---------------------------------------------------------------------------
@@ -878,9 +930,9 @@
                          :slot-names slot-names)
   (remove-event-function streamer '(unlink-event +) unit-class-spec
                          :slot-names slot-names)
-  (remove-event-function streamer '(add-instance-to-space-instance-event +)
+  (remove-event-function streamer '(instance-added-to-space-instance-event +)
                          unit-class-spec)
-  (remove-event-function streamer '(remove-instance-from-space-instance-event +)
+  (remove-event-function streamer '(instance-removed-from-space-instance-event +)
                          unit-class-spec))
 
 ;;; ---------------------------------------------------------------------------
@@ -899,20 +951,20 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#+SOON
 (defun do-space-instance-mirroring (evstreamers event-class 
-                                    &key instance &allow-other-keys)
+                                    &key instance space-instance
+                                    &allow-other-keys)
   (when *%%mirroring-enabled%%*
     ;; TODO: Deal with subevents in ecase:
     (ecase (class-name event-class)
-      (add-instance-to-space-instance-event
+      (instance-added-to-space-instance-event
        (dolist (evstreamer evstreamers)
-         (stream-add-instance-to-space-instance
-          instance (evstreamer.streamer evstreamer))))
-      (remove-instance-from-space-instance-event
+         (stream-add-to-space
+          instance space-instance (evstreamer.streamer evstreamer))))
+      (instance-removed-from-space-instance-event
        (dolist (evstreamer evstreamers)
-         (stream-remove-instance-from-space-instance
-          instance (evstreamer.streamer evstreamer)))))))
+         (stream-remove-from-space
+          instance space-instance (evstreamer.streamer evstreamer)))))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -920,6 +972,7 @@
                                   &key instance slot current-value
                                        initialization
                                   &allow-other-keys)
+  (declare (ignore event-class))
   (when (and (not initialization) *%%mirroring-enabled%%*)
     (dolist (evstreamer evstreamers)
       (stream-slot-update 

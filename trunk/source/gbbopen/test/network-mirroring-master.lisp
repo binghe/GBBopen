@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 21 18:53:36 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 04:15:08 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -72,6 +72,21 @@
 ;; Perform a link:
 (linkf (next-location-of (find-instance-by-name 8 'location))
        (find-instance-by-name 9 'location))
+
+;; Remove a location from the known-world:
+(remove-instance-from-space-instance 
+ (find-instance-by-name 8 'location) 
+ (find-space-instance-by-path '(known-world)))
+
+;; Add the location back to the known-world:
+(add-instance-to-space-instance
+ (find-instance-by-name 8 'location) 
+ (find-space-instance-by-path '(known-world)))
+
+;; Remove another location from the known-world:
+(remove-instance-from-space-instance 
+ (find-instance-by-name 5 'location) 
+ (find-space-instance-by-path '(known-world)))
 
 ;; Send a silly command:
 (stream-command-form '(:print "All done!") *streamer*)
