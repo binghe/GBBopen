@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/startup.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 14 12:49:24 2011 *-*
+;;;; *-* Last-Edit: Wed Feb 23 00:57:22 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -44,6 +44,19 @@
 
 (in-package :common-lisp-user)
 
+;;; ===========================================================================
+;;;  Control compilation of old event names (for backward compatibility --
+;;;  disappearing soon...)
+
+(declaim (special *include-old-event-names*))
+
+;; This file also can establish the GBBopen install directory:
+(when (or (not (boundp '*include-old-event-names*))
+          *include-old-event-names*)
+  (format t "~&;; Adding :old-event-names to ~s...~%"
+          '*features*)
+  (pushnew ':old-event-names *features*))
+  
 ;;; ===========================================================================
 ;;;  Preferred browser setting (defaults) 
 

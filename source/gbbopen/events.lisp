@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 04:52:55 2011 *-*
+;;;; *-* Last-Edit: Wed Feb 23 01:43:13 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -42,7 +42,6 @@
 	    describe-all-event-functions ; not yet documented
 	    describe-event-function	; not yet documented
 	    describe-event-printing
-	    describe-mirroring
 	    disable-event-printing
 	    enable-event-printing
 	    ensure-event-class		; not yet implemented/documented
@@ -53,6 +52,7 @@
 	    remove-event-function
 	    resume-event-printing
 	    signal-event
+            signal-event-using-class    ; not documented
 	    suspend-event-printing
 	    with-events-disabled
 	    with-events-enabled)))
@@ -1468,25 +1468,6 @@
         (parse-unit-class/instance-specifier unit-class-spec)
       (flet ((fn (event-class plus-subevents) 
                (ds-evfn-using-class 'describe-event-printing
-                                    event-class plus-subevents 
-                                    unit-class/instance plus-subclasses
-                                    slot-names paths)))
-        (declare (dynamic-extent #'fn))
-        (map-extended-event-classes #'fn event-classes-spec))))
-  (values))
-
-;;; ---------------------------------------------------------------------------
-
-(defun describe-mirroring (&optional (event-classes-spec 't)
-                           &rest args)
-  ;;; Prints streamers for the specified event signature(s).
-  (declare (dynamic-extent args))
-  (multiple-value-bind (unit-class-spec slot-names paths)
-      (parse-event-function-args args)
-    (multiple-value-bind (unit-class/instance plus-subclasses)
-        (parse-unit-class/instance-specifier unit-class-spec)
-      (flet ((fn (event-class plus-subevents) 
-               (ds-evfn-using-class 'describe-mirroring
                                     event-class plus-subevents 
                                     unit-class/instance plus-subclasses
                                     slot-names paths)))

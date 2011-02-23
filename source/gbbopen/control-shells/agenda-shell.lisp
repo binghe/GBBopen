@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:11:23 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Wed Feb 23 01:17:57 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -42,6 +42,7 @@
 ;;;  06-27-08 Add user-accessable PENDING-KSAS-OF, EXECUTED-KSAS-OF, and
 ;;;           OBVIATED-KSAS-OF control-shell-object readers, 
 ;;;           & CURRENT-CONTROL-SHELL.  (Corkill)
+;;;  02-22-11 Renamed some events to better suggest their timing.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -706,6 +707,9 @@
   (:export-class-name t)
   (:system-event t))
 
+;;; ---------------------------------------------------------------------------
+
+#+OLD-EVENT-NAMES
 (define-event-class start-control-shell-event (control-shell-event)
   ()
   (:metaclass non-instance-event-class)
@@ -714,7 +718,24 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(define-event-class control-shell-started-event (control-shell-event)
+  ()
+  (:metaclass non-instance-event-class)
+  (:export-class-name t)
+  (:system-event t))
+
+;;; ---------------------------------------------------------------------------
+
+#+OLD-EVENT-NAMES
 (define-event-class restart-control-shell-event (control-shell-event)
+  ()
+  (:metaclass non-instance-event-class)
+  (:export-class-name t)
+  (:system-event t))
+
+;;; ---------------------------------------------------------------------------
+
+(define-event-class control-shell-restarted-event (control-shell-event)
   ()
   (:metaclass non-instance-event-class)
   (:export-class-name t)
@@ -738,7 +759,36 @@
 
 ;;; ---------------------------------------------------------------------------
 
+#+OLD-EVENT-NAMES
 (define-event-class control-shell-hibernation-event (control-shell-event)
+  ()
+  (:metaclass non-instance-event-class)
+  (:export-class-name t)
+  (:system-event t))                      
+
+;;; ---------------------------------------------------------------------------
+
+(define-event-class control-shell-hibernating/awakened-event 
+    (control-shell-event)
+  ()
+  (:abstract t)
+  (:metaclass non-instance-event-class)
+  (:export-class-name t)
+  (:system-event t))                      
+
+;;; ---------------------------------------------------------------------------
+
+(define-event-class control-shell-hibernating-event 
+    (control-shell-hibernating/awakened-event )
+  ()
+  (:metaclass non-instance-event-class)
+  (:export-class-name t)
+  (:system-event t))                      
+
+;;; ---------------------------------------------------------------------------
+
+(define-event-class control-shell-awakened-event
+    (control-shell-hibernating/awakened-event )
   ()
   (:metaclass non-instance-event-class)
   (:export-class-name t)
@@ -755,6 +805,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
+#+OLD-EVENT-NAMES
 (define-event-class ksa-activation-event (ksa-event)
   ()
   (:metaclass instance-event-class)
@@ -763,6 +814,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(define-event-class ksa-activated-event (ksa-event)
+  ()
+  (:metaclass instance-event-class)
+  (:export-class-name t)
+  (:system-event t))                      
+
+;;; ---------------------------------------------------------------------------
+
+#+OLD-EVENT-NAMES
 (define-event-class ksa-execution-event (ksa-event)
   ()
   (:metaclass instance-event-class)
@@ -771,6 +831,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(define-event-class ksa-executing-event (ksa-event)
+  ()
+  (:metaclass instance-event-class)
+  (:export-class-name t)
+  (:system-event t))                      
+
+;;; ---------------------------------------------------------------------------
+
+#+OLD-EVENT-NAMES
 (define-event-class ksa-obviation-event (ksa-event)
   ()
   (:metaclass instance-event-class)
@@ -779,7 +848,24 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(define-event-class ksa-obviated-event (ksa-event)
+  ()
+  (:metaclass instance-event-class)
+  (:export-class-name t)
+  (:system-event t))                      
+
+;;; ---------------------------------------------------------------------------
+
+#+OLD-EVENT-NAMES
 (define-event-class ksa-retrigger-event (ksa-event)
+  ()
+  (:metaclass instance-event-class)
+  (:export-class-name t)
+  (:system-event t))                      
+
+;;; ---------------------------------------------------------------------------
+
+(define-event-class ksa-retriggered-event (ksa-event)
   ()
   (:metaclass instance-event-class)
   (:export-class-name t)
@@ -1124,7 +1210,15 @@
     (insert-on-queue ksa (pending-ksas-of cs))
     (incf (cs.ks-activations-count cs))
     (with-update-stat (agenda-shell-ks-stats.activation ks))
-    (signal-event 'ksa-activation-event :instance ksa :cycle cycle)
+    #+OLD-EVENT-NAMES
+    (signal-event-using-class
+     (load-time-value (find-event-class 'ksa-activation-event))
+     :instance ksa
+     :cycle cycle)
+    (signal-event-using-class
+     (load-time-value (find-event-class 'ksa-activated-event))
+     :instance ksa
+     :cycle cycle)
     ksa))
 
 ;;; ---------------------------------------------------------------------------
@@ -1142,7 +1236,15 @@
     (setf (execution-cycle-of ksa) cycle)
     (incf (cs.executed-ksas-count cs))
     (unlinkf (pending-activations-of ks) ksa)
-    (signal-event 'ksa-execution-event :instance ksa :cycle cycle))
+    #+OLD-EVENT-NAMES
+    (signal-event-using-class
+     (load-time-value (find-event-class 'ksa-execution-event))
+     :instance ksa 
+     :cycle cycle)
+    (signal-event-using-class
+     (load-time-value (find-event-class 'ksa-executing-event))
+     :instance ksa 
+     :cycle cycle))
   (with-update-stat (agenda-shell-ks-stats.execution ks)
     (let ((execution-function (execution-function-of ks)))
       (when execution-function
@@ -1159,7 +1261,15 @@
     (incf (cs.obviated-ksas-count cs))
     (remove-from-queue ksa)
     (unlinkf (pending-activations-of ks) ksa)
-    (signal-event 'ksa-obviation-event :instance ksa :cycle cycle)
+    #+OLD-EVENT-NAMES
+    (signal-event-using-class
+     (load-time-value (find-event-class 'ksa-obviation-event))
+     :instance ksa
+     :cycle cycle)
+    (signal-event-using-class
+     (load-time-value (find-event-class 'ksa-obviated-event))
+     :instance ksa
+     :cycle cycle)
     (if (cs.save-obviated-ksas cs)
 	(insert-on-queue ksa (obviated-ksas-of cs))
 	(delete-instance ksa))))
@@ -1271,8 +1381,15 @@
                   (dolist (ksa (pending-activations-of ks))
                     (maybe-control-shell-step 
                      (cs :retrigger-function event ksa))
-                    (signal-event 'ksa-retrigger-event
-                                  :instance ksa :cycle (cs.cycle cs))
+                    #+OLD-EVENT-NAMES
+                    (signal-event-using-class
+                     (load-time-value (find-event-class 'ksa-retrigger-event))
+                     :instance ksa 
+                     :cycle (cs.cycle cs))
+                    (signal-event-using-class
+                     (load-time-value (find-event-class 'ksa-retriggered-event))
+                     :instance ksa 
+                     :cycle (cs.cycle cs))
                     (with-update-stat 
                         (agenda-shell-ks-stats.retrigger-function ks)
                       (funcall retrigger-function ksa event))))))))))))
@@ -1287,7 +1404,11 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun hibernate-control-shell (cs)
-  (signal-event 'control-shell-hibernation-event)
+  #+OLD-EVENT-NAMES
+  (signal-event-using-class
+   (load-time-value (find-event-class 'control-shell-hibernation-event)))
+  (signal-event-using-class
+   (load-time-value (find-event-class 'control-shell-hibernating-event)))
   ;; On a uniprocess CL we must "busy wait" (but not too fast) until something
   ;; awakens the control-shell:
   (cond 
@@ -1311,7 +1432,9 @@
       (with-lock-held ((cs.hibernating-cv cs))
         (setf (cs.hibernating cs) 't)
         (while (cs.hibernating cs)
-          (condition-variable-wait (cs.hibernating-cv cs)))))))
+          (condition-variable-wait (cs.hibernating-cv cs))))))
+  (signal-event-using-class
+   (load-time-value (find-event-class 'control-shell-awakened-event))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1345,8 +1468,9 @@
 		(when (cs.pause cs)
 		  (hibernate-control-shell cs))
 		;; signal the "real" start of the cycle
-		(signal-event 'control-shell-cycle-event 
-			      :cycle (incf (cs.cycle cs)))
+		(signal-event-using-class
+                 (load-time-value (find-event-class 'control-shell-cycle-event))
+                 :cycle (incf (cs.cycle cs)))
 		;; when recording stats, record the cycle:
 		(let ((stats *control-shell-stats*))
 		  (when stats
@@ -1367,8 +1491,9 @@
 		      ;; continuing indefinitely:
 		      (unless (cs.continue-past-quiescence cs)
 			(setf quiescence-handled-p t))
-		      (signal-event 'quiescence-event))
-		     ;; if second consecutive time in quiescence state without
+		      (signal-event-using-class
+                       (load-time-value (find-event-class 'quiescence-event))))
+                     ;; if second consecutive time in quiescence state without
 		     ;; finding a KSA to execute, then hibernate or exit:
 		     (t (cond
 			 ;; hibernate if requested:
@@ -1542,7 +1667,11 @@
     (format (cs.output-stream *cs*) 
             "~&;; Control shell ~s started~%"
             (instance-name-of *cs*)))
-  (signal-event 'start-control-shell-event)
+  #+OLD-EVENT-NAMES
+  (signal-event-using-class
+   (load-time-value (find-event-class 'start-control-shell-event)))
+  (signal-event-using-class
+   (load-time-value (find-event-class 'control-shell-started-event)))
   (control-shell-loop *cs*))
    
 ;;; ---------------------------------------------------------------------------
@@ -1597,7 +1726,11 @@
               "~&;; Control shell ~s restarting after cycle ~s~%"
               (instance-name-of cs)
               (cs.cycle cs)))
-    (signal-event 'restart-control-shell-event)
+    #+OLD-EVENT-NAMES
+    (signal-event-using-class
+     (load-time-value (find-event-class 'restart-control-shell-event)))
+    (signal-event-using-class
+     (load-time-value (find-event-class 'control-shell-restarted-event)))
     (control-shell-loop cs)))
 
 ;;; ---------------------------------------------------------------------------

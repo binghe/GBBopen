@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 04:49:04 2011 *-*
+;;;; *-* Last-Edit: Wed Feb 23 01:43:36 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -43,6 +43,7 @@
             broadcast-streamer          ; class-name
             beginning-queued-read
             define-streamer-node
+            describe-mirroring          ; not yet documented`
             end-queued-streaming
             ending-queued-read
             find-or-make-network-streamer
@@ -103,7 +104,7 @@
    external-format
    read-default-float-format 
    authorized-nodes
-   (streamer-class :initform 'network-streamer)
+   streamer-class
    (streamer :initform nil)))
 
 ;;; ---------------------------------------------------------------------------
@@ -124,6 +125,7 @@
                                   (external-format ':default)                                  
                                   (read-default-float-format 
                                    *read-default-float-format*)
+                                  (streamer-class 'network-streamer)
                                   (authorized-nodes ':all))
   (let ((streamer-node
          (make-instance 'streamer-node
@@ -135,6 +137,7 @@
            :package package
            :external-format external-format
            :read-default-float-format read-default-float-format 
+           :streamer-class streamer-class
            :authorized-nodes authorized-nodes)))
     (setf (gethash name *streamer-nodes-ht*) streamer-node)
     (if localnodep (setf *local-streamer-node* streamer-node))))
@@ -313,7 +316,7 @@
         ;; Return streamer on success:
         streamer))))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
 ;;;   Streamer entities
 
 (defun %do-with-streamer-stream (streamer body-form-fn)
@@ -650,6 +653,9 @@
   (let ((maximum-contiguous-errors 4)
         (contiguous-errors 0)
         *queued-read-tag*
+        (*package* (ensure-package (package-of network-streamer)))
+        (*read-default-float-format*
+         (read-default-float-format-of network-streamer))
         form)
     (loop
       (setf form 
@@ -908,9 +914,9 @@
 ;;;   Mirroring setup
 
 (defun add-mirroring (streamer unit-class-spec &optional (slot-names 't))
-  (add-event-function streamer '(create-instance-event +) unit-class-spec)
+  (add-event-function streamer '(instance-created-event +) unit-class-spec)
   (add-event-function streamer '(instance-deleted-event +) unit-class-spec)
-  (add-event-function streamer '(update-nonlink-slot-event +) unit-class-spec)
+  (add-event-function streamer '(nonlink-slot-updated-event +) unit-class-spec)
   (add-event-function streamer '(link-event +) unit-class-spec 
                       :slot-names slot-names)
   (add-event-function streamer '(unlink-event +) unit-class-spec
@@ -923,9 +929,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun remove-mirroring (streamer unit-class-spec &optional (slot-names 't))
-  (remove-event-function streamer '(create-instance-event +) unit-class-spec)
+  (remove-event-function streamer '(instance-created-event +) unit-class-spec)
   (remove-event-function streamer '(instance-deleted-event +) unit-class-spec)
-  (remove-event-function streamer '(update-nonlink-slot-event +) unit-class-spec)
+  (remove-event-function streamer '(nonlink-slot-updated-event +) unit-class-spec)
   (remove-event-function streamer '(link-event +) unit-class-spec
                          :slot-names slot-names)
   (remove-event-function streamer '(unlink-event +) unit-class-spec
@@ -942,7 +948,7 @@
   (when *%%mirroring-enabled%%*
     ;; TODO: Deal with subevents in ecase:
     (ecase (class-name event-class)
-      (create-instance-event
+      (instance-created-event
        (dolist (evstreamer evstreamers)
          (stream-instance instance (evstreamer.streamer evstreamer))))
       (instance-deleted-event
@@ -953,8 +959,9 @@
 
 (defun do-space-instance-mirroring (evstreamers event-class 
                                     &key instance space-instance
+                                         initialization
                                     &allow-other-keys)
-  (when *%%mirroring-enabled%%*
+  (when (and (not initialization) *%%mirroring-enabled%%*)
     ;; TODO: Deal with subevents in ecase:
     (ecase (class-name event-class)
       (instance-added-to-space-instance-event
@@ -997,6 +1004,26 @@
           instance slot removed-instances (evstreamer.streamer evstreamer)))))))
 
 ;;; ---------------------------------------------------------------------------
+
+(defun describe-mirroring (&optional (event-classes-spec 't)
+                           &rest args)
+  ;;; Prints streamers for the specified event signature(s).
+  (declare (dynamic-extent args))
+  (multiple-value-bind (unit-class-spec slot-names paths)
+      (parse-event-function-args args)
+    (multiple-value-bind (unit-class/instance plus-subclasses)
+        (parse-unit-class/instance-specifier unit-class-spec)
+      (flet ((fn (event-class plus-subevents) 
+               (ds-evfn-using-class 'describe-mirroring
+                                    event-class plus-subevents 
+                                    unit-class/instance plus-subclasses
+                                    slot-names paths)))
+        (declare (dynamic-extent #'fn))
+        (map-extended-event-classes #'fn event-classes-spec))))
+  (values))
+
+;;; ===========================================================================
+;;;   Journal entities
 
 (defun make-jnl-pathname (pathname) 
   ;; Adds type "jnl", if not supplied ; then adds defaults from

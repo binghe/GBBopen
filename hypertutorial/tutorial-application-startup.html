@@ -65,7 +65,7 @@ dimensional specifications of a unit class
     (make-instance 'location :x 0 :y 0))
 
   (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
+      :trigger-events ((control-shell-started-event))
       :execution-function 'startup-ks-function)
 </pre>
 </p>
@@ -135,7 +135,7 @@ or the shorthand equivalent:
 <p>Add the following form at the end of your <nobr><code>tutorial-example.lisp</code></nobr>
 file:
 <pre class="pretop">
-  (add-event-function 'initializations 'start-control-shell-event
+  (add-event-function 'initializations 'control-shell-started-event
                       ;; Initializations should be done first!
                       :priority 100)
 </pre>

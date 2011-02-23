@@ -65,7 +65,7 @@ Facility
     (make-instance 'location :time 0 :x 0 :y 0))
 
   (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
+      :trigger-events ((control-shell-started-event))
       :execution-function 'startup-ks-function)
 
   ;;; ====================================================================
@@ -80,7 +80,7 @@ Facility
      '(known-world)
      :dimensions (dimensions-of 'location)))
 
-  (add-event-function 'initializations 'start-control-shell-event
+  (add-event-function 'initializations 'control-shell-started-event
                       ;; Initializations should be done first!
                       :priority 100)
 
@@ -117,7 +117,7 @@ Facility
            (t (format t "~2&#38;Walked off the world: (~d, ~d).~&#37;" x y))))))))
 
   (define-ks random-walk-ks
-      :trigger-events ((create-instance-event location))
+      :trigger-events ((instance-created-event location))
       :rating 100
       :execution-function 'random-walk-ks-function)
 

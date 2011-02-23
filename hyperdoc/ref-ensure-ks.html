@@ -163,7 +163,7 @@ called by the expansion of the <nobr><b><a href="ref-define-ks.html">define-ks</
 started:
 <pre class="pretop">
   (ensure-ks 'initial
-     :trigger-events '((start-control-shell-event)) 
+     :trigger-events '((control-shell-started-event)) 
      :execution-function #'initial-ks-function)
 </pre>
 </p>

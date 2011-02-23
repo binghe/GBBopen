@@ -145,7 +145,7 @@ function and KS definition to the end of the
     (make-instance 'location :x 0 :y 0))
 
   (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
+      :trigger-events ((control-shell-started-event))
       :execution-function 'startup-ks-function)</font></font>
 </pre>
 </p>
@@ -159,8 +159,8 @@ instance at the center of the <nobr><code>known-world</code></nobr>, coordinate 
 <p>The <nobr><b>define-ks</b></nobr> form defines a KS named <nobr><code>startup-ks</code></nobr>
 to the Agenda Shell.  The <nobr><code>:trigger-events</code></nobr> value indicates that
 the KS should be triggered when an event called
-<nobr><code>start-control-shell-event</code></nobr> is signaled.  The Agenda Shell signals
-<nobr><code>start-control-shell-event</code></nobr> once, when the control shell is
+<nobr><code>control-shell-started-event</code></nobr> is signaled.  The Agenda Shell signals
+<nobr><code>control-shell-started-event</code></nobr> once, when the control shell is
 started.  The <nobr><code>:execution-function</code></nobr> names the function (that we
 just defined) that implements the KS.
 </p>
@@ -269,7 +269,7 @@ display of all control-shell and instance-creation events by evaluating:
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(enable-event-printing '(control-shell-event :plus-subevents))</font>
   nil
-  gbbopen-user&gt; <font color="#000000">(enable-event-printing 'create-instance-event)</font>
+  gbbopen-user&gt; <font color="#000000">(enable-event-printing 'instance-created-event)</font>
   nil
   gbbopen-user&gt;</font>
 </pre>
@@ -277,7 +277,7 @@ or the shorthand equivalent:
 <pre>
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(enable-event-printing '(control-shell-event +))</font>
   nil
-  gbbopen-user&gt; <font color="#000000">(enable-event-printing 'create-instance-event)</font>
+  gbbopen-user&gt; <font color="#000000">(enable-event-printing 'instance-created-event)</font>
   nil
   gbbopen-user&gt;</font>
 </pre>
@@ -289,18 +289,18 @@ detail in a later exercise.
 <pre class="pretop">
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(start-control-shell)</font>
   ;; Control shell 1 started
-  =&gt; Start-control-shell-event
+  =&gt; Control-shell-started-event
   =&gt; Control-shell-cycle-event
        :cycle 1
-  =&gt; Create-instance-event
+  =&gt; Instance-created-event
        :instance #&lt;ksa 1 startup-ks 1&gt;
-  =&gt; Ksa-activation-event
-       :instance #&lt;ksa 1 startup-ks 1&gt;
-       :cycle 1
-  =&gt; Ksa-execution-event
+  =&gt; Ksa-activated-event
        :instance #&lt;ksa 1 startup-ks 1&gt;
        :cycle 1
-  =&gt; Create-instance-event
+  =&gt; Ksa-executing-event
+       :instance #&lt;ksa 1 startup-ks 1&gt;
+       :cycle 1
+  =&gt; Instance-created-event
        :instance #&lt;location 1 (0 0)&gt;
   =&gt; Control-shell-cycle-event
        :cycle 2
@@ -335,7 +335,7 @@ and disable the event printing that we enabled in the last step:
 <font color="#667f66">  gbbopen-user&gt; <font color="#000000">(start-control-shell :stepping 't)</font>
   ;; Control shell 1 started
   &gt;&gt; CS Step (cycle 1):
-     About to process event #&lt;start-control-shell-event&gt;... <font color="#00b200">[<i>? entered</i>]</font>
+     About to process event #&lt;control-shell-started-event&gt;... <font color="#00b200">[<i>? entered</i>]</font>
   Stepping commands (follow with &lt;Return&gt;):
      d       Disable this kind of stepping (:process-event)
      e       Enable another kind of stepping
@@ -349,10 +349,10 @@ and disable the event printing that we enabled in the last step:
      -       Disable all stepping
      &lt;Space&gt; Continue (resume processing)
   &gt;&gt; CS Step (cycle 1):
-     About to process event #&lt;start-control-shell-event&gt;... <font color="#00b200">[<i>&lt;Return&gt; entered</i>]</font>
+     About to process event #&lt;control-shell-started-event&gt;... <font color="#00b200">[<i>&lt;Return&gt; entered</i>]</font>
   &gt;&gt; CS Step (cycle 1):
      About to activate KS startup-ks on
-       start-control-shell-event... <font color="#00b200">[<i>&lt;Return&gt; entered</i>]</font>
+       control-shell-started-event... <font color="#00b200">[<i>&lt;Return&gt; entered</i>]</font>
   &gt;&gt; CS Step (cycle 1):
      About to execute KSA #&lt;ksa 1 startup-ks 1&gt;... <font color="#00b200">[<i>&lt;Return&gt; entered</i>]</font>
   &lt;&lt; KSA 1 returned: (#&lt;location 1 (0 0)&gt;)

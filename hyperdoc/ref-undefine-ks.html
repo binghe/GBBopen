@@ -49,7 +49,7 @@ editing the defining form (such as from within an editor buffer).
 forms are all equivalent:
 <pre class="pretop">
   &gt; (undefine-ks initial
-       :trigger-events '((start-control-shell-event)) 
+       :trigger-events '((control-shell-started-event)) 
        :execution-function #'initial-ks-function)
   #&lt;deleted-unit-instance ks initial&gt;
 

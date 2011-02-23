@@ -1,5 +1,5 @@
 %!PS-Adobe-1.0
-%%BoundingBox: 0 0 540 174
+%%BoundingBox: 0 0 540 171
 %%Page: ? ?
 /max {2 copy lt {exch} if pop} def
 /min {2 copy gt {exch} if pop} def
@@ -70,22 +70,22 @@ widtharray 0 (standard-event-instance) stringwidth pop put
 widtharray 1 (instance-event) stringwidth pop put
 widtharray 2 (multiple-instance-event) stringwidth pop put
 widtharray 3 (single-instance-event) stringwidth pop put
-widtharray 4 (create/delete-instance-event) stringwidth pop put
+widtharray 4 (instance-created/changed/deleted-event) stringwidth pop put
 widtharray 5 (change-instance-class-event) stringwidth pop put
-widtharray 6 (create-instance-event) stringwidth pop put
-widtharray 7 (delete-instance-event) stringwidth pop put
-widtharray 8 (instance-changed-class-event) stringwidth pop put
+widtharray 6 (delete-instance-event) stringwidth pop put
+widtharray 7 (instance-changed-class-event) stringwidth pop put
+widtharray 8 (instance-created-event) stringwidth pop put
 widtharray 9 (instance-deleted-event) stringwidth pop put
 widtharray 10 (link/nonlink-slot-event) stringwidth pop put
 widtharray 11 (link-slot-event) stringwidth pop put
 widtharray 12 (link-event) stringwidth pop put
 widtharray 13 (unlink-event) stringwidth pop put
-widtharray 14 (link/nonlink-slot-modify-event) stringwidth pop put
-widtharray 15 (update-nonlink-slot-event) stringwidth pop put
+widtharray 14 (link/nonlink-slot-modified-event) stringwidth pop put
+widtharray 15 (nonlink-slot-updated-event) stringwidth pop put
 widtharray 16 (space-instance-event) stringwidth pop put
-widtharray 17 (add-instance-to-space-instance-event) stringwidth pop put
-widtharray 18 (move-instance-within-space-instance-event) stringwidth pop put
-widtharray 19 (remove-instance-from-space-instance-event) stringwidth pop put
+widtharray 17 (instance-added-to-space-instance-event) stringwidth pop put
+widtharray 18 (instance-moved-within-space-instance-event) stringwidth pop put
+widtharray 19 (instance-removed-from-space-instance-event) stringwidth pop put
 widtharray 20 (non-instance-event) stringwidth pop put
 widtharray 21 (timer-interrupt-event) stringwidth pop put
 /Helvetica-Oblique findfont 8 scalefont setfont
@@ -273,22 +273,22 @@ xarray 21 get 2 widtharray 21 get 14 drawbox
 /text1 {xarray 1 get boxedge add 163 moveto (instance-event) show} def
 /text2 {xarray 2 get boxedge add 222 moveto (multiple-instance-event) show} def
 /text3 {xarray 3 get boxedge add 105 moveto (single-instance-event) show} def
-/text4 {xarray 4 get boxedge add 168 moveto (create/delete-instance-event) show} def
+/text4 {xarray 4 get boxedge add 168 moveto (instance-created/changed/deleted-event) show} def
 /text5 {xarray 5 get boxedge add 204 moveto (change-instance-class-event) show} def
-/text6 {xarray 6 get boxedge add 186 moveto (create-instance-event) show} def
-/text7 {xarray 7 get boxedge add 168 moveto (delete-instance-event) show} def
-/text8 {xarray 8 get boxedge add 150 moveto (instance-changed-class-event) show} def
+/text6 {xarray 6 get boxedge add 186 moveto (delete-instance-event) show} def
+/text7 {xarray 7 get boxedge add 168 moveto (instance-changed-class-event) show} def
+/text8 {xarray 8 get boxedge add 150 moveto (instance-created-event) show} def
 /text9 {xarray 9 get boxedge add 132 moveto (instance-deleted-event) show} def
 /text10 {xarray 10 get boxedge add 105 moveto (link/nonlink-slot-event) show} def
 /text11 {xarray 11 get boxedge add 114 moveto (link-slot-event) show} def
 /text12 {xarray 12 get boxedge add 114 moveto (link-event) show} def
 /text13 {xarray 13 get boxedge add 96 moveto (unlink-event) show} def
-/text14 {xarray 14 get boxedge add 96 moveto (link/nonlink-slot-modify-event) show} def
-/text15 {xarray 15 get boxedge add 78 moveto (update-nonlink-slot-event) show} def
+/text14 {xarray 14 get boxedge add 96 moveto (link/nonlink-slot-modified-event) show} def
+/text15 {xarray 15 get boxedge add 78 moveto (nonlink-slot-updated-event) show} def
 /text16 {xarray 16 get boxedge add 42 moveto (space-instance-event) show} def
-/text17 {xarray 17 get boxedge add 60 moveto (add-instance-to-space-instance-event) show} def
-/text18 {xarray 18 get boxedge add 42 moveto (move-instance-within-space-instance-event) show} def
-/text19 {xarray 19 get boxedge add 24 moveto (remove-instance-from-space-instance-event) show} def
+/text17 {xarray 17 get boxedge add 60 moveto (instance-added-to-space-instance-event) show} def
+/text18 {xarray 18 get boxedge add 42 moveto (instance-moved-within-space-instance-event) show} def
+/text19 {xarray 19 get boxedge add 24 moveto (instance-removed-from-space-instance-event) show} def
 /text20 {xarray 20 get boxedge add 6 moveto (non-instance-event) show} def
 /text21 {xarray 21 get boxedge add 6 moveto (timer-interrupt-event) show} def
 /edge0 {newpath

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/test/agenda-shell-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Jan 16 05:40:48 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 14:15:39 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -77,7 +77,7 @@
 ;;;   KS definitions
 
 (define-ks start-control-shell-ks
-    :trigger-events ((start-control-shell-event))
+    :trigger-events ((control-shell-started-event))
     :activation-predicate 
     #'(lambda (ks event)
         (declare (ignore ks event))
@@ -102,7 +102,7 @@
 	  (unless (and (consp trigger-events)
 		       (= (length trigger-events) 1)
 		       (typep (first trigger-events)
-			      'start-control-shell-event))
+			      'control-shell-started-event))
 	    (error "Start-control-shell: Wrong events ~s" 
 		   trigger-events)))
         (format t "~&;; Start-control-shell-ks ~
@@ -124,8 +124,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-ks retriggered-event-ks
-  :trigger-events ((create-instance-event uc-one))
-  :retrigger-events ((create-instance-event uc-two))
+  :trigger-events ((instance-created-event uc-one))
+  :retrigger-events ((instance-created-event uc-two))
   :rating -1
   :retrigger-function
   #'(lambda (ksa event)
@@ -144,7 +144,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-ks obviation-event-ks
-  :trigger-events ((create-instance-event uc-one))
+  :trigger-events ((instance-created-event uc-one))
   :obviation-events ((quiescence-event))
   :rating -1
   :obviation-predicate 
@@ -160,14 +160,14 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-ks create-uc-one-instance-event-ks
-  :trigger-events ((create-instance-event uc-one))
+  :trigger-events ((instance-created-event uc-one))
   :execution-function 
   #'(lambda (ksa)
       (format t "~&;; Create-uc-one-instance-event ks executed~%")
       (unless (find-space-instance-by-path '(space-3))
         (error "KS ~s was not triggered by ~s"
                'update-uc-one-value-slot-event-ks
-               '(update-nonlink-slot-event uc-one :slot-name value)))
+               '(nonlink-slot-updated-event uc-one :slot-name value)))
       (let ((trigger-instance (sole-trigger-instance-of ksa)))
 	(make-instance 'uc-two :uc-one trigger-instance))
       (values)))
@@ -175,7 +175,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-ks add-uc-one-to-space-instance-event-ks
-    :trigger-events ((add-instance-to-space-instance-event 
+    :trigger-events ((instance-added-to-space-instance-event 
                       uc-one :paths (? space-1)))
     :precondition-function 
     #'(lambda (ks events)
@@ -192,7 +192,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-ks update-uc-one-value-slot-event-ks
-  :trigger-events ((update-nonlink-slot-event uc-one :slot-name value))
+  :trigger-events ((nonlink-slot-updated-event uc-one :slot-name value))
   :execution-function 
   #'(lambda (ksa)
       (format t "~&;; Update-uc-one-value-slot-event ks executed~%")
@@ -205,7 +205,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-ks add-uc-one-to-future-space-instance-event-ks
-    :trigger-events ((add-instance-to-space-instance-event 
+    :trigger-events ((instance-added-to-space-instance-event 
                       uc-one :path (space-3)))
     :execution-function 
     #'(lambda (ksa)
@@ -243,7 +243,7 @@
   #+if-desired
   (enable-event-printing '(ksa-event :plus-subevents) 'ksa))
 
-(add-event-function 'initializations 'start-control-shell-event
+(add-event-function 'initializations 'control-shell-started-event
 		    ;; Initializations should be done first!
 		    :priority 100)
 

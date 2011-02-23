@@ -99,20 +99,20 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-remove-all-event-functions.html"><b>remove-all-event-functions</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id3">Remove</a> the event <a href="ref-glossary.html#gl:function">function</a> <nobr><b><a href="ref-evfn-printv.html">evfn-printv</a></b></nobr> from
-the set of functions to be invoked when <nobr><code>create-instance-event</code></nobr> is
+the set of functions to be invoked when <nobr><code>instance-created-event</code></nobr> is
 signaled on a <code>hyp</code> <a href="ref-glossary.html#id234">unit&nbsp;instance</a>:
 <pre class="pretop">
-  (remove-event-function 'evfn-printv 'create-instance-event 'hyp)
+  (remove-event-function 'evfn-printv 'instance-created-event 'hyp)
 </pre>
 Remove the event <a href="ref-glossary.html#gl:function">function</a> <nobr><b><a href="ref-evfn-printv.html">evfn-printv</a></b></nobr> from
-the set of functions to be invoked when <nobr><code>create-instance-event</code></nobr> is
+the set of functions to be invoked when <nobr><code>instance-created-event</code></nobr> is
 signaled on a <code>hyp</code> <a href="ref-glossary.html#id234">unit&nbsp;instance</a> or its subclasses:
 <pre>
-  (remove-event-function 'evfn-printv 'create-instance-event '(hyp :plus-subclasses))
+  (remove-event-function 'evfn-printv 'instance-created-event '(hyp :plus-subclasses))
 </pre>
 or simply:
 <pre>
-  (remove-event-function 'evfn-printv 'create-instance-event '(hyp +))
+  (remove-event-function 'evfn-printv 'instance-created-event '(hyp +))
 </pre>
 </p>
 <p><span class="fndoclabel">Note</span> <br />Unit-instance-specific event functions
