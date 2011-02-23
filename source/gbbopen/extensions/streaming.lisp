@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 12:42:08 2011 *-*
+;;;; *-* Last-Edit: Wed Feb 23 15:02:12 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -71,6 +71,8 @@
             stream-delete-instance
             stream-instance
             stream-instances
+            stream-instances-of-class
+            stream-instances-on-space-instances
             stream-link
             stream-remove-from-space
             stream-slot-update
@@ -828,6 +830,33 @@
   (%with-streamer-stream (stream streamer)
     (let ((*save/send-references-only* nil)) 
       (dolist (instance instances)
+        (print-object-for-saving/sending instance stream)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun stream-instances-of-class (unit-class-specifier streamer)
+  (%with-streamer-stream (stream streamer)
+    (let ((*save/send-references-only* nil)) 
+      (do-instances-of-class (instance unit-class-specifier)
+        (print-object-for-saving/sending instance stream)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun stream-instances-on-space-instances (unit-class-specifier
+                                            space-instances 
+                                            streamer
+                                            &key (pattern ':all)
+                                                 filter-before filter-after
+                                                 (use-marking *use-marking*)
+                                                 (verbose *find-verbose*))
+  (%with-streamer-stream (stream streamer)
+    (let ((*save/send-references-only* nil)) 
+      (do-instances-on-space-instances (instance unit-class-specifier
+                                                 space-instances
+                                                 :pattern pattern
+                                                 :filter-before filter-before
+                                                 :use-marking use-marking
+                                                 :verbose verbose)
         (print-object-for-saving/sending instance stream)))))
 
 ;;; ---------------------------------------------------------------------------
