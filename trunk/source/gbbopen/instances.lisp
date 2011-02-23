@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 14:16:55 2011 *-*
+;;;; *-* Last-Edit: Wed Feb 23 18:46:40 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -444,7 +444,7 @@
         (setf (standard-unit-instance.%%space-instances%% instance) nil)
         (add-instance-to-space-instance-paths
          instance space-instance-paths))))
-  (unless *%%loading-complete-repository%%*
+  (unless *%%loading-complete-repository%%*    
     (let ((*%%allow-setf-on-link%%* 't))
       (reconcile-direct-link-values instance))
     ;; do the inverse pointers all link slots:
@@ -455,7 +455,20 @@
            (effective-link-definition.direct-slot-definition eslotd)
            instance 
            (ensure-list (slot-value-using-class class instance eslotd))
-           't)))))
+           't))))
+    ;; Bump the instance counter, if needed:
+    (let ((unit-class (class-of instance))
+          (instance-name (instance-name-of instance)))
+      (when (integerp instance-name)
+        (if (standard-unit-class.use-global-instance-name-counter unit-class)
+            ;; Using global instance-name counter?
+            (when (> instance-name *global-instance-name-counter*)
+              (setf *global-instance-name-counter* instance-name))
+            ;; Otherwise, using normal per-unit-class counter:
+            (when (> instance-name 
+                     (standard-unit-class.instance-name-counter unit-class))
+              (setf (standard-unit-class.instance-name-counter unit-class)
+                    instance-name))))))
   ;; signal the creation event:
   #+OLD-EVENT-NAMES
   (signal-event-using-class

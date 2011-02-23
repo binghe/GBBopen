@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jul 30 09:23:33 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Wed Feb 23 18:45:01 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -84,7 +84,7 @@
 (define-class standard-unit-class (standard-class)
   ((abstract :initform nil :type boolean)
    (instance-hash-table)
-   (instance-name-counter :initform unbound-value-indicator)
+   (instance-name-counter :initform 0)
    (estimated-instances :initform nil)
    (use-global-instance-name-counter :initform nil :type boolean)
    (instance-name-comparison-test :initform 'eql)
