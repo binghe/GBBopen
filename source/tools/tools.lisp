@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 11:27:17 2011 *-*
+;;;; *-* Last-Edit: Wed Feb 23 12:38:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -345,7 +345,7 @@
                                       (go ,condition/tag))
                                     `((declare (ignore condition))
                                       (return-from ,block (values))))))))
-                 (declare (dynamic-extent #'.conditioner))
+                 (declare (dynamic-extent #'.conditioner.))
                  (handler-bind
                      ((,conditions #'.conditioner.))
                    (return-from ,block ,form)))
