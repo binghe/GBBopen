@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 04:14:05 2011 *-*
+;;;; *-* Last-Edit: Wed Feb 23 15:00:01 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -56,12 +56,13 @@
 ;; Generate some data (locally):
 (take-a-walk)
 
-;; Mirror the space instances:
+;; Send the space instances:
 (stream-instances (find-space-instances 't) *streamer*)
 
 ;; Send everything else (as a single queued block):
 (with-queued-streaming (*streamer* ':tutorial)
-  (stream-instances (find-instances 't 't 't) *broadcast-streamer*))
+  (stream-instances-of-class 'path *broadcast-streamer*)
+  (stream-instances-of-class 'location *broadcast-streamer*))
 
 ;; Test empty queue writing:
 (with-queued-streaming (*streamer* ':empty-queue-that-should-not-be-written)
