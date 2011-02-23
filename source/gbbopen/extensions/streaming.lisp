@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 15:02:12 2011 *-*
+;;;; *-* Last-Edit: Wed Feb 23 18:24:12 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -611,7 +611,8 @@
      streamer
      ;; A new streamer is needed; try to connect to GBBopen Network Server:
      (let ((connection 
-            ;; TODO: ** Extend open-connection to accept external-format **
+            ;; TODO: ** Extend open-connection to accept external-format &
+            ;; clozure :sharing **
             (open-connection (host-of streamer-node) (port-of streamer-node)))
            (package (ensure-package (package-of streamer-node)))
            (external-format (external-format-of streamer-node))
@@ -1087,11 +1088,14 @@
                                    (read-default-float-format 
                                     *read-default-float-format*)
                                    (streamer-class 'journal-streamer))
-  (let ((stream (open (make-bb-pathname pathname)
-                      ;; TODO: ** Deal with appended journaling **
-                      :direction ':output
-                      :if-exists if-exists
-                      :external-format external-format))
+  (let ((stream (if (streamp pathname)
+                    pathname
+                    (open (make-bb-pathname pathname)
+                          ;; TODO: ** Deal with appended journaling **
+                          :direction ':output
+                          :if-exists if-exists
+                          :external-format external-format
+                          #+clozure :sharing #+clozure ':external)))
         (*package* (ensure-package package))
         (*read-default-float-format* read-default-float-format))
     (write-saving/sending-block-info stream)
@@ -1101,10 +1105,7 @@
     ;; Make and return the streamer:
     (apply #'make-instance
            streamer-class
-           :lock (make-recursive-lock 
-                  :name (concatenate 'simple-string 
-                          (enough-namestring pathname)
-                          " lock"))
+           :lock (make-lock :name "Journal streamer lock")
            :package *package*
            :external-format external-format
            :read-default-float-format read-default-float-format 
