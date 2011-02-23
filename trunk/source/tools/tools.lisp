@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Sep 14 05:37:01 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Wed Feb 23 11:27:17 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -314,39 +314,41 @@
         `(block ,block
            (let (,.(when error-body (list condition/tag)))
              (tagbody
-               (handler-bind
-                   ((,conditions
-                     #'(lambda (condition)
-                         ,@(if handler-body
-                               `((flet ((error-message ()
-                                          (error-message-string condition))
-                                        (error-condition ()
-                                          condition))
-                                   (declare (ignorable #'error-message
-                                                       #'error-condition)
-                                            (dynamic-extent #'error-message
-                                                            #'error-condition))
-                                   ,@(if error-body
-                                         `(,@handler-body
-                                           (when *disable-with-error-handling*
-                                             (error condition))
-                                           ;; Save the condition for use
-                                           ;; by (error-message) in error-body:
-                                           (setf ,condition/tag condition)
-                                           (go ,condition/tag))
-                                         `((return-from ,block 
-                                             (progn ,@handler-body))))))
-                               `(,@(if error-body
-                                       `(,@handler-body
-                                         (when *disable-with-error-handling*
-                                           (error condition))
-                                         ;; Save the condition for use by
-                                         ;; (error-message) in error-body:
-                                         (setf ,condition/tag condition)
-                                         (go ,condition/tag))
-                                       `((declare (ignore condition))
-                                         (return-from ,block (values)))))))))
-                 (return-from ,block ,form))
+               (flet
+                   ((.conditioner. (condition)
+                      ,@(if handler-body
+                            `((flet ((error-message ()
+                                       (error-message-string condition))
+                                     (error-condition ()
+                                       condition))
+                                (declare (ignorable #'error-message
+                                                    #'error-condition)
+                                         (dynamic-extent #'error-message
+                                                         #'error-condition))
+                                ,@(if error-body
+                                      `(,@handler-body
+                                        (when *disable-with-error-handling*
+                                          (error condition))
+                                        ;; Save the condition for use
+                                        ;; by (error-message) in error-body:
+                                        (setf ,condition/tag condition)
+                                        (go ,condition/tag))
+                                      `((return-from ,block 
+                                          (progn ,@handler-body))))))
+                            `(,@(if error-body
+                                    `(,@handler-body
+                                      (when *disable-with-error-handling*
+                                        (error condition))
+                                      ;; Save the condition for use by
+                                      ;; (error-message) in error-body:
+                                      (setf ,condition/tag condition)
+                                      (go ,condition/tag))
+                                    `((declare (ignore condition))
+                                      (return-from ,block (values))))))))
+                 (declare (dynamic-extent #'.conditioner))
+                 (handler-bind
+                     ((,conditions #'.conditioner.))
+                   (return-from ,block ,form)))
                ,.(when error-body (list condition/tag))
                ,@(when error-body
                    `((flet ((error-message ()
