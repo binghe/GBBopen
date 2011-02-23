@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 01:43:36 2011 *-*
+;;;; *-* Last-Edit: Wed Feb 23 12:42:08 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -320,26 +320,41 @@
 ;;;   Streamer entities
 
 (defun %do-with-streamer-stream (streamer body-form-fn)
-  ;; Handle broadcast streamer indirection:
-  (when (typep streamer 'streamer)
-    (let ((broadcast-streamer (broadcast-streamer-of streamer)))
-      (when broadcast-streamer
-        (setf streamer broadcast-streamer))))
-  (let ((streamer-queue (cdr (assq streamer *%%streamer-queues%%*))))
-    (with-standard-io-syntax 
-      (setf *package* (package-of streamer))
-      (setf *read-default-float-format* 
-            (read-default-float-format-of streamer))
-      (let ((*recorded-class-descriptions-ht* 
-             (recorded-class-descriptions-ht-of streamer)))
-        (if streamer-queue
-            ;; queued streaming:
-            (funcall body-form-fn (streamer-queue.stream streamer-queue))
-            ;; regular streaming:
-            (with-lock-held ((lock-of streamer))
-              (let ((stream (stream-of streamer)))
-                (funcall body-form-fn stream)
-                (force-output stream))))))))
+  (let ((streamer-for-writing streamer)) 
+    (when (typep streamer 'streamer)
+      (let ((broadcast-streamer (broadcast-streamer-of streamer)))
+        ;; If streamer is a constituent of a broadcast-streamer, use the
+        ;; streamer for writing/queuing but the broadcast-streamer for locking:
+        (when broadcast-streamer
+          (setf streamer broadcast-streamer))))
+    (let ((streamer-queue
+           (cdr (assq streamer-for-writing *%%streamer-queues%%*))))
+      (with-standard-io-syntax 
+        (setf *package* (package-of streamer))
+        (setf *read-default-float-format* 
+              (read-default-float-format-of streamer))
+        (let ((*recorded-class-descriptions-ht* 
+               (recorded-class-descriptions-ht-of streamer-for-writing)))
+          (flet ((do-it ()
+                   (if streamer-queue
+                       ;; queued streaming:
+                       (funcall body-form-fn (streamer-queue.stream streamer-queue))
+                       ;; regular streaming:
+                       (with-lock-held ((lock-of streamer))
+                         (let ((stream (stream-of streamer-for-writing)))
+                           (funcall body-form-fn stream)
+                           (force-output stream))))))
+            ;; Quick & dirty handling of stream errors -- timeout checks and
+            ;; notifying other endpoint needed!!
+            (with-error-handling ((do-it) :conditions 'stream-error)
+              (let ((*print-readably* nil))
+                (princ (error-message) *error-output*)
+                (terpri *error-output*)
+                (let ((connection (stream-of streamer-for-writing)))
+                  (unless (open-stream-p connection)
+                    (format *error-output* "~&;; Closing ~s due to error...~%"
+                            connection)
+                    (close connection)))))))))))
     
 ;;; ---------------------------------------------------------------------------
 
@@ -669,12 +684,12 @@
          (force-output *trace-output*)
          (when (>=& (incf& contiguous-errors) maximum-contiguous-errors)
            (format *trace-output* "~&;; Maximum contiguous errors exceeded; ~
-                                        closing connection ~s.~%"
+                                          closing connection ~s.~%"
                    connection)
            (force-output *trace-output*)
            (return ':error)))
         (t (setf contiguous-errors 0))))))
-
+  
 ;;; ---------------------------------------------------------------------------
 
 (defun start-streaming-connection-endpoint (streamer-node connection 
