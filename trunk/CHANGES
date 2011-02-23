@@ -1,5 +1,27 @@
 Important changes since GBBopen 1.5:
 
+  * Incompatible changes to event names --
+    (set cl-user::*include-old-event-names* to nil and recompile to eliminate
+     old event names and associated [redundant] signaling):
+        > CREATE-INSTANCE-EVENT -> INSTANCE-CREATED-EVENT
+        > CREATE/DELETE-INSTANCE-EVENT -> 
+            INSTANCE-CREATED/CHANGED/DELETED-EVENT
+        > ADD-INSTANCE-TO-SPACE-INSTANCE-EVENT -> 
+            INSTANCE-ADDED-TO-SPACE-INSTANCE-EVENT
+        > MOVE-INSTANCE-WITHIN-SPACE-INSTANCE-EVENT ->
+            INSTANCE-MOVED-WITHIN-SPACE-INSTANCE-EVENT
+        > REMOVE-INSTANCE-FROM-SPACE-INSTANCE-EVENT ->
+            INSTANCE-REMOVED-FROM-SPACE-INSTANCE-EVENT 
+        > UPDATE-NONLINK-SLOT-EVENT -> NONLINK-SLOT-UPDATED-EVENT
+        > LINK/NONLINK-SLOT-MODIFY-EVENT -> LINK/NONLINK-SLOT-MODIFIED-EVENT
+        > START-CONTROL-SHELL-EVENT -> CONTROL-SHELL-STARTED-EVENT
+        > RESTART-CONTROL-SHELL-EVENT -> CONTROL-SHELL-RESTARTED-EVENT
+        > CONTROL-SHELL-HIBERNATION-EVENT -> CONTROL-SHELL-HIBERNATING-EVENT
+        > KSA-ACTIVATION-EVENT -> KSA-ACTIVATED-EVENT
+        > KSA-EXECUTION-EVENT -> KSA-EXECUTING-EVENT
+        > KSA-OBVIATION-EVENT -> KSA-OBVIATED-EVENT
+        > KSA-RETRIGGER-EVENT -> KSA-RETRIGGERED-EVENT
+
   * Changes to GBBopen initiate & startup
      - New FUNCALL-IN-PACKAGE function
 
@@ -23,6 +45,10 @@ Important changes since GBBopen 1.5:
      - New CHECK-INSTANCE-LOCATORS function
      - New WITH-BLACKBOARD-REPOSITORY-LOCKED macro
      - Documented *FIND-VERBOSE*, *USE-MARKING*, CHECK-FOR-DELETED-INSTANCE
+
+  * Changes to Agenda Shell
+     - New CONTROL-SHELL-HIBERNATING/AWAKENED-EVENT abstrace control-shell
+       event and CONTROL-SHELL-AWAKENED-EVENT control-shell event
 
 
 Important changes in GBBopen 1.5:

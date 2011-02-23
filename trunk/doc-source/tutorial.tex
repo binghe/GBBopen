@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Fri Dec 31 11:22:36 2010; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Feb 22 14:33:09 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
@@ -3678,7 +3678,7 @@ function and KS definition to the end of the
     (make-instance 'location :x 0 :y 0))
 
   (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
+      :trigger-events ((control-shell-started-event))
       :execution-function 'startup-ks-function)}}
 \end{example}
 
@@ -3692,8 +3692,8 @@ instance at the center of the \nobr{\code{known-world}}, coordinate (0,0).
 The \nobr{\textbf{define-ks}} form defines a KS named \nobr{\code{startup-ks}}
 to the Agenda Shell.  The \nobr{\code{:trigger-events}} value indicates that
 the KS should be triggered when an event called
-\nobr{\code{start-control-shell-event}} is signaled.  The Agenda Shell signals
-\nobr{\code{start-control-shell-event}} once, when the control shell is
+\nobr{\code{control-shell-started-event}} is signaled.  The Agenda Shell signals
+\nobr{\code{control-shell-started-event}} once, when the control shell is
 started.  The \nobr{\code{:execution-function}} names the function (that we
 just defined) that implements the KS.
 
@@ -3829,7 +3829,7 @@ display of all control-shell and instance-creation events by evaluating:
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(enable-event-printing '(control-shell-event :plus-subevents))}
   nil
-  gbbopen-user> \textcolor{black}{(enable-event-printing 'create-instance-event)}
+  gbbopen-user> \textcolor{black}{(enable-event-printing 'instance-created-event)}
   nil
   gbbopen-user>}
 \end{example}
@@ -3841,7 +3841,7 @@ or the shorthand equivalent:
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(enable-event-printing '(control-shell-event +))}
   nil
-  gbbopen-user> \textcolor{black}{(enable-event-printing 'create-instance-event)}
+  gbbopen-user> \textcolor{black}{(enable-event-printing 'instance-created-event)}
   nil
   gbbopen-user>}
 \end{example}
@@ -3859,18 +3859,18 @@ Start the Agenda Shell once again:
 \textcolor{darkergray}{%
   gbbopen-user> \textcolor{black}{(start-control-shell)}
   ;; Control shell 1 started
-  => Start-control-shell-event
+  => Control-shell-started-event
   => Control-shell-cycle-event
        :cycle 1
-  => Create-instance-event
+  => Instance-created-event
        :instance #<ksa 1 startup-ks 1>
-  => Ksa-activation-event
-       :instance #<ksa 1 startup-ks 1>
-       :cycle 1
-  => Ksa-execution-event
+  => Ksa-activated-event
        :instance #<ksa 1 startup-ks 1>
        :cycle 1
-  => Create-instance-event
+  => Ksa-executing-event
+       :instance #<ksa 1 startup-ks 1>
+       :cycle 1
+  => Instance-created-event
        :instance #<location 1 (0 0)>
   => Control-shell-cycle-event
        :cycle 2
@@ -3920,7 +3920,7 @@ Now start the Agenda Shell, this time with stepping enabled:
   gbbopen-user> \textcolor{black}{(start-control-shell :stepping 't)}
   ;; Control shell 1 started
   >> CS Step (cycle 1):
-     About to process event #<start-control-shell-event>... \entered{?}
+     About to process event #<control-shell-started-event>... \entered{?}
   Stepping commands (follow with <Return>):
      d       Disable this kind of stepping (:process-event)
      e       Enable another kind of stepping
@@ -3934,10 +3934,10 @@ Now start the Agenda Shell, this time with stepping enabled:
      -       Disable all stepping
      <Space> Continue (resume processing)
   >> CS Step (cycle 1):
-     About to process event #<start-control-shell-event>... \entered{<Return>}
+     About to process event #<control-shell-started-event>... \entered{<Return>}
   >> CS Step (cycle 1):
      About to activate KS startup-ks on
-       start-control-shell-event... \entered{<Return>}
+       control-shell-started-event... \entered{<Return>}
   >> CS Step (cycle 1):
      About to execute KSA #<ksa 1 startup-ks 1>... \entered{<Return>}
   << KSA 1 returned: (#<location 1 (0 0)>)
@@ -4024,7 +4024,7 @@ This exercise shows you how to:
     (make-instance 'location :x 0 :y 0))
 
   (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
+      :trigger-events ((control-shell-started-event))
       :execution-function 'startup-ks-function)
 \end{example}
 
@@ -4117,7 +4117,7 @@ file:
 %
 \W\supp
 \begin{example}
-  (add-event-function 'initializations 'start-control-shell-event
+  (add-event-function 'initializations 'control-shell-started-event
                       ;; Initializations should be done first!
                       :priority 100)
 \end{example}
@@ -4343,7 +4343,7 @@ This exercise shows you how to:
     (make-instance 'location :x 0 :y 0))
 
   (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
+      :trigger-events ((control-shell-started-event))
       :execution-function 'startup-ks-function)
 
   ;;; ====================================================================
@@ -4358,7 +4358,7 @@ This exercise shows you how to:
      '(known-world)
      :dimensions (dimensions-of 'location)))
 
-  (add-event-function 'initializations 'start-control-shell-event
+  (add-event-function 'initializations 'control-shell-started-event
                       ;; Initializations should be done first!
                       :priority 100)
 \end{example}
@@ -4605,7 +4605,7 @@ Finally, add this \nobr{\code{define-ks}} form to the end of your
 \W\supp
 \begin{example}
   (define-ks random-walk-ks
-     :trigger-events ((create-instance-event location))
+     :trigger-events ((instance-created-event location))
      :rating 100
      :execution-function 'random-walk-ks-function)
 \end{example}
@@ -4935,7 +4935,7 @@ This exercise shows you how to:
     (make-instance 'location :time 0 :x 0 :y 0))
 
   (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
+      :trigger-events ((control-shell-started-event))
       :execution-function 'startup-ks-function)
 
   ;;; ====================================================================
@@ -4950,7 +4950,7 @@ This exercise shows you how to:
      '(known-world)
      :dimensions (dimensions-of 'location)))
 
-  (add-event-function 'initializations 'start-control-shell-event
+  (add-event-function 'initializations 'control-shell-started-event
                       ;; Initializations should be done first!
                       :priority 100)
 
@@ -4986,7 +4986,7 @@ This exercise shows you how to:
            (t (format t "~2&Walked off the world: (~d, ~d).~\%" x y))))))))
 
   (define-ks random-walk-ks
-      :trigger-events ((create-instance-event location))
+      :trigger-events ((instance-created-event location))
       :rating 100
       :execution-function 'random-walk-ks-function)
 \end{example}
@@ -5522,7 +5522,7 @@ Facility}{sec:module-manager}
     (make-instance 'location :time 0 :x 0 :y 0))
 
   (define-ks startup-ks
-      :trigger-events ((start-control-shell-event))
+      :trigger-events ((control-shell-started-event))
       :execution-function 'startup-ks-function)
 
   ;;; ====================================================================
@@ -5537,7 +5537,7 @@ Facility}{sec:module-manager}
      '(known-world)
      :dimensions (dimensions-of 'location)))
 
-  (add-event-function 'initializations 'start-control-shell-event
+  (add-event-function 'initializations 'control-shell-started-event
                       ;; Initializations should be done first!
                       :priority 100)
 
@@ -5574,7 +5574,7 @@ Facility}{sec:module-manager}
            (t (format t "~2\&Walked off the world: (~d, ~d).~\%" x y))))))))
 
   (define-ks random-walk-ks
-      :trigger-events ((create-instance-event location))
+      :trigger-events ((instance-created-event location))
       :rating 100
       :execution-function 'random-walk-ks-function)
 

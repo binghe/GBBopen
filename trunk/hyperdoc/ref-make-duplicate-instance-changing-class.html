@@ -93,15 +93,15 @@ list of the slots that were duplicated or explicitly initialized.
 <p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id234">unit&nbsp;instance</a> is duplicated, events are signaled in the
 following sequence: 
 </p>
-<p><ol class="tight"><li>An <nobr><code>update-nonlink-slot-event</code></nobr> or <nobr><code>link-event</code></nobr> is
+<p><ol class="tight"><li>An <nobr><code>nonlink-slot-updated-event</code></nobr> or <nobr><code>link-event</code></nobr> is
 signaled for each initialized slot in the duplicated
 <a href="ref-glossary.html#id234">unit&nbsp;instance</a>.  A <nobr><code>link-event</code></nobr> is also signaled for
 each inverse pointer from an existing <a href="ref-glossary.html#id234">unit&nbsp;instance</a> to the
 (newly created) duplicate <a href="ref-glossary.html#id234">unit&nbsp;instance</a>.
-<li>An <nobr><code>add-instance-to-space-instance-event</code></nobr> is signaled
+<li>An <nobr><code>instance-added-to-space-instance-event</code></nobr> is signaled
 for each <a href="ref-glossary.html#id208">space&nbsp;instance</a> on which the duplicate
 <a href="ref-glossary.html#id234">unit&nbsp;instance</a> is added.
-<li>A <code>create-instance-event</code> is signaled.
+<li>A <code>instance-created-event</code> is signaled.
 </ol>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />Use of an initialization argument that has not been declared as valid.

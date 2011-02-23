@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/examples/abort-ks-execution.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:11:39 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Tue Feb 22 14:19:15 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -35,7 +35,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-ks ks-to-abort 
-    :trigger-events ((start-control-shell-event)) 
+    :trigger-events ((control-shell-started-event)) 
     :execution-function 'ks-to-abort-execution-function)
 
 (defun ks-to-abort-execution-function (ksa)
@@ -74,7 +74,7 @@
                    (abort-ks-execution))))
         (add-polling-function #'abort-ks-polling-function)))))
 
-(add-event-function 'initializations 'start-control-shell-event
+(add-event-function 'initializations 'control-shell-started-event
                     ;; Initializations should be done first!
                     :priority 100)
 

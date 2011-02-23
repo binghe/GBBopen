@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 04:52:35 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 10:53:37 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -940,6 +940,7 @@
                       instance 
                       space-instance))))))
       ;; do the add:
+      #+OLD-EVENT-NAMES
       (signal-event-using-class
        (load-time-value (find-class 'add-instance-to-space-instance-event))
        :instance instance
@@ -953,11 +954,11 @@
        (type-of instance) 1 
        (standard-space-instance.instance-counts space-instance)
        :test #'eq)
-      (unless *%%doing-initialize-instance%%*
-        (signal-event-using-class
-         (load-time-value (find-class 'instance-added-to-space-instance-event))
-         :instance instance
-         :space-instance space-instance))
+      (signal-event-using-class
+       (load-time-value (find-class 'instance-added-to-space-instance-event))
+       :instance instance
+       :space-instance space-instance
+       :initialization *%%doing-initialize-instance%%*)
       #+someday
       (dolist (bb-widget 
                   (standard-space-instance.%%bb-widgets%% space-instance))
@@ -999,7 +1000,8 @@
                 'remove-instance-from-space-instance
                 instance 
                 space-instance)))
-       (t (signal-event-using-class
+       (t #+OLD-EVENT-NAMES
+          (signal-event-using-class
            (load-time-value
             (find-class 'remove-instance-from-space-instance-event))
            :instance instance

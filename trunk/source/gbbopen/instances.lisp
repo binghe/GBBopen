@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 04:38:28 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 14:16:55 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -48,7 +48,7 @@
 ;;;           (Corkill)
 ;;;  01-31-11 Added optional errorp argument to FIND-INSTANCE-BY-NAME.  
 ;;;           (Corkill)
-;;;  02-02-11 Signal CREATE-INSTANCE-EVENT in INITIALIZE-SAVED/SENT-INSTANCE 
+;;;  02-02-11 Signal INSTANCE-CREATED-EVENT in INITIALIZE-SAVED/SENT-INSTANCE 
 ;;;           (standard-unit-instance) method. (Corkill)
 ;;;  02-10-11 Added support for incomplete instances and internal 
 ;;;           *%%LOADING-COMPLETE-REPOSITORY%%* special variable.  (Corkill)
@@ -341,16 +341,7 @@
      new-instance slots space-instances space-instances-p)))
 
 ;;; ---------------------------------------------------------------------------
-
-(defun do-instance-added-to-space-instance-events (instance)
-  (dolist (space-instance (space-instances-of instance))
-    (signal-event-using-class
-     (load-time-value (find-class 'instance-added-to-space-instance-event))
-     :instance instance
-     :space-instance space-instance)))
-
-;;; ---------------------------------------------------------------------------
-;;; Create-instance-event signaling is done in these :around methods to follow
+;;; Instance-created-event signaling is done in these :around methods to follow
 ;;; the activities performed by the primary and :before/:after methods.
 
 (defmethod make-duplicate-instance :around ((instance standard-unit-instance)
@@ -362,11 +353,13 @@
             (*%%doing-initialize-instance%%* 't))
         (apply #'call-next-method instance unduplicated-slot-names initargs))
     ;; signal the creation event:
+    #+OLD-EVENT-NAMES
     (signal-event-using-class
      (load-time-value (find-class 'create-instance-event))
      :instance new-instance)
-    ;; signal the instance-added events:
-    (do-instance-added-to-space-instance-events new-instance)
+    (signal-event-using-class
+     (load-time-value (find-class 'instance-created-event))
+     :instance new-instance)
     (values new-instance slots)))
 
 ;;; ---------------------------------------------------------------------------
@@ -382,11 +375,13 @@
         (apply #'call-next-method instance new-class unduplicated-slot-names
                initargs))
     ;; signal the creation event:
+    #+OLD-EVENT-NAMES
     (signal-event-using-class
      (load-time-value (find-class 'create-instance-event))
-     :instance new-instance)
-    ;; signal the instance-added events:
-    (do-instance-added-to-space-instance-events new-instance)
+     :instance instance)
+    (signal-event-using-class
+     (load-time-value (find-class 'instance-created-event))
+     :instance instance)
     (values new-instance slots)))
 
 ;;; ===========================================================================
@@ -462,8 +457,12 @@
            (ensure-list (slot-value-using-class class instance eslotd))
            't)))))
   ;; signal the creation event:
+  #+OLD-EVENT-NAMES
   (signal-event-using-class
    (load-time-value (find-class 'create-instance-event))
+   :instance instance)
+  (signal-event-using-class
+   (load-time-value (find-class 'instance-created-event))
    :instance instance)
   instance)
 
@@ -701,8 +700,17 @@
                          (slot-boundp-using-class unit-class instance 
                                                   slot-name/def))
                 ;; signal the update-nonlink-slot event:
+                #+OLD-EVENT-NAMES
                 (signal-event-using-class
                  (load-time-value (find-class 'update-nonlink-slot-event))
+                 :instance instance
+                 :slot eslotd
+                 :current-value (slot-value-using-class 
+                                 unit-class instance 
+                                 slot-name/def)
+                 :initialization 't)
+                (signal-event-using-class
+                 (load-time-value (find-class 'nonlink-slot-updated-event))
                  :instance instance
                  :slot eslotd
                  :current-value (slot-value-using-class 
@@ -843,11 +851,13 @@
     (with-blackboard-repository-locked ()
       (call-next-method)))
   ;; signal the creation event:
+  #+OLD-EVENT-NAMES
   (signal-event-using-class
    (load-time-value (find-class 'create-instance-event))
    :instance instance)
-    ;; signal the instance-added events:
-    (do-instance-added-to-space-instance-events instance)
+  (signal-event-using-class
+   (load-time-value (find-class 'instance-created-event))
+   :instance instance)
   instance)
 
 ;;; ---------------------------------------------------------------------------
@@ -1031,6 +1041,7 @@
     (signal-event-using-class
      (load-time-value (find-class 'delete-instance-event))
      :instance instance)
+    ;; delete the instance:
     (call-next-method)
     ;; signal the instance-deleted event:
     (signal-event-using-class
@@ -1126,12 +1137,19 @@
   (when #-lispworks 't
         ;; only non-link slots!
         #+lispworks (typep slot 'effective-nonlink-slot-definition)    
-    (signal-event-using-class 
-     (load-time-value (find-class 'update-nonlink-slot-event))
-     :instance instance
-     :slot slot
-     :current-value nv
-     :initialization *%%doing-initialize-instance%%*)))
+      #+OLD-CLASS-NAMES    
+      (signal-event-using-class 
+       (load-time-value (find-class 'update-nonlink-slot-event))
+       :instance instance
+       :slot slot
+       :current-value nv
+       :initialization *%%doing-initialize-instance%%*)
+      (signal-event-using-class 
+       (load-time-value (find-class 'nonlink-slot-updated-event))
+       :instance instance
+       :slot slot
+       :current-value nv
+       :initialization *%%doing-initialize-instance%%*)))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  CMUCL can't handle the above :before/:after combination, so we must use a
@@ -1152,12 +1170,19 @@
           (call-next-method)))
        (t (call-next-method)))
     ;; signal the update event:
+    #+OLD-CLASS-NAMES
     (signal-event-using-class 
      (load-time-value (find-class 'update-nonlink-slot-event))
      :instance instance
      :slot slot
-     :current-value nv)
-     :initialization *%%doing-initialize-instance%%*))
+     :current-value nv
+     :initialization *%%doing-initialize-instance%%*)
+    (signal-event-using-class 
+     (load-time-value (find-class 'nonlink-slot-updated-event))
+     :instance instance
+     :slot slot
+     :current-value nv
+     :initialization *%%doing-initialize-instance%%*)))
 
 ;;; ===========================================================================
 ;;;   Find instance by name
@@ -1591,6 +1616,12 @@
               (every #'fn dimensions-being-changed)))
       (dolist (space-instance 
                   (standard-unit-instance.%%space-instances%% instance))
+        #+OLD-CLASS-NAMES
+        (signal-event-using-class
+         (load-time-value
+          (find-class 'move-instance-within-space-instance-event))
+         :instance instance
+         :space-instance space-instance)
         (dolist (storage (storage-objects-for-add/move/remove
                           unit-class space-instance))
           ;; these two are a bit heavy handed, but OK for now... 
@@ -1601,7 +1632,7 @@
           (add-instance-to-storage instance storage verbose))
         (signal-event-using-class
          (load-time-value
-          (find-class 'move-instance-within-space-instance-event))
+          (find-class 'instance-moved-within-space-instance-event))
          :instance instance
          :space-instance space-instance)))))
 

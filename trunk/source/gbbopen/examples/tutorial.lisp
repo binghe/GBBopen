@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 10 16:01:37 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 12:17:00 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -113,7 +113,7 @@
   ;; Link the newly created location instance to the path:
   (linkf (path-of instance) *the-random-walk*))
 
-(add-event-function 'add-location-to-path 'create-instance-event 'location)
+(add-event-function 'add-location-to-path 'instance-created-event 'location)
 
 ;;; ===========================================================================
 ;;;   Startup KS
@@ -129,7 +129,7 @@
     (signal-event 'initial-location-event :instance instance)))
 
 (define-ks startup-ks
-    :trigger-events ((start-control-shell-event))
+    :trigger-events ((control-shell-started-event))
     :rating 100
     :execution-function 'startup-ks-function)
 
@@ -168,7 +168,7 @@
          (t (format t "~2&Walked off the world: (~d, ~d).~%" x y))))))))
 
 (define-ks random-walk-ks
-    :trigger-events ((create-instance-event location))
+    :trigger-events ((instance-created-event location))
     :rating 100
     :execution-function 'random-walk-ks-function)
 
@@ -185,7 +185,7 @@
             (length unit-instances))))
 
 (define-ks count-center-locations-ks
-    :trigger-events ((start-control-shell-event))
+    :trigger-events ((control-shell-started-event))
     ;; The rating of this KS must be lower than the rating of the 
     ;; startup-ks and random-walk-ks:
     :rating 90
@@ -227,7 +227,7 @@
    :storage '((location (x y) uniform-buckets :layout ((0 100 5)
                                                        (0 100 5))))))
 
-(add-event-function 'initializations 'start-control-shell-event
+(add-event-function 'initializations 'control-shell-started-event
                     ;; Initializations should be done first!
                     :priority 100)
 

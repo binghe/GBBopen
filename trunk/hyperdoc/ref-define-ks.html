@@ -271,7 +271,7 @@ indicates whether the <a href="ref-glossary.html#gl:activations">KSA</a> should 
 <p><span class="fndoclabel">Examples</span> <br />Define an initial <a href="ref-glossary.html#gl:KSs">KS</a> that is triggered when the control shell is started:
 <pre class="pretop">
   (define-ks initial
-     :trigger-events ((start-control-shell-event)) 
+     :trigger-events ((control-shell-started-event)) 
      :execution-function #'initial-ks-function)
 </pre>
 </p>
@@ -279,7 +279,7 @@ indicates whether the <a href="ref-glossary.html#gl:activations">KSA</a> should 
 whenever a <code>hyp</code> <a href="ref-glossary.html#id234">unit&nbsp;instance</a> is created:
 <pre class="pretop">
   (define-ks aggregate-hyps
-     :trigger-events ((create-instance-event hyp))
+     :trigger-events ((instance-created-event hyp))
      :precondition-function #'aggregate-hyps-precondition-function
      :execution-function #'aggregate-hyps-ks-function)
 </pre>

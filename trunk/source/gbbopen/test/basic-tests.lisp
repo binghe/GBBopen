@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May  9 01:53:26 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Tue Feb 22 14:24:19 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -1127,10 +1127,10 @@
 	   (when signaled-events
 	     (error "Unexpected events remain: ~s" signaled-events))))
       ;; events to check:
-      (add-event-function  #'evfn-tester 'create-instance-event 'uc-1) 
+      (add-event-function  #'evfn-tester 'instance-created-event 'uc-1) 
       (add-event-function  #'evfn-tester 'delete-instance-event 'uc-1) 
       (add-event-function  #'evfn-tester 'instance-deleted-event 'uc-1)
-      (add-event-function  #'evfn-tester 'update-nonlink-slot-event 'uc-1 
+      (add-event-function  #'evfn-tester 'nonlink-slot-updated-event 'uc-1 
 			   :slot-name 'x)
       (add-event-function  #'evfn-tester 'link-event 'uc-1 
 			   :slot-name 'link-2)
@@ -1143,7 +1143,7 @@
       ;; do the checking:
       (format t "~&;;   make-instance events...~%")
       (let ((u1 (make-instance 'uc-1 :link-2 u2)))
-	(check-event 'create-instance-event 
+	(check-event 'instance-created-event 
 		     :instance u1)
 	(check-event 'link-event 
 		     :instance u1
@@ -1157,14 +1157,14 @@
 		     :current-value (list u1)
 		     :added-instances (list u1)
 		     :directp nil)	
-	(check-event 'update-nonlink-slot-event
+	(check-event 'nonlink-slot-updated-event
 		     :instance u1
 		     :slot-name 'x
 		     :current-value 1)	
 	(check-for-unprocessed-events)
         (format t "~&;;   nonlink slot-update event...~%")
 	(setf (x-of u1) 0)
-	(check-event 'update-nonlink-slot-event 
+	(check-event 'nonlink-slot-updated-event 
 		     :instance u1
 		     :slot-name 'x
 		     :current-value 0)

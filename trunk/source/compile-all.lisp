@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/compile-all.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:54:07 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Tue Feb 22 11:52:14 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2006-2009, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2006-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -44,6 +44,7 @@
 (compile-it :gbbopen-tools-test)
 (compile-it :gbbopen-test)
 (compile-it :tutorial-example)
+(compile-it :streaming)
 (compile-it :cl-timing :dont-reset 't)
 (compile-it :double-metaphone-test :dont-reset 't)
 (compile-it :os-interface-test :dont-reset 't)

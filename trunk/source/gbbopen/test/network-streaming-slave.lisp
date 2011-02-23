@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 04:46:22 2011 *-*
+;;;; *-* Last-Edit: Tue Feb 22 14:25:41 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -71,18 +71,18 @@
           connection exit-status))
 
 ;; Show what is happening once streaming begins!
-(enable-event-printing 'create-instance-event 'location)
+(enable-event-printing 'instance-created-event 'location)
 (enable-event-printing 'delete-instance-event 'location)
 (add-event-function
  ;; Enable update-nonlink-slot-event printing only after the delete-instance
  ;; has been received:
  #'(lambda (&rest args)
      (declare (ignore args))
-     (enable-event-printing 'update-nonlink-slot-event 'location :slot-name 'time)
+     (enable-event-printing 'nonlink-slot-updated-event 'location :slot-name 'time)
      (enable-event-printing '(link-slot-event +) 'location :slot-name 'previous-location)
      (enable-event-printing '(link-slot-event +) 'location :slot-name 'next-location)
-     (enable-event-printing 'add-instance-to-space-instance-event 'location)
-     (enable-event-printing 'remove-instance-from-space-instance-event 'location))
+     (enable-event-printing 'instance-added-to-space-instance-event 'location)
+     (enable-event-printing 'instance-removed-from-space-instance-event 'location))
  'delete-instance-event 'location)
 
 ;; Don't warn that the Agenda Shell isn't running to process trigger events on
