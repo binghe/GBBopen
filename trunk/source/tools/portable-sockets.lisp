@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 24 18:01:02 2011 *-*
+;;;; *-* Last-Edit: Fri Feb 25 10:46:29 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
 ;;;
 ;;; Developed and supported by the GBBopen Project (http://GBBopen.org) and
 ;;; licenced under the Apache 2.0 license (see
@@ -292,8 +292,7 @@
         sbcl
         scl)
   (declare (ignore input-timeout))
-  ;; The (currently undocumented) :output-timeout extension is only accepted by
-  ;; CLISP, Clozure CL, and Lispworks:
+  ;; The (currently undocumented) :keepalive extension needs attention on:
   #+(or allegro
         cmu
         digitool-mcl
@@ -304,7 +303,6 @@
   ;; The (currently undocumented) :keepalive extension needs attention on:
   #+(or allegro
         clisp
-        clozure
         cmu
         digitool-mcl
         ecl
@@ -382,7 +380,9 @@
                            :output-timeout output-timeout
                            :keepalive keepalive))
 
-(defmethod open-connection ((host integer) port &key timeout keepalive)
+(defmethod open-connection ((host integer) port &key input-timeout
+                                                     output-timeout
+                                                     keepalive)
   (open-connection-to-host host port 
                            :input-timeout input-timeout
                            :output-timeout output-timeout
@@ -395,8 +395,8 @@
                                                            keepalive)
                                 &body body)
   `(let ((,connection (open-connection ,host ,port
-                                       :input-timeout input-timeout
-                                       :output-timeout output-timeout
+                                       :input-timeout ,input-timeout
+                                       :output-timeout ,output-timeout
                                        :keepalive ,keepalive)))
      (unwind-protect
          (progn ,@body)
