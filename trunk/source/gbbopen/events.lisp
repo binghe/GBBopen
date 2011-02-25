@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/events.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 01:43:13 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 24 18:11:40 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -834,7 +834,7 @@
       ((add-it (unit-class)
          (ensure-finalized-class unit-class)
          (flet ((do-fn (slot)
-                  (when (typep slot 'gbbopen-effective-slot-definition)
+                  (when (typep slot 'gbbopen-effective-slot-definition)                                       
                     (let* ((evfn-blks
                             (gbbopen-effective-slot-definition.evfn-blks slot))
                            (evfn-blk 
@@ -861,9 +861,17 @@
                          plus-subevents plus-subclasses))
                        ;; nil `fn' with `streamer':
                        (streamer
-                        (streamer-adder evfn-blk streamer 
-                                        plus-subevents plus-subclasses 
-                                        (eq slot-names 't)))
+                        (let ((slot-name (slot-definition-name slot))
+                              (class-prototype (class-prototype unit-class)))
+                          (unless (or (memq slot-name
+                                            (hidden-nonlink-slot-names
+                                             class-prototype))
+                                      (memq slot-name
+                                            (omitted-slots-for-saving/sending 
+                                             class-prototype)))
+                            (streamer-adder evfn-blk streamer 
+                                            plus-subevents plus-subclasses 
+                                            (eq slot-names 't)))))
                        ;; nil `fn' with `evfn-blk-fn':
                        (evfn-blk-fn
                         (apply (the function (symbol-function evfn-blk-fn))

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 09:59:04 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Thu Feb 24 18:01:02 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -134,7 +134,7 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Generic functions
 
-(defgeneric open-connection (host port))
+(defgeneric open-connection (host port &key))
 
 ;;; ===========================================================================
 ;;;  Need-to-port reporting
@@ -279,23 +279,50 @@
 ;;; ===========================================================================
 ;;;  Connections
 
-(defun open-connection-to-host (host port &key (timeout nil))
-  ;; The (currently undocumented) :timeout extension is only accepted by CLISP
-  ;; and Lispworks:
+(defun open-connection-to-host (host port &key 
+                                          (input-timeout nil)
+                                          (output-timeout nil)
+                                          (keepalive nil))
+  ;; The (currently undocumented) :input-timeout extension is only accepted by
+  ;; CLISP, Clozure CL, and Lispworks:
   #+(or allegro
-        clozure
         cmu
         digitool-mcl
         ecl
         sbcl
         scl)
-  (declare (ignore timeout))
+  (declare (ignore input-timeout))
+  ;; The (currently undocumented) :output-timeout extension is only accepted by
+  ;; CLISP, Clozure CL, and Lispworks:
+  #+(or allegro
+        cmu
+        digitool-mcl
+        ecl
+        sbcl
+        scl)
+  (declare (ignore output-timeout))
+  ;; The (currently undocumented) :keepalive extension needs attention on:
+  #+(or allegro
+        clisp
+        clozure
+        cmu
+        digitool-mcl
+        ecl
+        lispworks
+        sbcl
+        scl)
+  (declare (ignore keepalive))
   #+allegro
   (socket:make-socket :remote-host host :remote-port port)
   #+clisp
-  (socket:socket-connect port host :external-format ':unix :timeout timeout)
+  (socket:socket-connect port host 
+                         :external-format ':unix 
+                         :timeout (or input-timeout output-timeout))
   #+clozure
-  (ccl:make-socket :remote-host host :remote-port port)
+  (ccl:make-socket :remote-host host :remote-port port 
+                   :input-timeout input-timeout
+                   :output-timeout output-timeout
+                   :keepalive keepalive)
   #+cmu
   (let ((socket (extensions:connect-to-inet-socket host port)))
     (system:make-fd-stream 
@@ -310,7 +337,7 @@
   #+ecl
   (si:open-client-stream host port)
   #+lispworks
-  (comm:open-tcp-stream host port :timeout timeout)
+  (comm:open-tcp-stream host port :timeout (or input-timeout output-timeout))
   #+sbcl
   (let ((socket (make-instance 'sb-bsd-sockets:inet-socket
                   :protocol ':tcp
@@ -347,16 +374,30 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod open-connection ((host string) port)
-  (open-connection-to-host host port))
+(defmethod open-connection ((host string) port &key input-timeout 
+                                                    output-timeout
+                                                    keepalive)
+  (open-connection-to-host host port 
+                           :input-timeout input-timeout
+                           :output-timeout output-timeout
+                           :keepalive keepalive))
 
-(defmethod open-connection ((host integer) port)
-  (open-connection-to-host host port))
+(defmethod open-connection ((host integer) port &key timeout keepalive)
+  (open-connection-to-host host port 
+                           :input-timeout input-timeout
+                           :output-timeout output-timeout
+                           :keepalive keepalive))
 
  ;;; ---------------------------------------------------------------------------
 
-(defmacro with-open-connection ((connection host port) &body body)
-  `(let ((,connection (open-connection ,host ,port)))
+(defmacro with-open-connection ((connection host port &key input-timeout
+                                                           output-timeout
+                                                           keepalive)
+                                &body body)
+  `(let ((,connection (open-connection ,host ,port
+                                       :input-timeout input-timeout
+                                       :output-timeout output-timeout
+                                       :keepalive ,keepalive)))
      (unwind-protect
          (progn ,@body)
        (when ,connection
@@ -366,7 +407,42 @@
 
 (defun make-passive-socket (port &key (backlog 5)
                                       interface
-                                      reuse-address)
+                                      keepalive
+                                      reuse-address
+                                      input-timeout
+                                      output-timeout)
+  ;; The (currently undocumented) :keepalive extension needs attention on:
+  #+(or allegro
+        clisp
+        cmu
+        digitool-mcl
+        ecl
+        lispworks
+        sbcl
+        scl)
+  (declare (ignore keepalive))
+  ;; The (currently undocumented) :input-timeout extension needs attention on:
+  #+(or allegro
+        clisp
+        clozure
+        cmu
+        digitool-mcl
+        ecl
+        lispworks
+        sbcl
+        scl)
+  (declare (ignore input-timeout))
+  ;; The (currently undocumented) :output-timeout extension needs attention on:
+  #+(or allegro
+        clisp
+        clozure
+        cmu
+        digitool-mcl
+        ecl
+        lispworks
+        sbcl
+        scl)
+  (declare (ignore output-timeout))
   #+old-clisp-version
   (declare (ignore backlog interface))
   #+allegro 
@@ -387,12 +463,24 @@
                            :so-reuseaddr reuse-address)
     passive-socket)
   #+clozure
-  (ccl:make-socket :connect ':passive
-                   :type ':stream
-                   :backlog backlog
-                   :reuse-address reuse-address
-                   :local-port port
-                   :local-host interface)  
+  (progn
+    #+SOON
+    (ccl:make-socket :connect ':passive
+                     :type ':stream
+                     :local-port port
+                     :local-host interface
+                     :backlog backlog
+                     :keepalive keepalive
+                     :reuse-address reuse-address
+                     :input-timeout timeout
+                     :output-timeout timeout)
+    (ccl:make-socket :connect ':passive
+                     :type ':stream
+                     :local-port port
+                     :local-host interface
+                     :backlog backlog
+                     :keepalive keepalive
+                     :reuse-address reuse-address))
   #+cmu
   (make-instance 'passive-socket
     :fd (ext:create-inet-listener port ':stream 
@@ -642,7 +730,10 @@
                                 &key (name "Connection Server") 
                                      (backlog 5)
                                      interface
-                                     reuse-address)
+                                     keepalive
+                                     reuse-address
+                                     input-timeout
+                                     output-timeout)
   #+threads-not-available
   (declare (ignore function port name backlog interface reuse-address))
   #-threads-not-available
@@ -653,7 +744,10 @@
               (make-passive-socket port 
                                    :backlog backlog
                                    :interface interface
-                                   :reuse-address reuse-address)))
+                                   :keepalive keepalive
+                                   :reuse-address reuse-address
+                                   :input-timeout input-timeout
+                                   :output-timeout output-timeout)))
          (unwind-protect
              (loop
                (let ((connection (accept-connection passive-socket)))

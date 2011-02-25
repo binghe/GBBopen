@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 18:24:12 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 24 19:09:33 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -504,8 +504,10 @@
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
     (let ((instance (find-instance-by-name instance-name class-name 't)))
-      ;; TODO: LINK SLOTS, MISSING SLOTS
-      (setf (slot-value instance slot-name) new-value))))
+      ;; TODO: CHECK FOR CHANGE TO A LINK SLOT OR MISSING SLOT...
+      ;; TODO: Improve efficiency
+      (with-changing-dimension-values (instance)  
+        (setf (slot-value instance slot-name) new-value)))))
         
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance link reader
@@ -515,8 +517,10 @@
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
     (let ((instance (find-instance-by-name instance-name class-name 't)))
-      ;; TODO: MISSING SLOTS
-      (linkf (slot-value instance slot-name) other-instances))))
+      ;; TODO: CHECK FOR CHANGE TO A NON-LINK SLOT OR MISSING SLOT...
+      ;; TODO: Improve efficiency
+      (with-changing-dimension-values (instance)
+        (linkf (slot-value instance slot-name) other-instances)))))
         
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance unlink reader
@@ -526,8 +530,10 @@
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
     (let ((instance (find-instance-by-name instance-name class-name 't)))
-      ;; TODO: MISSING SLOTS
-      (unlinkf (slot-value instance slot-name) other-instances))))
+      ;; TODO: CHECK FOR CHANGE TO A NON-LINK SLOT OR MISSING SLOT...
+      ;; TODO: Improve efficiency
+      (with-changing-dimension-values (instance)  
+        (unlinkf (slot-value instance slot-name) other-instances)))))
         
 ;;; ---------------------------------------------------------------------------
 ;;;  Add instance to space-instance reader
@@ -611,9 +617,9 @@
      streamer
      ;; A new streamer is needed; try to connect to GBBopen Network Server:
      (let ((connection 
-            ;; TODO: ** Extend open-connection to accept external-format &
-            ;; clozure :sharing **
-            (open-connection (host-of streamer-node) (port-of streamer-node)))
+            ;; TODO: ** Extend open-connection to accept external-format
+            (open-connection (host-of streamer-node) (port-of streamer-node) 
+                             :keepalive 't))
            (package (ensure-package (package-of streamer-node)))
            (external-format (external-format-of streamer-node))
            (read-default-float-format 
@@ -785,6 +791,7 @@
         (start-connection-server 'network-stream-connection-server
                                  (port-of *local-streamer-node*)
                                  :name "GBBopen Network Connection Server"
+                                 :keepalive 't
                                  :reuse-address 't)))
 
 ;;; ---------------------------------------------------------------------------

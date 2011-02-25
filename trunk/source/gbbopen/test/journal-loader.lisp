@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 18 10:09:34 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 24 19:19:01 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -52,6 +52,11 @@
 
 ;; Load the journal:
 (load-journal "~/tutorial.jnl")
+
+;; Check the results:
+(unless (find-instances 'location '(known-world) '(= time -10))
+  (error "Location ~s was not properly positioned"
+         (find-instance-by-name 3 'location)))
 
 ;;; ===========================================================================
 ;;;				  End of File

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 10:53:37 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 24 18:10:11 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -166,11 +166,12 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod hidden-nonlink-slot-names ((instance standard-space-instance))
-  (list* '%%evfn-unit-ht%% 
-         '%%bb-widgets%% 
-         '%%storage-spec%% 
-         '%%storage%%
-         (call-next-method)))
+  '(%%marks%% 
+    '%%space-instances%%
+    '%%evfn-unit-ht%% 
+    '%%bb-widgets%% 
+    '%%storage-spec%% 
+    '%%storage%%))
 
 ;;; ---------------------------------------------------------------------------
 

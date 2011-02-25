@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 04:13:26 2011 *-*
+;;;; *-* Last-Edit: Thu Feb 24 19:13:08 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -74,18 +74,27 @@
                           (find-space-instance-by-path '(known-world))
                           *streamer*)
 
+;; Create a new world:
+(make-space-instance 
+    '(new-world)
+    :allowed-unit-classes '(location path)
+    :dimensions (dimensions-of 'location)
+    :storage '((location (x y) uniform-buckets :layout ((0 100 5)
+                                                        (0 100 5)))))
+
+;; Add a location to the new world:
+(add-instance-to-space-instance 
+ (find-instance-by-name 6 'location) 
+ (find-space-instance-by-path '(new-world)))
+
+;; Move a location in time:
+(let ((instance (find-instance-by-name 3 'location)))
+  (with-changing-dimension-values (instance time)
+    (setf (time-of instance) -10)))
+
 ;; Journal a silly command:
 (stream-command-form '(:print "All done!") *streamer*)
 
 ;;; ===========================================================================
 ;;;				  End of File
 ;;; ===========================================================================
-
-
-
-
-
-
-
-
-
