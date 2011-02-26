@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 18:45:01 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 26 06:38:09 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -96,6 +96,7 @@
    (effective-dimensional-values 
     :type list
     :initform nil)
+   (effective-dv-source-slots :initform nil)
    (unit-class-dimensions 
     :initform nil
     :reader dimensions-of
@@ -301,6 +302,26 @@
                                     (slot standard-slot-definition))
   (slot-boundp-using-class class instance (slot-definition-name slot)))
  
+;;; ---------------------------------------------------------------------------
+;;;  Cannonical dimension value
+
+(defstruct (cdv
+            (:conc-name #.(dotted-conc-name 'cdv))
+            (:copier nil))
+  dimension-name 
+  dimension-value-type
+  comparison-type
+  value-fn
+  composite-type
+  ordering-dimension-name
+  slot-name-or-fn
+  slot-name)
+
+
+;; CDVs are written as part of the unit-class object:
+(defmethod make-load-form ((cdv cdv) &optional environment)
+  (make-load-form-saving-slots cdv :environment environment))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  Multinode support
 

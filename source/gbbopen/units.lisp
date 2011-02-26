@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu May  6 17:03:20 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sat Feb 26 09:53:37 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -116,26 +116,46 @@
     ;; Add dimensional-values from supers:
     (dolist (super (class-direct-superclasses unit-class))
       (when (typep super 'standard-unit-class)
-        (dolist (cdv-spec 
-                    (standard-unit-class.effective-dimensional-values super))
-          (pushnew cdv-spec dimensional-values :test #'eq :key #'car))))
+        (dolist (cdv (standard-unit-class.effective-dimensional-values super))
+          (pushnew cdv dimensional-values :test #'eq :key #'cdv.dimension-name))))
     ;; Stash the effective values:
     (setf (standard-unit-class.effective-initial-space-instances unit-class)
           initial-space-instances)
     (setf (standard-unit-class.effective-dimensional-values unit-class)
           dimensional-values)
+    ;; Compute and stash effective dimension-value-source slots:
+    (let ((dv-source-slots nil))
+      (dolist (cdv dimensional-values)
+        (when cdv
+          (let ((dimension-name (cdv.dimension-name cdv))
+                (slot-name-or-fn (cdv.slot-name-or-fn cdv))
+                (slot-name (cdv.slot-name cdv)))
+            (flet ((add-dimension (slot-name dimension-name)
+                     (let ((acons (assq slot-name dv-source-slots)))
+                       (if acons
+                           (pushnew dimension-name (cdr acons))
+                           (push-acons slot-name 
+                                       (list dimension-name)
+                                       dv-source-slots)))))
+            (when (symbolp slot-name-or-fn) ; check against effective-slot
+                                            ; names?
+              (add-dimension slot-name-or-fn dimension-name))
+            (when slot-name
+              (add-dimension slot-name dimension-name))))))
+      (setf (standard-unit-class.effective-dv-source-slots unit-class)
+            dv-source-slots))
     ;; Cache unit-class-dimensions:
     (setf (standard-unit-class.unit-class-dimensions unit-class)
-          (flet ((fn (dimensional-value)
+          (flet ((fn (cdv)
                    `(;; dimension name:
-                     ,(first dimensional-value)
+                     ,(cdv.dimension-name cdv)
                      (;; dimension type:
-                      ,(case (second dimensional-value)
+                      ,(case (cdv.dimension-value-type cdv)
                          (:boolean ':boolean)
                          (:element ':enumerated)
                          ((:point :interval :mixed) ':ordered))
                       ;; comparison type:
-                      ,(third dimensional-value)))))
+                      ,(cdv.comparison-type cdv)))))
             (declare (dynamic-extent #'fn))
             (mapcar #'fn dimensional-values)))
     ;; Propogate retain attribute from supers:
@@ -336,14 +356,9 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun build-cannonical-dimensional-value-spec (unit-class-name dv-spec)
-  ;;; Returns a cannonical dimension-value specification of `dv-spec' of the
-  ;;; form:
-  ;;;
-  ;;;   (dimension-name dimension-value-type comparison-type lookup-fn
-  ;;;    composite-type ordering-dimension-name)
-  ;;;
-  ;;; Note that the cannonical value does not contain sufficient accessible
-  ;;; information to recreate the exact original `dv-spec'.
+  ;;; Returns a cannonical dimension-value (cdv) of `dv-spec'; note that the
+  ;;; cdv does not contain sufficient accessible information to recreate the
+  ;;; exact original `dv-spec'.
   (multiple-value-bind (dimension-name 
                         dimension-value-type comparison-type
                         composite-type ordering-dimension-name
@@ -410,9 +425,15 @@
 			       instance))))))
            (dv-lookup-function 
             (fixup-function-value-part1 unfixed-dv-lookup-function)))
-      `(,dimension-name ,dimension-value-type ,comparison-type
-                        ,dv-lookup-function
-                        ,composite-type ,ordering-dimension-name))))
+      (make-cdv
+       :dimension-name dimension-name 
+       :dimension-value-type dimension-value-type 
+       :comparison-type comparison-type
+       :value-fn dv-lookup-function
+       :composite-type composite-type 
+       :ordering-dimension-name ordering-dimension-name
+       :slot-name-or-fn slot-name-or-fn 
+       :slot-name slot-name))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -435,8 +456,8 @@
     (declare (dynamic-extent #'do-fn))
     (map-direct-link-slots #'do-fn unit-class))
   ;; fixup canonicalized :dimensional-values option:  
-  (dolist (cdv-spec (standard-unit-class.dimensional-values unit-class))
-    (let ((maybe-fn (fourth cdv-spec)))
+  (dolist (cdv (standard-unit-class.dimensional-values unit-class))
+    (let ((maybe-fn (cdv.value-fn cdv)))
       (when (or (memq maybe-fn fixup-symbols)
                 ;; NOTE: CLISP looses eq-ness of the uninterned fixup-symbols
                 ;; when loading the compiled file into the compiling image
@@ -447,7 +468,7 @@
                 #+clisp
                 (setf maybe-fn (find maybe-fn fixup-symbols 
                                      :test #'string=)))
-        (setf (fourth cdv-spec)
+        (setf (cdv.value-fn cdv)
               (symbol-value maybe-fn)))))
   ;; fixup :initial-space-instances option
   (let* ((initial-space-instances-spec
@@ -983,27 +1004,27 @@
       (when (typep slot 'effective-link-definition)
         (describe-unit-slot unit-class slot)))
     ;; Dimensional values:
-    (let ((cdv-specs 
+    (let ((cdvs 
            (sort
             (copy-list (standard-unit-class.dimensional-values 
                         unit-class))
             #'string<
-            :key #'first)))
+            :key #'cdv.dimension-name)))
       (format t "~&~2tDimensional values:~@[ None~%~]"
-              (null cdv-specs))
-      (dolist (cdv-spec cdv-specs)
-        (describe-dimensional-value cdv-spec)))
+              (null cdvs))
+      (dolist (cdv cdvs)
+        (describe-dimensional-value cdv)))
     ;; Effective dimensional values:
-    (let ((ecdv-specs 
+    (let ((ecdvs 
            (sort
             (copy-list (standard-unit-class.effective-dimensional-values 
                         unit-class))
             #'string<
-            :key #'first)))
+            :key #'cdv.dimension-name)))
       (format t "~&~2tEffective dimensional values:~@[ None~%~]"
-              (null ecdv-specs))
-      (dolist (cdv-spec ecdv-specs)
-        (describe-dimensional-value cdv-spec)))
+              (null ecdvs))
+      (dolist (cdv ecdvs)
+        (describe-dimensional-value cdv)))
     ;; Initial space instances:
     (let ((space-instances 
            (ensure-list
@@ -1080,19 +1101,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun describe-dimensional-value (dv)
-  (destructuring-bind (dimension-name 
-                       dimension-value-type comparison-type
-                       value-fn
-                       composite-type ordering-dimension-name)
-      dv
-    (declare (ignore value-fn))
-    (format t "~&~4t~s (~s ~s)~@[ ~s~@[ ~s~]~]~%" 
-            dimension-name 
-            dimension-value-type
-            comparison-type
-            composite-type
-            ordering-dimension-name)))
+(defun describe-dimensional-value (cdv)
+  (format t "~&~4t~s (~s ~s)~@[ ~s~@[ ~s~]~]~%" 
+          (cdv.dimension-name cdv)
+          (cdv.dimension-value-type cdv)
+          (cdv.comparison-type cdv)
+          (cdv.composite-type cdv)
+          (cdv.ordering-dimension-name cdv)))
 
 ;;; ---------------------------------------------------------------------------
 

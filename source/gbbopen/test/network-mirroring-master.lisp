@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 24 19:00:51 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 26 10:38:49 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -100,6 +100,22 @@
 (add-instance-to-space-instance 
  (find-instance-by-name 6 'location) 
  (find-space-instance-by-path '(new-world)))
+
+(defun do-a-bunch (n) 
+  (declare (fixnum n))
+  (dotimes (i n)
+    (make-instance 'location
+      :time (+& 1 100)
+      :x (-& (random 100) 50)
+      :y (-& (random 100) 50))))
+(compile 'do-a-bunch)
+
+;; Create a bunch of new locations (with event-printing disabled on the
+;; slave):
+(stream-command-form '(:disable-event-printing t) *streamer*)
+(time (do-a-bunch 1000))
+#+LONGER-TEST
+(time (do-a-bunch 10000))
 
 ;; Send a silly command:
 (stream-command-form '(:print "All done!") *streamer*)

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/hashed-storage.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 16 15:05:27 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sat Feb 26 07:04:18 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -72,36 +72,33 @@
     (dolist (class-spec (stores-classes-of storage))
       (destructuring-bind (stores-class . plus-subclasses)
           class-spec
-        (flet ((do-class (stores-class plus-subclasses)
-                 (declare (ignore plus-subclasses))
-                 (let ((effective-dimensional-values
-                        (standard-unit-class.effective-dimensional-values 
-                         stores-class)))
-                   (dolist (dimension-name (dimension-names-of storage))
-                     (let ((dv-spec 
-                            (assq dimension-name effective-dimensional-values)))
-                       (when dv-spec
-                         (destructuring-bind (dimension-name 
-                                              dimension-value-type 
-                                              comparison-type
-                                              value-fn
-                                              composite-type 
-                                              ordering-dimension-name)
-                             dv-spec
-                           (declare (ignore value-fn composite-type
-                                            ordering-dimension-name))
-                           (unless (eq ':element dimension-value-type)
-                             (error "Dimension ~s is not an :enumerated ~
-                                     dimension."
-                                    dimension-name))
-                           (cond 
-                            ;; We have a test already, determine the most
-                            ;; liberal test:
-                            (test
-                             (setf test (most-general-hash-table-test
-                                         test comparison-type)))
-                            ;; Set the test:
-                            (t (setf test comparison-type))))))))))
+        (flet
+            ((do-class (stores-class plus-subclasses)
+               (declare (ignore plus-subclasses))
+               (let ((cdvs (standard-unit-class.effective-dimensional-values 
+                            stores-class)))
+                 (dolist (dimension-name (dimension-names-of storage))
+                   (let ((cdv
+                          ;; (car (member ...)) with :test & :key often
+                          ;; optimizes better than (find ...):
+                          (car (member dimension-name cdvs
+                                       :test #'eq
+                                       :key #'cdv.dimension-name))))
+                     (when cdv
+                       (let ((dimension-value-type (cdv.dimension-value-type cdv))
+                             (comparison-type (cdv.comparison-type cdv)))
+                         (unless (eq ':element dimension-value-type)
+                           (error "Dimension ~s is not an :enumerated ~
+                                   dimension."
+                                  dimension-name))
+                         (cond 
+                          ;; We have a test already, determine the most
+                          ;; liberal test:
+                          (test
+                           (setf test (most-general-hash-table-test
+                                       test comparison-type)))
+                          ;; Set the test:
+                          (t (setf test comparison-type))))))))))
           (declare (dynamic-extent #'do-class))
           (if plus-subclasses
               (map-unit-classes #'do-class stores-class)
