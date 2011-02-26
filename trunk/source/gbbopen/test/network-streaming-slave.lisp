@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 14:25:41 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 26 10:24:02 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -61,9 +61,15 @@
 (defmethod ending-queued-read ((tag t))
   (format t "~&;; Ending ~a receive.~%" tag))
 
-;; Silly command form method:
+;; Silly command-form method:
 (defmethod handle-streamed-command-form ((command (eql ':print)) &rest args)
   (format t "~&;; Print:~{ ~s~}~%" args))
+
+;; A more useful command-form method:
+(defmethod handle-streamed-command-form ((command (eql ':disable-event-printing))
+                                         &rest args)
+  (declare (dynamic-extent args))
+  (apply #'disable-event-printing args))
 
 ;; Silly connection-exiting method:
 (defmethod handle-stream-connection-exiting ((connection stream) exit-status)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 18:46:40 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 26 06:55:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -1541,7 +1541,7 @@
     ;;; for deleted unit instances.
     (declare (inline class-of))
     (let* ((unit-class (class-of instance))
-           (dimension-spec 
+           (cdv
             ;; (car (member ...)) with :test & :key often optimizes better
             ;; than (find ...):
             (car (member
@@ -1549,24 +1549,16 @@
                   (standard-unit-class.effective-dimensional-values 
                    unit-class)
                   :test #'eq
-                  :key #'car))))
-      (unless dimension-spec
-        (error "~s is not a dimension of ~s."
-               dimension-name
-               instance))
-      (destructuring-bind (dimension-name 
-                           dimension-value-type comparison-type
-                           value-fn
-                           composite-type ordering-dimension-name)
-          dimension-spec
-        (declare (ignore dimension-name))
-        (values 
-         ;; get the dimension value:
-         (funcall (the function value-fn) instance into-cons)
-         dimension-value-type
-         comparison-type
-         composite-type 
-         ordering-dimension-name)))))
+                  :key #'cdv.dimension-name))))
+      (unless cdv
+        (error "~s is not a dimension of ~s." dimension-name instance))
+      (values 
+       ;; get the dimension value:
+       (funcall (the function (cdv.value-fn cdv)) instance into-cons)
+       (cdv.dimension-value-type cdv)
+       (cdv.comparison-type cdv)
+       (cdv.composite-type cdv)
+       (cdv.ordering-dimension-name cdv)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1594,8 +1586,8 @@
                    (instance-dimension-value instance dimension-name))))
       (if (symbolp dimension-names)
           (if (eq dimension-names 't)
-              (flet ((fn (dimensional-value)
-                       (make-dimension-value-acons (car dimensional-value))))
+              (flet ((fn (cdv)
+                       (make-dimension-value-acons (cdv.dimension-name cdv))))
                 (declare (dynamic-extent #'fn))
                 (mapcar #'fn
                         (standard-unit-class.effective-dimensional-values 

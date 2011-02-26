@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 24 19:09:33 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 26 10:13:39 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -353,7 +353,7 @@
                 (princ (error-message) *error-output*)
                 (terpri *error-output*)
                 (let ((connection (stream-of streamer-for-writing)))
-                  (unless (open-stream-p connection)
+                  (when (open-stream-p connection)
                     (format *error-output* "~&;; Closing ~s due to error...~%"
                             connection)
                     (close connection)))))))))))
@@ -505,9 +505,15 @@
     (setf class-name (possibly-translate-class-name class-name))
     (let ((instance (find-instance-by-name instance-name class-name 't)))
       ;; TODO: CHECK FOR CHANGE TO A LINK SLOT OR MISSING SLOT...
-      ;; TODO: Improve efficiency
-      (with-changing-dimension-values (instance)  
-        (setf (slot-value instance slot-name) new-value)))))
+      (let ((source-slot 
+             (cdr (assq slot-name
+                        (standard-unit-class.effective-dv-source-slots
+                         (class-of instance))))))
+        (if source-slot
+            ;; TODO: Optimize this!
+            (with-changing-dimension-values (instance)  
+              (setf (slot-value instance slot-name) new-value))
+            (setf (slot-value instance slot-name) new-value))))))
         
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance link reader
@@ -518,10 +524,16 @@
     (setf class-name (possibly-translate-class-name class-name))
     (let ((instance (find-instance-by-name instance-name class-name 't)))
       ;; TODO: CHECK FOR CHANGE TO A NON-LINK SLOT OR MISSING SLOT...
-      ;; TODO: Improve efficiency
-      (with-changing-dimension-values (instance)
-        (linkf (slot-value instance slot-name) other-instances)))))
-        
+      (let ((source-slot 
+             (cdr (assq slot-name
+                        (standard-unit-class.effective-dv-source-slots
+                         (class-of instance))))))
+        (if source-slot
+            ;; TODO: Optimize this!
+            (with-changing-dimension-values (instance)  
+              (linkf (slot-value instance slot-name) other-instances))
+            (linkf (slot-value instance slot-name) other-instances))))))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance unlink reader
 
@@ -531,10 +543,16 @@
     (setf class-name (possibly-translate-class-name class-name))
     (let ((instance (find-instance-by-name instance-name class-name 't)))
       ;; TODO: CHECK FOR CHANGE TO A NON-LINK SLOT OR MISSING SLOT...
-      ;; TODO: Improve efficiency
-      (with-changing-dimension-values (instance)  
-        (unlinkf (slot-value instance slot-name) other-instances)))))
-        
+      (let ((source-slot 
+             (cdr (assq slot-name
+                        (standard-unit-class.effective-dv-source-slots
+                         (class-of instance))))))
+        (if source-slot
+            ;; TODO: Optimize this!
+            (with-changing-dimension-values (instance)  
+              (unlinkf (slot-value instance slot-name) other-instances))
+            (unlinkf (slot-value instance slot-name) other-instances))))))
+
 ;;; ---------------------------------------------------------------------------
 ;;;  Add instance to space-instance reader
 
@@ -720,7 +738,8 @@
             (setf (streamer-of streamer-node) nil)
             (handle-stream-connection-exiting network-streamer exit-status))
           (error "Missing network-streamer at ~s" streamer-node)))
-    (close connection)))
+    (when (open-stream-p connection)
+      (close connection))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -773,7 +792,8 @@
 (defun network-stream-connection-server (connection) 
   (flet ((connect-it (connection)
            (unwind-protect (network-streaming-client-connection connection)
-             (close connection))))
+             (when (open-stream-p connection)               
+               (close connection)))))
     (spawn-thread "Client GBBopen Connection" #'connect-it connection)))
 
 ;;; ---------------------------------------------------------------------------
@@ -863,6 +883,7 @@
                                                  space-instances
                                                  :pattern pattern
                                                  :filter-before filter-before
+                                                 :filter-after filter-after
                                                  :use-marking use-marking
                                                  :verbose verbose)
         (print-object-for-saving/sending instance stream)))))

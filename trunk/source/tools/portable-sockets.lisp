@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Feb 25 10:46:29 2011 *-*
+;;;; *-* Last-Edit: Sat Feb 26 10:04:47 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -424,7 +424,6 @@
   ;; The (currently undocumented) :input-timeout extension needs attention on:
   #+(or allegro
         clisp
-        clozure
         cmu
         digitool-mcl
         ecl
@@ -435,7 +434,6 @@
   ;; The (currently undocumented) :output-timeout extension needs attention on:
   #+(or allegro
         clisp
-        clozure
         cmu
         digitool-mcl
         ecl
@@ -463,24 +461,15 @@
                            :so-reuseaddr reuse-address)
     passive-socket)
   #+clozure
-  (progn
-    #+SOON
-    (ccl:make-socket :connect ':passive
-                     :type ':stream
-                     :local-port port
-                     :local-host interface
-                     :backlog backlog
-                     :keepalive keepalive
-                     :reuse-address reuse-address
-                     :input-timeout timeout
-                     :output-timeout timeout)
-    (ccl:make-socket :connect ':passive
-                     :type ':stream
-                     :local-port port
-                     :local-host interface
-                     :backlog backlog
-                     :keepalive keepalive
-                     :reuse-address reuse-address))
+  (ccl:make-socket :connect ':passive
+                   :type ':stream
+                   :local-port port
+                   :local-host interface
+                   :backlog backlog
+                   :keepalive keepalive
+                   :reuse-address reuse-address
+                   :input-timeout input-timeout
+                   :output-timeout output-timeout)
   #+cmu
   (make-instance 'passive-socket
     :fd (ext:create-inet-listener port ':stream 
@@ -735,7 +724,8 @@
                                      input-timeout
                                      output-timeout)
   #+threads-not-available
-  (declare (ignore function port name backlog interface reuse-address))
+  (declare (ignore function port name backlog interface reuse-address
+                   keepalive input-timout output-timeout))
   #-threads-not-available
   (spawn-thread
    name

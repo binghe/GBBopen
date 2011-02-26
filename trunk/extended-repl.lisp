@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Aug 20 13:02:44 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Tue Jan  4 04:08:32 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -17,7 +17,7 @@
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -37,6 +37,7 @@
 ;;;  02-04-06 Added SLIME (Emacs->Swank) support.  (Corkill)
 ;;;  04-17-08 Reworked SLIME mechanism.  (Corkill)
 ;;;  10-15-09 Added XCL support.  (Corkill)
+;;;  01-04-11 Added XCL support.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
@@ -152,6 +153,8 @@
            (unless (member ':no-cl-user-function .options.)
              (intern (symbol-name command-name) ':common-lisp-user)))
           (tlc-sym (gensym))
+          #+abcl
+          (command-name-string (string-downcase (symbol-name command-name)))
 	  #+xcl
 	  (command-fn-sym
 	   (intern (concatenate 'string
@@ -173,7 +176,7 @@
 	 (defun ,command-fn-sym (line)
 	   (flet ((command ,lambda-list ,@body))
 	      (apply #'command (read-args-from-string line))))
-         ;; Now do the REPL-command definition:
+          ;; Now do the REPL-command definition:
          #+allegro
          ,@(unless (member ':add-to-native-help .options.)
              `((pushnew ,(string-downcase (symbol-name command-name))
@@ -199,6 +202,10 @@
             ,',cl-user-fn-name
             ,*current-system-name*))
          ;; Add to the CL implemention's top-level, where possible:
+         #+abcl
+         (pushnew '(,command-name-string ,command-name-string ,tlc-sym ,maybe-doc)
+                  top-level::*command-table*
+                  :test #'string= :key #'first)
          #+allegro
          (top-level:alias ,(string-downcase (symbol-name command-name))
              ,lambda-list
