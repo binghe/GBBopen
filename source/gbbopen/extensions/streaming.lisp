@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 26 10:13:39 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 27 07:41:35 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -78,6 +78,7 @@
             stream-slot-update
             stream-unlink
             streamer                    ; class-name
+            streamer-error              ; condition-name
             streamer-node               ; class-name
 	    with-mirroring-disabled
 	    with-mirroring-enabled
@@ -172,6 +173,7 @@
 (define-class basic-streamer (%trivial-streamer%)
   (lock
    (stream :initform nil)
+   (closed :initform nil)
    package
    read-default-float-format 
    (recorded-class-descriptions-ht :initform (make-hash-table :test 'eq))))
@@ -180,7 +182,7 @@
 
 (defun open-streamer-p (streamer)
   (let ((stream (stream-of streamer)))
-    (when stream (open-stream-p stream))))
+    (and (streamp stream) (open-stream-p stream))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -209,6 +211,15 @@
 (define-class journal-streamer (streamer)
   ())
    
+;;; ---------------------------------------------------------------------------
+
+(define-condition streamer-error (error)
+  ((streamer :reader streamer-error-streamer :initarg :streamer))
+  (:report
+   (lambda (condition stream)
+     (format stream "Operation on closed streamer ~s"
+             (streamer-error-streamer condition)))))
+
 ;;; ===========================================================================
 ;;;   Broadcast streamers
 
@@ -323,14 +334,16 @@
 
 (defun %do-with-streamer-stream (streamer body-form-fn)
   (let ((streamer-for-writing streamer)) 
+    (when (closed-of streamer)
+      (error 'streamer-error :streamer streamer))
     (when (typep streamer 'streamer)
       (let ((broadcast-streamer (broadcast-streamer-of streamer)))
         ;; If streamer is a constituent of a broadcast-streamer, use the
         ;; streamer for writing/queuing but the broadcast-streamer for locking:
         (when broadcast-streamer
           (setf streamer broadcast-streamer))))
-    (let ((streamer-queue
-           (cdr (assq streamer-for-writing *%%streamer-queues%%*))))
+    (let* ((streamer-acons (assq streamer-for-writing *%%streamer-queues%%*))
+           (streamer-queue (cdr streamer-acons)))
       (with-standard-io-syntax 
         (setf *package* (package-of streamer))
         (setf *read-default-float-format* 
@@ -353,10 +366,22 @@
                 (princ (error-message) *error-output*)
                 (terpri *error-output*)
                 (let ((connection (stream-of streamer-for-writing)))
-                  (when (open-stream-p connection)
+                  (when (and (streamp connection) (open-stream-p connection))
                     (format *error-output* "~&;; Closing ~s due to error...~%"
                             connection)
-                    (close connection)))))))))))
+                    (force-output *error-output*)
+                    (setf (closed-of streamer-for-writing)
+                          ':closed-due-to-errors)
+                    (when streamer-queue
+                      (format *error-output* 
+                              "~&;; Terminating queued streamer ~s...~%"
+                              streamer-queue)
+                      (force-output *error-output*)
+                      (setf *%%streamer-queues%%*
+                            (delq streamer-acons *%%streamer-queues%%*)))
+                    (close connection)
+                    (error 'streamer-error 
+                           :streamer streamer-for-writing)))))))))))
     
 ;;; ---------------------------------------------------------------------------
 
@@ -692,7 +717,7 @@
 (defmethod network-stream-receiver ((network-streamer network-streamer) 
                                     connection)
   (declare (ignorable network-streamer))
-  (let ((maximum-contiguous-errors 4)
+  (let ((maximum-contiguous-errors 2)
         (contiguous-errors 0)
         *queued-read-tag*
         (*package* (ensure-package (package-of network-streamer)))
@@ -711,7 +736,7 @@
          (force-output *trace-output*)
          (when (>=& (incf& contiguous-errors) maximum-contiguous-errors)
            (format *trace-output* "~&;; Maximum contiguous errors exceeded; ~
-                                          closing connection ~s.~%"
+                                        closing connection ~s.~%"
                    connection)
            (force-output *trace-output*)
            (return ':error)))
@@ -722,24 +747,29 @@
 (defun start-streaming-connection-endpoint (streamer-node connection 
                                             skip-block-info-reading)
   (with-reading-saved/sent-objects-block 
-      (connection :%%skip-block-info-reading%% skip-block-info-reading)
-    (let ((exit-status ':error)
+      (connection :skip-block-info-reading skip-block-info-reading)
+    (let ((exit-status nil)
           (network-streamer (streamer-of streamer-node)))
-      (if network-streamer
-          (unwind-protect 
-              (setf exit-status
-                    (network-stream-receiver network-streamer connection))
-            (let* ((streamer (streamer-of streamer-node))
-                   (broadcast-streamer (broadcast-streamer-of streamer)))
-              (remove-mirroring streamer 't)
-              ;; Remove from broadcast-streamer:
-              (when broadcast-streamer
-                (remove-from-broadcast-streamer streamer broadcast-streamer)))
-            (setf (streamer-of streamer-node) nil)
-            (handle-stream-connection-exiting network-streamer exit-status))
-          (error "Missing network-streamer at ~s" streamer-node)))
-    (when (open-stream-p connection)
-      (close connection))))
+      (cond 
+       (network-streamer
+        (unwind-protect 
+            (setf exit-status
+                  (network-stream-receiver network-streamer connection))
+          (let* ((streamer (streamer-of streamer-node))
+                 (broadcast-streamer (broadcast-streamer-of streamer)))
+            (setf (closed-of streamer) 't)
+            (remove-mirroring streamer 't)
+            ;; Remove from broadcast-streamer:
+            (when broadcast-streamer
+              (remove-from-broadcast-streamer streamer broadcast-streamer)))
+          (setf (streamer-of streamer-node) nil)
+          (setf (stream-of network-streamer) ':closed)
+          (handle-stream-connection-exiting network-streamer exit-status)))
+       (t (error "Missing network-streamer at ~s" streamer-node)))
+      ;; Clean up:
+      (when (and (streamp connection)
+                 (open-stream-p connection))
+        (close connection)))))
 
 ;;; ---------------------------------------------------------------------------
 

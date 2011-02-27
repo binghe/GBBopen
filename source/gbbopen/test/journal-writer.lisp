@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 24 19:13:08 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 27 05:38:40 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -91,6 +91,31 @@
 (let ((instance (find-instance-by-name 3 'location)))
   (with-changing-dimension-values (instance time)
     (setf (time-of instance) -10)))
+
+(defun create-a-bunch (n) 
+  (declare (fixnum n))
+  (dotimes (i n)
+    (make-instance 'location
+      :time (+& 1 100)
+      :x (-& (random 100) 50)
+      :y (-& (random 100) 50))))
+(compile 'create-a-bunch)
+
+;; Create a bunch of new locations:
+(time (create-a-bunch 1000))
+#+LONGER-TEST
+(time (create-a-bunch 10000))
+
+(defun update-a-bunch (n) 
+  (declare (fixnum n))
+  (let ((location (find-instance-by-name 100 'location)))
+    (dotimes (i n)
+      (setf (x-of location)
+            (-& (random 100) 50)))))
+(compile 'update-a-bunch)
+
+;; Update a bunch of new locations:
+(time (update-a-bunch 20000))
 
 ;; Journal a silly command:
 (stream-command-form '(:print "All done!") *streamer*)

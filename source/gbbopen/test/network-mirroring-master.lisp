@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 26 10:38:49 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 27 07:43:47 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -101,21 +101,37 @@
  (find-instance-by-name 6 'location) 
  (find-space-instance-by-path '(new-world)))
 
-(defun do-a-bunch (n) 
+;; Move a location in time:
+(let ((instance (find-instance-by-name 3 'location)))
+  (with-changing-dimension-values (instance time)
+    (setf (time-of instance) -10)))
+
+(defun create-a-bunch (n) 
   (declare (fixnum n))
   (dotimes (i n)
     (make-instance 'location
       :time (+& 1 100)
       :x (-& (random 100) 50)
       :y (-& (random 100) 50))))
-(compile 'do-a-bunch)
+(compile 'create-a-bunch)
 
 ;; Create a bunch of new locations (with event-printing disabled on the
 ;; slave):
 (stream-command-form '(:disable-event-printing t) *streamer*)
-(time (do-a-bunch 1000))
+(time (create-a-bunch 1000))
 #+LONGER-TEST
-(time (do-a-bunch 10000))
+(time (create-a-bunch 10000))
+
+(defun update-a-bunch (n) 
+  (declare (fixnum n))
+  (let ((location (find-instance-by-name 100 'location)))
+    (dotimes (i n)
+      (setf (x-of location)
+            (-& (random 100) 50)))))
+(compile 'update-a-bunch)
+
+;; Update a bunch of new locations:
+(time (update-a-bunch 20000))
 
 ;; Send a silly command:
 (stream-command-form '(:print "All done!") *streamer*)
