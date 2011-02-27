@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 17 09:14:56 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 27 07:33:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -304,7 +304,7 @@
   (define-module :streaming
     (:requires :gbbopen-core :portable-sockets)
     (:directory :gbbopen "extensions")
-    (:files ("streaming")))
+    (:files ("streaming" :forces-recompile)))
 
   (define-module :web-inspector 
     (:requires :http-services)
