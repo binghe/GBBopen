@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 27 07:43:47 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 27 10:09:37 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -119,8 +119,10 @@
 ;; slave):
 (stream-command-form '(:disable-event-printing t) *streamer*)
 (time (create-a-bunch 1000))
-#+LONGER-TEST
-(time (create-a-bunch 10000))
+#+NON-REMOVAL-TEST
+(progn
+  (setf *remove-mirroring-when-streamer-closes* nil)
+  (time (create-a-bunch 10000)))
 
 (defun update-a-bunch (n) 
   (declare (fixnum n))
