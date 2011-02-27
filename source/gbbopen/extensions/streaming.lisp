@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 27 07:41:35 2011 *-*
+;;;; *-* Last-Edit: Sun Feb 27 10:05:23 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -37,6 +37,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*break-on-receive-errors*
             *default-network-stream-server-port*
+            *remove-mirroring-when-streamer-closes*
             add-mirroring
             add-to-broadcast-streamer
             begin-queued-streaming
@@ -637,6 +638,7 @@
 (defparameter *network-stream-format-version* 1)
 (defvar *network-stream-connection-server-thread* nil)
 (defvar *break-on-receive-errors* nil)
+(defvar *remove-mirroring-when-streamer-closes* 't)
 (defvar *queued-read-tag*)
 
 ;;; ---------------------------------------------------------------------------
@@ -730,7 +732,7 @@
                 (read connection)
                 (safe-read connection)))
       (case form
-        (:eof (return))
+        (:eof (return nil))
         (:error
          (format *trace-output* "~&;; Read error: ~s~%" form)
          (force-output *trace-output*)
@@ -748,23 +750,25 @@
                                             skip-block-info-reading)
   (with-reading-saved/sent-objects-block 
       (connection :skip-block-info-reading skip-block-info-reading)
-    (let ((exit-status nil)
-          (network-streamer (streamer-of streamer-node)))
+    (let ((network-streamer (streamer-of streamer-node)))
       (cond 
        (network-streamer
-        (unwind-protect 
-            (setf exit-status
-                  (network-stream-receiver network-streamer connection))
-          (let* ((streamer (streamer-of streamer-node))
-                 (broadcast-streamer (broadcast-streamer-of streamer)))
-            (setf (closed-of streamer) 't)
-            (remove-mirroring streamer 't)
-            ;; Remove from broadcast-streamer:
-            (when broadcast-streamer
-              (remove-from-broadcast-streamer streamer broadcast-streamer)))
-          (setf (streamer-of streamer-node) nil)
-          (setf (stream-of network-streamer) ':closed)
-          (handle-stream-connection-exiting network-streamer exit-status)))
+        (let (exit-status)
+          (unwind-protect 
+              (setf exit-status
+                    (network-stream-receiver network-streamer connection))
+            (let* ((streamer (streamer-of streamer-node))
+                   (broadcast-streamer (broadcast-streamer-of streamer)))
+              (setf (closed-of streamer) 't)
+              (when *remove-mirroring-when-streamer-closes*
+                (remove-mirroring streamer 't))
+              ;; Remove from broadcast-streamer:
+              (when broadcast-streamer
+                (remove-from-broadcast-streamer 
+                 streamer broadcast-streamer)))
+            (setf (streamer-of streamer-node) nil)
+            (setf (stream-of network-streamer) ':closed)
+            (handle-stream-connection-exiting network-streamer exit-status))))
        (t (error "Missing network-streamer at ~s" streamer-node)))
       ;; Clean up:
       (when (and (streamp connection)
