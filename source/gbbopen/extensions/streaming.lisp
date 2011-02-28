@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 27 10:05:23 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 28 05:10:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -93,14 +93,12 @@
 ;;; ===========================================================================
 ;;;   Streamer Node
 
-(defvar *local-streamer-node* nil)
 (defvar *streamer-nodes-ht* (make-hash-table :test 'equal))
 
 ;;; ---------------------------------------------------------------------------
 
 (define-class streamer-node (standard-gbbopen-instance)
   (name
-   localnodep
    host
    port
    passphrase
@@ -123,7 +121,6 @@
 (defun define-streamer-node (name &key
                                   (host "localhost")
                                   (port *default-network-stream-server-port*)
-                                  (localnodep nil)
                                   (passphrase nil)
                                   (package ':cl-user)
                                   (external-format ':default)                                  
@@ -134,7 +131,6 @@
   (let ((streamer-node
          (make-instance 'streamer-node
            :name name
-           :localnodep localnodep
            :host host
            :port port
            :passphrase passphrase
@@ -144,7 +140,8 @@
            :streamer-class streamer-class
            :authorized-nodes authorized-nodes)))
     (setf (gethash name *streamer-nodes-ht*) streamer-node)
-    (if localnodep (setf *local-streamer-node* streamer-node))))
+    ;; Return the streamer-node:
+    streamer-node))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -650,12 +647,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun find-or-make-network-streamer (streamer-node &rest initargs)
-  (unless *local-streamer-node*
-    (error "No local streamer node has been defined."))
-  ;; Lookup streamer node, if needed:
+(defun find-or-make-network-streamer (streamer-node local-streamer-node
+                                      &rest initargs)
+  ;; Lookup streamer nodes, if needed:
   (unless (typep streamer-node 'streamer-node)
     (setf streamer-node (find-streamer-node streamer-node 't)))
+  (unless (typep local-streamer-node 'streamer-node)
+    (setf local-streamer-node (find-streamer-node local-streamer-node 't)))
   (let ((streamer (streamer-of streamer-node)))
     (or 
       ;; A streamer already exists, return it:
@@ -672,7 +670,7 @@
        (format connection "(:gbbopen ~s ~s ~s)"
                *network-stream-format-version*
                (passphrase-of streamer-node)
-               (name-of *local-streamer-node*))
+               (name-of local-streamer-node))
        (let ((*package* package)
              (*read-default-float-format* read-default-float-format))
          (write-saving/sending-block-info connection))
@@ -838,12 +836,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun start-network-stream-server ()
-  (unless *local-streamer-node*
-    (error "No local streamer node has been defined."))
+(defun start-network-stream-server (streamer-node)
+  (unless (typep streamer-node 'streamer-node)
+    (setf streamer-node (find-streamer-node streamer-node 't)))
   (setf *network-stream-connection-server-thread*
         (start-connection-server 'network-stream-connection-server
-                                 (port-of *local-streamer-node*)
+                                 (port-of streamer-node)
                                  :name "GBBopen Network Connection Server"
                                  :keepalive 't
                                  :reuse-address 't)))
