@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 28 10:32:18 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 28 11:04:35 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -31,8 +31,7 @@
   (use-package ':portable-sockets))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen-tools::*recorded-class-descriptions-ht*
-            gbbopen-tools::write-saving/sending-block-info)))
+  (import '(gbbopen-tools::write-saving/sending-block-info)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*break-on-receive-errors*

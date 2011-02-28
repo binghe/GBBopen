@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 17 09:17:50 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 28 11:07:36 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -55,7 +55,8 @@
 ;;;  11-13-06 Added :abort-ks-execution-example command.  (Corkill)
 ;;;  02-15-10 Added :double-metaphone command.  (Corkill)
 ;;;  03-09-10 Added :gbbopen-tools-user command.  (Corkill)
-;;;  02-02-11 Added :network-streaming command. (Corkill)
+;;;  02-02-11 Added :streaming command. (Corkill)
+;;;  02-28-11 Added :network-streaming command. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -200,8 +201,12 @@
     (startup-module :multinode options nil))
 
   (define-repl-command :streaming (&rest options)
-    "Compile and load GBBopen network streaming and journaling support [Experimental]"
+    "Compile and load journaling support [Experimental]"
     (startup-module :streaming options nil))
+
+  (define-repl-command :network-streaming (&rest options)
+    "Compile and load network streaming support [Experimental]"
+    (startup-module :network-streaming options nil))
 
   #+not-yet
   (define-repl-command :restricted-eval (&rest options)
