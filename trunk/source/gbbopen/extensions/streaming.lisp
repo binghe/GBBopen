@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 28 10:26:12 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 28 11:04:16 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -27,9 +27,6 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen)
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (use-package ':portable-sockets))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(gbbopen-tools::*recorded-class-descriptions-ht*
