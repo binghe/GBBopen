@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 27 10:09:37 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 28 05:04:40 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -42,13 +42,12 @@
 
 ;; The master host (me!):
 (define-streamer-node "master"
-    :localnodep 't
     :host "127.0.0.1"
     :port (1+ (port-of (find-streamer-node "slave")))
     :package ':tutorial)
 
 ;; Connect to slave image:
-(defparameter *streamer* (find-or-make-network-streamer "slave"))
+(defparameter *streamer* (find-or-make-network-streamer "slave" "master"))
 
 (add-mirroring *streamer* 'standard-space-instance)
 (add-mirroring *streamer* 'path)

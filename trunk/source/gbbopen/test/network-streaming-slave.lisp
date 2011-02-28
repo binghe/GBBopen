@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 26 10:24:02 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 28 05:06:37 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -37,7 +37,6 @@
 
 ;; The slave host (me!):
 (define-streamer-node "slave"
-    :localnodep 't
     :host "127.0.0.1"
     :package ':tutorial)
 
@@ -96,7 +95,7 @@
 (setf *warn-about-unusual-requests* nil)
 
 ;; Prepare to receive from the master:
-(defparameter *network-stream-server* (start-network-stream-server))
+(defparameter *network-stream-server* (start-network-stream-server "slave"))
 
 ;;; ===========================================================================
 ;;;				  End of File
