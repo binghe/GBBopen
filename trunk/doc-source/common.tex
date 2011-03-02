@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sat Feb 12 09:57:52 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Mar  1 03:03:53 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -1287,7 +1287,11 @@
             "Blackboard Repository"
             "Instance Retrieval"
             "Saving and Sending"
-	    "Queue Management")))
+	    "Queue Management"
+            ;; :gbbopen-extensions
+            "Streaming"
+            "Journaling"
+            "Network Streaming")))
 
 (defun hyperlatex-insert-menu (secnum depth)
   "Insert a menu for section SECNUM of depth DEPTH."
@@ -1320,10 +1324,11 @@
                               (substring secname 0 4))
                          nav-string)
                   ;; don't add the special section entries to the entries
-                  ;; listed on the Tools & GBBopen Core pages:
+                  ;; listed on these Tools & GBBopen Core pages:
                   (and (or (string= node-secname "GBBopen Tools")
                            (string= node-secname "Additional GBBopen Tools")
-                           (string= node-secname "GBBopen Core"))
+                           (string= node-secname "GBBopen Core")
+                           (string= node-secname "GBBopen Extensions"))
                        special-section-p))
               ;; --- end DDC mod
               

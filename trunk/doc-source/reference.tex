@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Feb 23 01:38:57 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Mar  2 17:03:14 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -114,6 +114,9 @@
 
 \newcommand{\inprogress}{\vfill\textcolor{darkergray}{\textsf{\textbf{This
         reference manual is being revised and expanded on a regular basis.}}}}
+
+\newcommand{\experimental}{\vfill\textcolor{darkergray}{\textsf{\textbf{The
+        entities in this module are experimental and are subject to change.}}}}
   
 \newcommand{\inline}{This function is compiled in-line for top performance.}
 
@@ -341,6 +344,9 @@ and \xsitelink{Hyperlatex}{http://hyperlatex.sourceforge.net/} 2.9a.
 
 \newcommand{\instanceevfnsnyi}{Unit-instance-specific event functions
   are not yet implemented in GBBopen.}
+
+\newcommand{\instancemirroringnyi}{Unit-instance-specific mirroring
+  is not yet implemented in GBBopen.}
 
 \newcommand{\instancekstriggersnyi}{Unit-instance-specific \glref{KS}
   triggers are not yet implemented in GBBopen.}
@@ -1304,7 +1310,7 @@ using a non-list (``spread'') representation.  For example:
 \W\supp
 \begin{example}
   > :gbbopen-test :propagate :create-dirs
-       ...
+     \textrm{\ldots{}}
   >
 \end{example}
 
@@ -1319,7 +1325,7 @@ spread notation.  For example:
 \W\supp\notpretop
 \begin{example}
   > (:gbbopen-test :propagate :create-dirs)
-       ...
+     \textrm{\ldots{}}
   >
 \end{example}
 %
@@ -1344,11 +1350,11 @@ modules can be compiled by entering the following REPL command:
   ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.lisp
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/modules.lisp
   ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
   ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
-       ...
+     \textrm{\ldots{}}
   ;;; GBBopen modules compilation completed.
   \textrm{[Common Lisp will exit]}}
 \end{smallexample}
@@ -1390,17 +1396,17 @@ compile all GBBopen modules.
   ;; Loading \var{<install-dir>\/}/initiate.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/startup.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.lisp
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/modules.lisp
   ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
   ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
-       ...
+     \textrm{\ldots{}}
   ;; Defining an ASDF defsystem for each Module Manager module...
   cl-user>}
 \end{smallexample}
@@ -1415,17 +1421,17 @@ or when ASDF is integrated with Common Lisp's \textbf{require}:
   ;; Loading \var{<install-dir>\/}/initiate.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/startup.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.lisp
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/modules.lisp
   ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
   ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
-       ...
+     \textrm{\ldots{}}
   ;; Defining an ASDF defsystem for each Module Manager module...
   cl-user>}
 \end{smallexample}
@@ -5753,12 +5759,12 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \begin{functiondoc}{Function}{list-length-1-p}{%
     \var{list\/} 
     \nobr{\returns{} \var{boolean\/}}}
-\index{length!testing a list for length = 1}%
-\index{list!testing length = 1}%
+\index{length!testing a list for length $=$ 1}%
+\index{list!testing length $=$ 1}%
 
 \fnsyntax
 
-\fnpurpose Fast length = 1 test of a list.
+\fnpurpose Fast length $=$ 1 test of a list.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -5801,12 +5807,12 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \begin{functiondoc}{Function}{list-length-2-p}{%
     \var{list\/}
     \nobr{\returns{} \var{boolean\/}}}
-\index{length!testing a list for length = 2}%
-\index{list!testing length = 2}%
+\index{length!testing a list for length $=$ 2}%
+\index{list!testing length $=$ 2}%
 
 \fnsyntax
 
-\fnpurpose Fast length = 2 test of a list.
+\fnpurpose Fast length $=$ 2 test of a list.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -5849,12 +5855,12 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \begin{functiondoc}[list-length-gt]{Function}{list-length>}{%
     \var{n list\/}
     \nobr{\returns{} \var{boolean\/}}}
-\index{length!testing a list for length > $n$}%
-\index{list!testing length > $n$}%
+\index{length!testing a list for length $>$ $n$}%
+\index{list!testing length $>$ $n$}%
 
 \fnsyntax
 
-\fnpurpose Fast length > $n$ test of a list.
+\fnpurpose Fast length $>$ $n$ test of a list.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -5867,7 +5873,7 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
-\fnreturns True if \var{list\/} has length > $n$; \nil{} otherwise.
+\fnreturns True if \var{list\/} has length $>$ $n$; \nil{} otherwise.
 
 \begin{alsos}{list-length-2-p}
 \also[list-length>]
@@ -5899,12 +5905,12 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \begin{functiondoc}[list-length-gt-1]{Function}{list-length>1}{%
     \var{list\/}
     \nobr{\returns{} \var{boolean\/}}}
-\index{length!testing a list for length > 1}%
-\index{list!testing length > 1}%
+\index{length!testing a list for length $>$ 1}%
+\index{list!testing length $>$ 1}%
 
 \fnsyntax
 
-\fnpurpose Fast length > 1 test of a list.
+\fnpurpose Fast length $>$ 1 test of a list.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -5916,7 +5922,7 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
-\fnreturns True if \var{list\/} has length > 1; \nil{} otherwise.
+\fnreturns True if \var{list\/} has length $>$ 1; \nil{} otherwise.
 
 \begin{alsos}{list-length-2-p}
 \also[list-length>]
@@ -5946,12 +5952,12 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \begin{functiondoc}[list-length-gt-2]{Function}{list-length>2}{%
     \var{list\/}
     \nobr{\returns{} \var{boolean\/}}}
-\index{length!testing a list for length > 2}%
-\index{list!testing length > 2}%
+\index{length!testing a list for length $>$ 2}%
+\index{list!testing length $>$ 2}%
 
 \fnsyntax
 
-\fnpurpose Fast length > 2 test of a list.
+\fnpurpose Fast length $>$ 2 test of a list.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -5963,7 +5969,7 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
 
-\fnreturns True if \var{list\/} has length > 2; \nil{} otherwise.
+\fnreturns True if \var{list\/} has length $>$ 2; \nil{} otherwise.
 
 \begin{alsos}{list-length-2-p}
 \also[list-length>]
@@ -9020,7 +9026,7 @@ The following \code{\glref{pseudo-probability}} operators are provided:
   {\var{pseudo-probability-numerator\/}
     \returns{} \var{reciprocal\/}}
 
-  \fnpurpose Returns the quotient of dividing
+\fnpurpose Returns the quotient of dividing
   \nobr{\var{pseudo-probability-numerator\/}} by all of the
   \nobr{\var{pseudo-probability-denominators}}, performing
   \glref{pseudo-probability}-normalization in the process.
@@ -9942,7 +9948,7 @@ description.
 \fnsyntax
 
 \fnpurpose Parse and then encode a date-and-time specification string to a
-\glref{Universal~Time}
+\glref{Universal~Time}.
 
 \fnpackage \code{:gbbopen-tools} 
 
@@ -12376,7 +12382,7 @@ use.
 
 \fnsyntax
 
-\fnpurpose Return number of entries stored in \var{llrb-tree} 
+\fnpurpose Return number of entries stored in \var{llrb-tree}.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -12419,7 +12425,7 @@ use.
 
 \fnsyntax
 
-\fnpurpose Delete the entry associated with a given key
+\fnpurpose Delete the entry associated with a given key.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -12465,7 +12471,7 @@ try deleting it a second time:
 
 \fnsyntax
 
-\fnpurpose Determine if an object is an LLRB tree
+\fnpurpose Determine if an object is an LLRB tree.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -12508,7 +12514,7 @@ try deleting it a second time:
 \fnsyntax
 
 \fnpurpose Return the \glref{three-way~comparison~test} function used in
-\var{llrb-tree}
+\var{llrb-tree}.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -12554,7 +12560,7 @@ try deleting it a second time:
 
 \fnsyntax
 
-\fnpurpose Return the value associated with a given key
+\fnpurpose Return the value associated with a given key.
 
 \fnsetf
 \fnsetfsyntax{llrb-tree-value}{\var{key llrb-tree\/}
@@ -13053,7 +13059,9 @@ Define an atomic \nobr{\textbf{\entlink{nsorted-insert}}}:
     \nobr{\returns{} \var{new-place-value\/}}}
 \index{atomic operations!decf\&@\textbf{decf\&}}%
 
-\fnsyntax \fnpurpose Decrement the \glref{fixnum} value stored in
+\fnsyntax 
+
+\fnpurpose Decrement the \glref{fixnum} value stored in
 \nobr{\var{place\/}} as an \glref{atomic~operation}.
 
 \fnpackage \code{:portable-threads}
@@ -14064,7 +14072,8 @@ the created \glref{condition-variable} instance.  However, using
 
 \fnsyntax
 
-\fnpurpose Force \var{thread\/} to apply \nobr{\var{function\/}} to \nobr{\var{args\/}}
+\fnpurpose Force \var{thread\/} to apply \nobr{\var{function\/}} to
+\nobr{\var{args\/}}.
 
 \fnpackage \code{:portable-threads}
 
@@ -14133,10 +14142,10 @@ Calls \code{sleep} with \var{seconds\/} or \nobr{\textbf{\entlink{nearly-forever
 \W\supp
 \begin{example}
   > (sleep-nearly-forever)    ; sleep for a very long time
-        ...
+     \textrm{\ldots{}}
   > (sleep-nearly-forever     ; sleep as long as the above
        (* 2 \entlink{nearly-forever-seconds}))
-        ...
+     \textrm{\ldots{}}
   >
 \end{example}
 
@@ -16768,7 +16777,7 @@ resources.
 \fnargs
 \begin{args}{socket-stream}
 \arg[socket-stream] A socket stream
-\arg[do-not-resolve] A \glref{generalized~boolean} (default is \nil)
+\arg[do-not-resolve] A \glref{generalized~boolean} (defaulto is \nil)
 \arg[hostname] A string
 \arg[port] An integer
 \end{args}
@@ -17206,7 +17215,7 @@ available and has been passed to the preferred browser; no value otherwise.
 
 \bfindexit{run-external-program}%
 \fnpurpose Close a stream created by
-\nobr{\textbf{\entlinknoex{run-external-program}}}
+\nobr{\textbf{\entlinknoex{run-external-program}}}.
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -20470,7 +20479,7 @@ as a \glref{link-pointer~object}---has no effect on the existing link pointer:
            (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
                :link-instance support-hyp
                :value 0.9))
-  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>
   > (supporting-hyps-of unit-instance)
   (#<hyp 231 (1488 7405) 0.63 [0..8]>)
   >
@@ -20486,9 +20495,9 @@ This time, add a \glref{link-pointer~object} as a new pointer:
            (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
                :link-instance support-hyp
                :value 0.9))
-  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>
   > (supporting-hyps-of unit-instance)
-  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>)
   >
 \end{example}
 
@@ -20603,9 +20612,9 @@ a link slot, adding a \glref{link-pointer-object} link to that same \code{hyp} u
            (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
                :link-instance support-hyp
                :value 0.9))
-  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>
   > (supporting-hyps-of unit-instance)
-  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>)
   > (value-of *)
   0.9
   >
@@ -20616,14 +20625,14 @@ Replace the existing \glref{link-pointer-object} pointer with one that has a dif
 \W\supp\notpretop
 \begin{example}
   > (supporting-hyps-of unit-instance)
-  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>)
   > (link-setf (supporting-hyps-of unit-instance) 
            (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
                :link-instance support-hyp
                :value 0.94))
-  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>
   > (supporting-hyps-of unit-instance)
-  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>)
   > (value-of *)
   0.94
   >
@@ -20635,11 +20644,11 @@ an existing \glref{link-pointer~object}:
 \W\supp\notpretop
 \begin{example}
   > (supporting-hyps-of unit-instance)
-  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>)
   > (setf (value-of *) 0.96)
   0.96
   > (supporting-hyps-of unit-instance)
-  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>)
+  (#<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>)
   > (value-of *)
   0.96
   >
@@ -20830,7 +20839,7 @@ The above, but this time showing that the \code{support-hyp} can be a \glref{lin
   > (unlinkf (supporting-hyps-of unit-instance) 
              (\entlink{make-instance} '\link{link-ptr-with-value}{link-ptr-class}
                  :link-instance support-hyp))
-  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>>
+  #<link-ptr-with-value #<hyp 231 (1488 7405) 0.63 [0..8]>
   > (supporting-hyps-of unit-instance)
   nil
   >
@@ -21719,7 +21728,7 @@ Resuming event printing does not enable event printing that is disabled.
 
 \fnsyntax
 
-\fnpurpose Signal an event
+\fnpurpose Signal an event.
 
 \fnpackage \code{:gbbopen}
 
@@ -26562,6 +26571,7 @@ and then load a blackboard repository that was saved previously:
 \W\supp
 \begin{example}
   > :tutorial-example :noautorun 
+     \textrm{\ldots{}}
   > (load-blackboard-repository "tutorial")
   ;; 35 temporarily forward-referenced instances (peak count)
   #P"\var{<homedir>\/}/tutorial.bb"
@@ -26910,7 +26920,7 @@ Write the binary value of slot \code{song} in \glref{unit~instances} of
 \fnsyntax 
 
 \fnpurpose Save the blackboard repository (all \glref{unit~instances} and
-\glref{space~instances} to a file.
+\glref{space~instances}) to a file.
 
 \fnpackage \code{:gbbopen}
 
@@ -27902,6 +27912,734 @@ Show the control shell's pending \glref{KSAs} queue (early in a
 \end{functiondoc}
 
 %% ========================================================================
+%%  GBBopen Extensions
+
+% Clear subsubentities indicator
+\W\renewcommand{\subsubentities}{}
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\cleardoublepage
+\W\xname{ref-GBBopen-extensions-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+\T\renewcommand{\headrulewidth}{0pt}
+\section{GBBopen Extensions}
+\label{sec:gbbopen-extensions}%
+%
+GBBopen extension \glref{modules} provide support for \glref{journaling} and
+for network streaming between GBBopen \glref{streamer~nodes}. Documentation
+for these entities is arranged into the following
+\texorhtml{sections}{groups}:
+%
+\begin{tightitemize}
+\item \refsectionlink{streaming entities}{sec:streaming}
+\item \refsectionlink{journaling entities}{sec:journaling}
+\item \refsectionlink{networking-streaming entities}{sec:network-streaming}
+\end{tightitemize}
+
+\T\clearpage
+\T\renewcommand{\headrulewidth}{0.01pt}
+
+%% ------------------------------------------------------------------------
+
+% Set subsubentities indicator
+\W\renewcommand{\subsubentities}{1}
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-streaming-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{Streaming}
+\label{sec:streaming}%
+
+\index{module!:streaming@\code{:streaming}}%
+\index{:streaming@\code{:streaming} module}%
+%
+The \code{:streaming} \glref{module} provides common entities used with
+\refsectionlink{journaling}{sec:journaling} and
+\refsectionlink{network streaming}{sec:network-streaming}.
+
+\begin{center}
+\experimental\\
+\end{center}
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{add-mirroring}%
+  {\var{streamer\/} 
+    \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+    \nobr{\code{\&key} \var{slot-names paths\/}}}
+\index{mirroring!adding}%
+
+%% Although the [] syntax is normally used for macros to denote optional
+%% arguments, here we use them rather than &optional because of the 
+%% keyword-driven argument parsing used in this function.
+
+\fnsyntax
+
+\fnpurpose Add mirroring of one or more \glref{unit~classes}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{unit-class-or-instance-specifier}
+\arg[streamer] A \glref{streamer}
+\arg[unit-class-or-instance-specifier] An 
+\glref{extended~unit-class~or~instance~specification} 
+(see below; default is \code{t})
+\arg[slot-names\/ \textrm{or} slot-name \T\hfil] A slot-name or list
+of slot-names (default is \code{t})
+\arg[paths\/ \textrm{or} path \T\hfil] A \glref{space-instance~path}
+regular expression 
+(default is \code{(*)})
+\end{args}
+
+\fndsyntax
+\W\supp\tabletop
+\unitclassinstancespec
+\subclassingspec
+
+\fndescription 
+The \var{paths\/} argument is either the symbol \code{t} (indicating
+all \glref{space~instances}) or a list representing a regular
+expression where the following reserved symbols are interpreted as
+follows:
+\spaceinstanceregexp
+
+\begin{alsos}{remove-mirroring}
+\also[remove-mirroring]
+\end{alsos}
+
+\fnexample 
+%
+Add full mirroring of \code{hyp} \glref{unit~instances} to
+\var{streamer\/}:
+%
+\W\supp
+\begin{example}
+  (add-mirroring streamer 'hyp)
+\end{example}
+
+\fnnote
+\instancemirroringnyi
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{stream-instance}{\var{instance streamer\/}
+    \nobr{\returns{} \var{instance\/}}}
+\index{streaming!an instance}%
+\index{journaling!an instance}%
+\index{network streaming!an instance}%
+\index{instance!writing to a streamer}% 
+
+\fnsyntax 
+
+\fnpurpose Write a \glref{unit~instance} (or \glref{space~instance}) to a
+\glref{streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{instance}
+\arg[instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[streamer] A \glref{streamer}
+\end{args}
+
+\fnreturns The \var{instance}.
+
+\begin{alsos}{stream-instances}
+\also[stream-instances]
+\end{alsos}
+
+\fnexample
+\bfindexit{find-instance-by-name}
+% 
+Stream a \code{hyp} unit instance to \glref{streamer} \code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  > (stream-instance (\entlink{find-instance-by-name} 419 'hyp) *streamer*)
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{stream-instances}{\var{instances streamer\/}
+    \nobr{\returns{} \var{instances\/}}}
+\index{streaming!multiple instances}%
+\index{journaling!multiple instances}%
+\index{network streaming!multiple instances}%
+\index{instance!writing to a streamer}% 
+
+\fnsyntax 
+
+\fnpurpose Write a list of \glref{unit~instances} (and
+\glref{space~instances}) to a \glref{streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{instance}
+\arg[instances] A list of \glref{unit~instances} (and \glref{space~instances})
+\arg[streamer] A \glref{streamer}
+\end{args}
+
+\fnreturns The \var{instances}.
+
+\begin{alsos}{stream-instance}
+\also[stream-instance]
+\end{alsos}
+
+\fnexample
+\bfindexit{find-instances}%
+\bfindexit{find-space-instance-by-path}%
+% 
+Stream the results of a blackboard retrieval to \glref{streamer}
+\code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  > (stream-instances (\entlink{find-instances} 'hyp (\entlink{find-space-instance-by-path} '(bb hyps)) 
+      '(and (= x 1835) (> belief .8)))
+  (#<hyp 319 (1835 8419) 0.91 [4..12]>
+   #<hyp 331 (1835 8419) 0.88 [15..30]>
+   #<hyp 335 (1835 8419) 0.92 [15..35]>
+   #<hyp 183 (1835 4791) 0.82 [0..35]>
+   #<hyp 233 (1835 4791) 0.89 [5..35]>
+   #<hyp 419 (1835 4791) 0.85 [5..35]>)
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{remove-mirroring}%
+  {\var{streamer\/} 
+    \nobr{[\var{unit-class-or-instance-specifier\/}]]}
+    \nobr{\code{\&key} \var{slot-names paths\/}}}
+\index{mirroring!removing}%
+
+%% Although the [] syntax is normally used for macros to denote optional
+%% arguments, here we use them rather than &optional because of the 
+%% keyword-driven argument parsing used in this function.
+
+\fnsyntax
+
+\fnpurpose Remove mirroring of one or more \glref{unit~classes}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{unit-class-or-instance-specifier}
+\arg[streamer] A \glref{streamer}
+\arg[unit-class-or-instance-specifier] An 
+\glref{extended~unit-class~or~instance~specification} 
+(see below; default is \code{t})
+\arg[slot-names\/ \textrm{or} slot-name \T\hfil] A slot-name or list
+of slot-names (default is \code{t})
+\arg[paths\/ \textrm{or} path \T\hfil] A \glref{space-instance~path}
+regular expression 
+(default is \code{(*)})
+\end{args}
+
+\fndsyntax
+\W\supp\tabletop
+\unitclassinstancespec
+\subclassingspec
+
+\fndescription 
+The \var{paths\/} argument is either the symbol \code{t} (indicating
+all \glref{space~instances}) or a list representing a regular
+expression where the following reserved symbols are interpreted as
+follows:
+\spaceinstanceregexp
+
+\begin{alsos}{add-mirroring}
+\also[add-mirroring]
+\end{alsos}
+
+\fnexample 
+%
+Remove full mirroring of \code{hyp} \glref{unit~instances} to
+\var{streamer\/}:
+%
+\W\supp
+\begin{example}
+  (remove-mirroring streamer 'hyp)
+\end{example}
+
+\fnnote
+\instancemirroringnyi
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-journaling-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+
+\subsection{Journaling}
+\label{sec:journaling}%
+
+\index{module!:streaming@\code{:streaming}}%
+\index{:streaming@\code{:streaming} module}%
+%
+Journal writing and reading is also provided by the \code{:streaming} \glref{module}.
+
+\begin{center}
+\experimental\\
+\end{center}
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{load-journal}{\var{pathname\/}
+    \code{\&key} 
+    \var{\nobr{class-name-translations}
+      \nobr{coalesce-strings}
+      \nobr{disable-events}
+      \nobr{estimated-peak-forward-references}
+      \nobr{external-format}
+      \nobr{readtable}
+      \nobr{read-eval}
+      \nobr{retain-classes}
+      \nobr{retain-event-functions}
+      \nobr{retain-event-printing\/}}
+    \nobr{\returns{} \var{pathname, saved-time, saved-value\/}}}
+\index{journal!loading from a file}%
+\index{loading!a journal from a file}% 
+\index{reading!a journal from a file}% 
+
+\fnsyntax 
+
+\fnpurpose Load a journal file.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{estimated-peak-forward-references}
+\arg[pathname] A \glref{pathname~designator}
+\arg[class-name-translations] An \glref{association~list} (default is \nil)
+\arg[coalesce-strings] A \glref{generalized~boolean} (default is \nil)
+\arg[disable-events] A \glref{generalized~boolean} (default is \code{t})
+\arg[estimated-peak-forward-references] An integer (default is
+  \nobr{\code{*default-estimated-peak-forward-references*}})
+\arg[external-format] An external-file-format designator (default is
+  \nobr{\code{:default}})
+\arg[readtable] A readtable (default is 
+  \nobr{\code{*reading-saved/sent-objects-readtable*}})
+\arg[read-eval] A \glref{generalized~boolean} (default is \nil)
+\arg[retain-classes] An \glref{extended~unit-classes~specification}
+  (see below)
+\arg[retain-event-functions] A \glref{generalized~boolean} (default is \nil)
+\arg[retain-event-printing] A \glref{generalized~boolean} (default is \nil)
+\arg[pathname] A \glref{pathname}
+\arg[saved-time] A \glref{Universal~Time}
+\arg[saved-value] An object
+\end{args}
+
+\fnreturns Three values: the pathname of the journal
+file, the time when the journal was started, and the
+save value specified when the journal was created. 
+
+\fndescription 
+%
+If \var{pathname\/} does not specify a file type, the type
+\code{jnl} is added to it.  Then, \nobr{\code{(user-homedir-pathname)}} is used
+to supply any missing components to \nobr{\var{pathname}}.
+
+The \nobr{\var{class-name-translations\/}} \glref{association~list}, if
+specified, should contain \glref{conses} of the form:\\
+%
+~~~~~~~~\nobr{\texttt{(\var{class-name\/} . \var{new-class-name\/})}}\\
+%
+for any \glref{class} translations that should occur during repository
+loading.
+
+If \var{coalesce-strings\/} is true, loaded strings that are
+\nobr{\code{equal}} become shared (\code{eq}).  This coalescing is performed
+using a temporary hash table whose initial size can be specified by providing
+an integer value for \nobr{\var{coalesce-strings}}.  If a hash table is
+provided as the value for \nobr{\var{coalesce-strings}}, it is used in place
+of the temporary hash table.
+
+\glref{Unit~instances} that are referenced before they are defined are
+recorded using a temporary hash table whose initial size can be specified by
+providing an integer value for \nobr{\var{estimated-peak-forward-references}}.
+
+\begin{alsos}{with-reading-saved/sent-objects-block}
+\also[make-journal-streamer]
+\also[save-blackboard-repository]
+\also[with-reading-saved/sent-objects-block]
+\end{alsos}
+
+\fnexample
+%
+Load the GBBopen Tutorial Example application (without running it)
+and then load a journal that was written previously:
+%
+\W\supp
+\begin{example}
+  > :tutorial-example :noautorun 
+     \textrm{\ldots{}}
+  > (load-journal "tutorial")
+  ;; 35 temporarily forward-referenced instances (peak count)
+  #P"\var{<homedir>\/}/tutorial.jnl"
+  3429178245
+  #<path 1>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-journal-streamer}%
+  {\var{pathname\/}
+    \code{\&key} 
+    \var{\nobr{external-format}
+      package
+      \nobr{read-default-float-format}
+      value\/} 
+    \nobr{\returns{} \var{journal-streamer\/}}}
+\index{journal!writing to a file}%
+\index{writing!a journal to a file}% 
+
+\fnsyntax 
+
+\fnpurpose Create a journal streamer to record changes made to the blackboard
+repository (all \glref{unit~instances} and \glref{space~instances}) to a file.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{read-default-float-format}
+\arg[pathname] A \glref{pathname~designator}
+\arg[external-format] An external-file-format designator (default is
+  \nobr{\code{:default}})
+\arg[package] A \glref{package~designator} indicating the package to be used
+when writing the journal and when loading the journal file (default is
+\nobr{\code{:common-lisp-user}})
+\arg[read-default-float-format] One of the atomic type specifiers
+\nobr{\code{short-float}}, \nobr{\code{single-float}},
+\nobr{\code{double-float}}, or \nobr{\code{long-float}} to be used when writing
+the journal and loading the journal file (default is \nobr{\code{single-float}})
+\arg[value] An object to be saved with the journal and returned when the
+journal file is loaded (default is \nil)
+\arg[journal-streamer] A \glref{journal~streamer}
+\end{args}
+
+\fnreturns The created \glref{journal~streamer}.
+
+\fndescription If \var{pathname\/} does not specify a file type, the type
+\code{jnl} is added to it.  Then, \nobr{\code{(user-homedir-pathname)}} is used
+to supply any missing components to \nobr{\var{pathname}}.
+
+The size of the journal file can be reduced by specifying a
+\nobr{\var{package\/}} containing the majority of the symbols that are written
+to the file.
+
+A \nobr{\textbf{\entlink{with-saving/sending-block}}}, with the
+\nobr{\var{package\/}} and \nobr{\var{read-default-float-format\/}} values, is
+established when writing to the journal.
+
+\begin{alsos}{omitted-slots-for-saving/sending}
+\also[load-journal]
+\also[omitted-slots-for-saving/sending]
+\also[stream-instance]
+\also[save-blackboard-repository]
+\also[with-saving/sending-block]
+\end{alsos}
+
+\fnexample
+%
+Load the \code{:streaming} module followed by the GBBopen Tutorial Example
+application (without running it). Then write a journal file recording what
+occurred when taking a walk:
+%
+\W\supp
+\begin{example}
+  > :streaming
+     \textrm{\ldots{}}
+  > :tutorial-example :noautorun
+     \textrm{\ldots{}}
+  > (defparameter *streamer*
+      (make-journal-streamer "tutorial" :package ':tutorial))
+  *streamer*
+  > *streamer*
+  #<journal-streamer "/Users/cork/tutorial.bb">
+  > (add-mirroring *streamer* 'standard-space-instance)
+  nil
+  > (add-mirroring *streamer* 'path)
+  nil
+  > (add-mirroring *streamer* 'location)
+  nil
+  > (take-a-walk)
+  ;; Control shell 1 started
+     \textrm{\ldots{}}
+  ;; Explicit :stop issued by KS print-walk-ks
+  ;; Control shell 1 exited: 41 cycles completed
+  ;; Run time: 0.01 seconds
+  ;; Elapsed time: 0 seconds
+  :stop
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\T\markright{}%
+\T\pagestyle{plain}
+\T\clearpage
+\W\xname{ref-network-streaming-entities}
+\T\pagestyle{fancy}
+\T\thispagestyle{fancybottom}
+\T\global\def\fnlastname{ }%
+\subsection{Network Streaming}
+\label{sec:network-streaming}%
+
+\index{module!:network-streaming@\code{:network-streaming}}%
+\index{:network-streaming@\code{:network-streaming} module}%
+%
+The \code{:network-streaming} \glref{module} provides
+network streaming entities.
+
+\begin{center}
+\experimental\\
+\end{center}
+
+\W\entities
+\T\clearpage
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}[default-network-stream-server-port-var]{Variable}%
+  {*default-network-stream-server-port*}{}%
+
+\fnsyntax
+
+\fnpurpose Specifies the default service port for the network stream server at
+a \glref{streamer~node}.
+
+\fnpackage \code{:gbbopen} 
+
+\fnmodule \code{:network-streaming}
+
+\fnvaluetype An integer or a string specifying the service port
+
+\fninitialvalue \code{1968}
+
+\begin{alsos}{define-streamer-node}
+\also[define-streamer-node]
+\end{alsos}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{define-streamer-node}{%
+    \nobr{\var{name\/}}
+    \code{\&key} 
+    \var{host
+      port
+      documentation
+      \nobr{external-format}
+      package
+      \nobr{read-default-float-format}
+      }
+    \nobr{\returns{} \var{streamer-node\/}}}
+\index{streamer node!defining/redefining}%
+\index{defining!a streamer node}%
+\index{redefining!a streamer node}%
+
+\fnsyntax
+
+\fnpurpose Define or redefine a \glref{streamer~node}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:network-streaming}
+
+\fnargs
+\begin{args}{read-default-float-format}
+\arg[name] An object naming the streamer node (not evaluated)
+\arg[host] A 32-bit internet address or a string specifying the remote host
+(default \code{"localhost"})
+\arg[port] An integer or a string specifying the service port (default
+is \nobr{\textbf{\entlink{*default-network-stream-server-port*}}})
+\arg[documentation] A documentation string or \nil (default is \nil)
+\arg[passphrase] A string or \nil (default is \nil)
+\arg[external-format] An external-file-format designator (default is
+  \nobr{\code{:default}})
+\arg[package] A \glref{package~designator} indicating the package to be used
+  when establishing a streaming connection to \var{node\/} (default is
+  \nobr{\code{:common-lisp-user}})
+\arg[read-default-float-format] One of the atomic type specifiers
+  \nobr{\code{short-float}}, \nobr{\code{single-float}},
+  \nobr{\code{double-float}}, or \nobr{\code{long-float}} to be used when
+  establishing a streaming connection to \var{streamer-node\/} (default is
+  \nobr{\code{single-float}})
+\end{args}
+
+\fnreturns The newly defined or modified \glref{streamer~node} object.
+
+\begin{alsos}{*default-network-stream-server-port*}
+\also[*default-network-stream-server-port*]
+\also[open-network-streamer]
+\end{alsos}
+
+\fnexample
+%
+Define a streamer node:
+%
+\W\supp
+\begin{example}
+  > (define-streamer-node "me"
+      :host "127.0.0.1"
+      :package ':gbbopen-user
+      :passphrase "Who goes there?"
+      :authorized-nodes '("you"))
+ #<streamer-node "me">
+ >
+\end{example}
+
+\fnnote Modifications to a \glref{streamer~node} object apply the next time
+that a \glref{network~streamer} is created for the \glref{streamer~node}---the
+changes to not affect an established network streamer.
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+ 
+\begin{functiondoc}{Function}{find-streamer-node}{\var{name\/} 
+    \nobr{\returns{} \var{streamer-node\/} or \nil}}
+\index{streamer node!finding by name}%
+
+\fnsyntax
+
+\fnpurpose Return a \glref{streamer~node} given its name.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:network-streaming}
+
+\fnargs
+\begin{args}{streamer-node}
+\arg[name] An object naming the \glref{streamer~node}.
+\arg[errorp] A \glref{generalized~boolean} (default is \nil) 
+\arg[streamer-node] A \glref{streamer~node}
+\end{args}
+
+\fnreturns The \glref{streamer~node} named \nobr{\var{name\/}}
+or \nil, if none has been defined.
+
+\fnexamples
+%
+Return the streamer node named \nobr{\code{"master"}}:
+%
+\W\supp
+\begin{example}
+  > (find-streamer-node "master")
+  #<streamer-node "master">
+\end{example}
+%
+Find a non-existent streamer node:
+% 
+\W\supp\notpretop
+\begin{example}
+  > (find-streamer-node "missing")
+  nil
+  > (find-streamer-node "missing" 't)
+  Error: No streamer node named "missing"
+  >>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+ 
+\begin{functiondoc}{Function}{open-network-streamer}%
+  {\var{streamer-node local-streamer-node\/} 
+    \nobr{\code{\&rest} \var{initargs\/}}
+    \nobr{\returns{} \var{network-streamer\/}}}
+\index{network streamer!opening a connection to}%
+
+\fnsyntax
+
+\fnpurpose Establish a connection to an external \glref{streamer~node} (from
+the specified local \glref{streamer~node}).
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:network-streaming}
+
+\fnargs
+\begin{args}{local-streamer-node}
+\arg[streamer-node] A non-local \glref{streamer~node} or its name
+\arg[local-streamer-node] A local \glref{streamer~node} or its name
+\arg[initargs] An \glref{initialization~argument~list}
+\arg[network-streamer] A \glref{network~streamer}
+\end{args}
+
+\fnreturns An open \glref{network~streamer} (either existing or newly
+created---see below).
+
+\fndescription If an open \glref{network~streamer} exists
+between \var{streamer-node\/} and \var{local-streamer-node\/}, 
+that \glref{network~streamer} is returned.
+
+The class of the created \glref{network~streamer} is specified by
+the \code{streamer-class} slot of \var{streamer-node}.
+
+\fnexamples
+%
+Return a \glref{network~streamer} connecting \glref{streamer~node} \code{"me"}
+and \glref{streamer~node} \code{"you"}:
+%
+\W\supp
+\begin{example}
+  > (open-network-streamer "me" "you")
+  #<network-streamer 127.0.0.1:1969>
+\end{example}
+
+\end{functiondoc}
+
+%% ========================================================================
 %%  Agenda Control Shell
 
 % Clear subsubentities indicator
@@ -27970,7 +28708,7 @@ Abort the currently executing KSA::
 
 \fnsyntax
 
-\fnpurpose Returns the cycle number when a \glref{KSA} was activated
+\fnpurpose Returns the cycle number when a \glref{KSA} was activated.
 
 \fnmethods
 \fnalternate{activation-cycle-of}{\code{(}\var{ksa\/} \code{ksa)}
@@ -28020,7 +28758,7 @@ Return the activation cycle of \code{ksa}:
 \fnsyntax
 
 \fnpurpose Return the trigger \glref{unit~instances} of a \glref{KSA}, an
-\glref{event}, or a list of \glref{KSAs} or \glref{events}
+\glref{event}, or a list of \glref{KSAs} or \glref{events}.
 
 \fnmethods
 \fnalternate{collect-trigger-instances}%
@@ -29036,7 +29774,7 @@ Show the control shell's pending \glref{KSAs} queue (early in a
 
 \fnsyntax
 
-\fnpurpose Returns the cycle number when a \glref{KSA} was executed
+\fnpurpose Returns the cycle number when a \glref{KSA} was executed.
 
 \fnmethods
 \fnalternate{execution-cycle-of}{\code{(}\var{ksa\/} \code{ksa)}
@@ -29127,7 +29865,7 @@ executing control shell.
 
 \fnsyntax
 
-\fnpurpose Return a ~\glref{KS} \glref{unit~instance} given its name
+\fnpurpose Return a \glref{KS} \glref{unit~instance} given its name.
 
 \fnpackage \code{:agenda-shell}
 
@@ -29191,7 +29929,7 @@ The class \textbf{ks} is the default \glref{class} of
 \fnsyntax
 
 \fnpurpose Determine if the specified \glref{KS} is enabled for
-execution
+execution.
 
 \fnsetf
 \fnsetfsyntax{ks-enabled-p}{\var{ks\/}}{\var{boolean\/}}
@@ -29263,7 +30001,7 @@ Check once again:
 \fnsyntax
 
 \fnpurpose Returns the \glref{knowledge~source} (KS) \glref{unit~instance}
-of a \glref{KSA}
+of a \glref{KSA}.
 
 \fnmethods
 \fnalternate{ks-of}{\code{(}\var{ksa\/} \code{ksa)}
@@ -29427,7 +30165,7 @@ Show the control shell's obviated \glref{KSAs} queue (early in a
 
 \fnsyntax
 
-\fnpurpose Returns the cycle number when a \glref{KSA} was \glref{obviated}
+\fnpurpose Returns the cycle number when a \glref{KSA} was \glref{obviated}.
 
 \fnmethods
 \fnalternate{obviation-cycle-of}{\code{(}\var{ksa\/} \code{ksa)}
@@ -29588,7 +30326,7 @@ by the Agenda Shell to order \glref{pending~KSAs}.
 
 \fnsyntax
 
-\fnpurpose Accesses the rating of a \glref{KSA}
+\fnpurpose Accesses the rating of a \glref{KSA}.
 
 \fnsetf
 \fnsetfsyntax{rating-of}{\var{ksa\/}}{\var{rating}}
@@ -29739,7 +30477,7 @@ Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 
 \fnsyntax
 
-\fnpurpose Return the sole trigger \glref{event} of a \glref{KSA}
+\fnpurpose Return the sole trigger \glref{event} of a \glref{KSA}.
 
 \fnmethods
 \fnalternate{sole-trigger-event-of}%
@@ -29791,7 +30529,7 @@ Return the (sole) trigger \glref{event} of a \glref{KSA}:
 \fnsyntax
 
 \fnpurpose Return the trigger \glref{unit~instance} of a \glref{KSA},
-\glref{event}, or a list of \glref{KSAs} or \glref{events}
+\glref{event}, or a list of \glref{KSAs} or \glref{events}.
 
 \fnmethods
 \fnalternate{sole-trigger-instance-of}%

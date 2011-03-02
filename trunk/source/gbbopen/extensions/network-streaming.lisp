@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 11:24:41 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  2 16:32:29 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -38,10 +38,10 @@
             *default-network-stream-server-port* ; not yet documented
             *remove-mirroring-when-streamer-closes* ; not yet documented
             close-network-streamer      ; not yet documented
-            define-streamer-node        ; not yet documented
+            define-streamer-node
             ensure-streamer-node        ; not yet documented
             find-or-make-network-streamer ; old name, remove soon
-            find-streamer-node          ; not yet documented
+            find-streamer-node
             handle-stream-connection-exiting ; not yet documented
             host-of                     ; not yet documented
             kill-network-stream-server  ; not yet documented
@@ -49,7 +49,7 @@
             network-stream-receiver     ; not yet documented
             network-stream-server-running-p ; not yet documented
             network-streamer            ; class-name (not yet documented)
-            open-network-streamer       ; not yet documented
+            open-network-streamer
             port-of                     ; not yet documented
             start-network-stream-server ; not yet documented
             streamer-node)))            ; class-name (not yet documented)
@@ -70,8 +70,8 @@
    (host :initform "localhost")
    (port :initform *default-network-stream-server-port*)
    (documentation :initform nil)
-   (passphrase :initform nil)
-   (package :initform ':common-lisp-user)
+   (passphrase :type (or simple-string null) :initform nil)
+   (package :initform (ensure-package ':common-lisp-user))
    (external-format :initform ':default)
    (read-default-float-format :initform *read-default-float-format*)
    (streamer-class :initform 'network-streamer)

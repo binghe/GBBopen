@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Fri Feb 18 09:51:15 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Mar  2 16:49:24 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -568,6 +568,24 @@ and end value representing the set of real numbers between them, inclusive.
 
 %% ------------------------------------------------------------------------
 
+\glent[journal~streamer] 
+\index{journal streamer}%
+\index{streamer!journal}%
+%
+An object that is used as a saving destination for
+\glref{journaling} functions.
+
+%% ------------------------------------------------------------------------
+
+\glent[journaling] 
+\index{journaling}%
+%
+Writing changes made to the \glref{blackboard~repository} to a file that can
+be loaded in order to perform the recorded changes.  Journaling can be used
+with or without repository saving to recreate a blackboard repository.
+
+%% ------------------------------------------------------------------------
+
 \glent[keyword~symbol]
 \gllabel{keyword}%
 \gllabel{keywords}%
@@ -773,6 +791,23 @@ Part of the \reflink{Module Manager Facility}{sec:module-manager}.
 \index{namestring}%
 %
 A string that represents a filename.
+
+%% ------------------------------------------------------------------------
+
+\glent[network~streamer] 
+\index{network streamer}%
+\index{streamer!network}%
+%
+An object that is used as a sending destination for
+\glref{network~streaming} functions.
+
+%% ------------------------------------------------------------------------
+
+\glent[network~streaming] 
+\gllabel{network-streaming}%
+\index{network streaming}%
+%
+Sending \glref{unit~instances} (and \glref{space~instances}, changes made to the \glref{blackboard~repository}, and commands to a \glref{streamer~node} (typically in another Common Lisp image).
 
 %% ------------------------------------------------------------------------
 
@@ -1211,6 +1246,28 @@ An object whose class is a subclass of
 %
 A specification of how \glref{unit~instances} are to be stored on a
 \glref{space~instance}.
+
+%% ------------------------------------------------------------------------
+
+\glent[streamer] 
+\index{streamer}%
+%
+An object that is used as a saving or sending destination for
+\glref{journaling} or \glref{network-streaming} functions.
+
+%% ------------------------------------------------------------------------
+
+\glent[streamer~node] 
+\gllabel{streamer~nodes}
+\index{streamer node}%
+\index{node!streamer}%
+%
+A logical ``host'' for sending and receiving streamed updates to
+\glref{unit~instances} and to the \glref{blackboard~repository}.  Each
+streaming node is resolved uniquely by \textit{host\/} and \textit{port\/} and
+should be defined with a unique \textit{name\/}. Although multiple streaming
+nodes can be defined for the same Common Lisp image, typically only one
+streaming node is defined per image.
 
 %% ------------------------------------------------------------------------
 

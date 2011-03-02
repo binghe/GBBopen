@@ -28,8 +28,8 @@ another <a href="#gl:thread">thread</a>.
 file is loaded based on the value of <nobr><b><a href="ref-autorun-modules-var.html">*autorun-modules*</a></b></nobr>.
 Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
 <p></dd><dt><a name="id9"></a><b>blackboard&nbsp;repository</b></dt><dd>
-<a name="id10">The</a> internal storage containing all <a href="#id234">unit&nbsp;instance</a> and
-<a href="#id208">space&nbsp;instance</a> objects and associated retrieval data structures.
+<a name="id10">The</a> internal storage containing all <a href="#id246">unit&nbsp;instance</a> and
+<a href="#id216">space&nbsp;instance</a> objects and associated retrieval data structures.
 <p></dd><dt><a name="id11"></a><b>boolean&nbsp;dimension</b></dt><dd>
 <a name="id12">A</a> <a href="#gl:dimension">dimension</a> of <code>:boolean</code> <a href="#id33">dimension&nbsp;type</a> where
 <code>:boolean</code> <a href="#id36">dimension&nbsp;values</a> are either true (non-<code>nil</code>) or
@@ -59,7 +59,7 @@ dimension value: <code>t</code>.
 <a href="#id36">dimension&nbsp;values</a>.
 <p></dd><dt><a name="id25"></a><b>condition&nbsp;variable</b></dt><dd>
 <a name="gl:condition-variable">A</a> condition variable provides an atomic means for a <a href="#gl:thread">thread</a> to release
-a <a href="#gl:lock">lock</a> (or <a href="#id180">recursive&nbsp;lock</a>) that it holds and go to sleep until
+a <a href="#gl:lock">lock</a> (or <a href="#id188">recursive&nbsp;lock</a>) that it holds and go to sleep until
 it is awakened by another thread.  Once awakened, the lock that it was holding
 is reacquired atomically before the awakened thread is allowed to do anything
 else.  A Portable Threads condition-variable object includes the lock that is
@@ -72,7 +72,7 @@ Conses are used to construct lists.
 <a name="gl:dimensions">A</a> conceptual extent within which values that share some
 relationship can be placed.  GBBopen uses dimensionality to relate the
 extent representations of <a href="#gl:instances">unit&nbsp;instances</a>,
-<a href="#gl:space-instance">space&nbsp;instances</a>, and <a href="#id187">retrieval&nbsp;patterns</a>.
+<a href="#gl:space-instance">space&nbsp;instances</a>, and <a href="#id195">retrieval&nbsp;patterns</a>.
 <p>GBBopen supports three <a href="#gl:dimension-type">dimension&nbsp;types</a>:
 </p>
 <p><ol class="tight"><li><a href="#gl:ordered-dimension">ordered&nbsp;dimensions</a> (<code>:ordered</code>)
@@ -89,21 +89,21 @@ extent representations of <a href="#gl:instances">unit&nbsp;instances</a>,
 the same dimension name.
 <p></dd><dt><a name="id33"></a><b>dimension&nbsp;type</b></dt><dd>
 <a name="gl:dimension-type">The</a> interpretation associated with a <a href="#gl:dimension">dimension</a> of a
-<a href="#id232">unit&nbsp;class</a>, a <a href="#id208">space&nbsp;instance</a>, or a <a href="#id186">retrieval&nbsp;pattern</a>;
+<a href="#id244">unit&nbsp;class</a>, a <a href="#id216">space&nbsp;instance</a>, or a <a href="#id194">retrieval&nbsp;pattern</a>;
 one of <code>:ordered</code>, <code>:enumerated</code>, or <code>:boolean</code>.
 <p></dd><dt><a name="id35"></a><b>dimension&nbsp;value</b></dt><dd>
-<a name="id36">The</a> value that can be used to position a <a href="#id234">unit&nbsp;instance</a> on a
+<a name="id36">The</a> value that can be used to position a <a href="#id246">unit&nbsp;instance</a> on a
 <a href="#gl:dimension">dimension</a> in one or more <a href="#gl:space-instance">space&nbsp;instances</a>.
 <p></dd><dt><a name="id37"></a><b>dimension-value&nbsp;type</b></dt><dd>
 <a name="id38">The</a> interpretation associated with a <a href="#id35">dimension&nbsp;value</a> of a
-<a href="#id234">unit&nbsp;instance</a>; one of <code>:point</code>, <code>:interval</code>, <code>:mixed</code>
+<a href="#id246">unit&nbsp;instance</a>; one of <code>:point</code>, <code>:interval</code>, <code>:mixed</code>
 (both points and intervals), <code>:element</code>, or <code>:boolean</code>.  
 The dimension-value types <code>:point</code>, <code>:interval</code>, and
-<code>:mixed</code> indicate values in an <a href="#id140">ordered&nbsp;dimension</a>,
+<code>:mixed</code> indicate values in an <a href="#id148">ordered&nbsp;dimension</a>,
 <code>:element</code> indicates a value in an <a href="#id43">enumerated&nbsp;dimension</a>, and
 <code>:boolean</code> indicates a value in a <a href="#id11">boolean&nbsp;dimension</a>.
 <p></dd><dt><a name="id39"></a><b>dimensional&nbsp;extent</b></dt><dd>
-<a name="id40">The</a> <a href="#gl:dimensions">dimensions</a> of a <a href="#id208">space&nbsp;instance</a>.
+<a name="id40">The</a> <a href="#gl:dimensions">dimensions</a> of a <a href="#id216">space&nbsp;instance</a>.
 <p></dd><dt><a name="id41"></a><b>dotted&nbsp;list</b></dt><dd>
 <a name="id42">A</a> list that is terminated by a non-<code>nil</code> atom rather than the empty list,
 <code>nil</code>.
@@ -136,7 +136,7 @@ one of the following event metaclasses:
 <code>space-instance-event-class</code>, <code>nonlink-slot-event-class</code>, or
 <code>link-slot-event-class</code>.
 <p></dd><dt><a name="id58"></a><b>executable&nbsp;KS&nbsp;activation</b></dt><dd>
-<a name="id59">A</a> <a href="#id158">pending&nbsp;KS&nbsp;activation</a> that meets the criteria for execution, such as
+<a name="id59">A</a> <a href="#id166">pending&nbsp;KS&nbsp;activation</a> that meets the criteria for execution, such as
 having a <a href="#gl:rating">rating</a> above the minimum KSA execution rating in effect for
 the control shell.
 <p></dd><dt><a name="id60"></a><b>executed&nbsp;KS&nbsp;activation</b></dt><dd>
@@ -156,8 +156,8 @@ one of the following:
 <p></dd><dt><a name="id65"></a><b>extended&nbsp;unit-class&nbsp;specification</b></dt><dd>
 <a name="id66">A</a> specification of one or more <a href="#gl:unit-class">unit&nbsp;classes</a> as indicated by
 one of the following:
-<p><ul class="tight"><li>a <a href="#id232">unit&nbsp;class</a>
-<li>a symbol naming a <a href="#id232">unit&nbsp;class</a>
+<p><ul class="tight"><li>a <a href="#id244">unit&nbsp;class</a>
+<li>a symbol naming a <a href="#id244">unit&nbsp;class</a>
 <li><a name="id67">a</a> list containing one of the above followed by the <a href="#gl:keywords">keyword</a>
 <code>:plus-subclasses</code> or the <a href="#gl:keywords">keyword</a> <code>:no-subclasses</code>
 <li>the symbol <code>t</code>, which is equivalent to
@@ -167,21 +167,21 @@ one of the following:
 <p></dd><dt><a name="id68"></a><b>extended&nbsp;unit-class&nbsp;or&nbsp;instance&nbsp;specification</b></dt><dd>
 <a name="id69">A</a> specification of one or more <a href="#gl:instances">unit&nbsp;instances</a> or one or more
 <a href="#gl:unit-class">unit&nbsp;classes</a> as indicated by one of the following:
-<p><ul class="tight"><li>a <a href="#id232">unit&nbsp;class</a>
-<li>a symbol naming a <a href="#id232">unit&nbsp;class</a>
+<p><ul class="tight"><li>a <a href="#id244">unit&nbsp;class</a>
+<li>a symbol naming a <a href="#id244">unit&nbsp;class</a>
 <li><a name="id70">a</a> list containing one of the above followed by the <a href="#gl:keywords">keyword</a>
 <code>:plus-subclasses</code> or the <a href="#gl:keywords">keyword</a> <code>:no-subclasses</code>
 <li>the symbol <code>t</code>, which is equivalent to
 <code>(standard-unit-instance :plus-subclasses)</code> 
-<li>a <a href="#id234">unit&nbsp;instance</a>
+<li>a <a href="#id246">unit&nbsp;instance</a>
 <li>a list of <a href="#gl:instances">unit&nbsp;instances</a>
 </ul>
 </p>
 <p></dd><dt><a name="id71"></a><b>extended&nbsp;unit-classes&nbsp;specification</b></dt><dd>
 <a name="id72">A</a> specification of one or more <a href="#gl:unit-class">unit&nbsp;classes</a> as indicated by
 one of the following:
-<p><ul class="tight"><li>a <a href="#id232">unit&nbsp;class</a>
-<li>a symbol naming a <a href="#id232">unit&nbsp;class</a>
+<p><ul class="tight"><li>a <a href="#id244">unit&nbsp;class</a>
+<li>a symbol naming a <a href="#id244">unit&nbsp;class</a>
 <li><a name="id73">a</a> list containing one of the above followed by the <a href="#gl:keywords">keyword</a>
 <code>:plus-subclasses</code> or the <a href="#gl:keywords">keyword</a> <code>:no-subclasses</code>
 <li>a list of one or more of the above
@@ -228,40 +228,47 @@ has the same name, only the first such pair is used to provide the value.
 determined by a <a href="#gl:class">class</a> object.
 <p></dd><dt><a name="id96"></a><b>instance&nbsp;name</b></dt><dd>
 <a name="gl:instance-name">An</a> object that uniquely identifies an <a href="#gl:instances">instance</a> of a
-<a href="#id232">unit&nbsp;class</a>.  The same object can be used to identify instances of
+<a href="#id244">unit&nbsp;class</a>.  The same object can be used to identify instances of
 different unit classes, but the same instance name cannot be used with two
 instances of the same class.
 <p></dd><dt><a name="gl:interval"></a><b>interval</b></dt><dd> 
 <a name="gl:intervals">A</a> <a href="#gl:cons">cons</a>, two-element list, or two-element array containing the start
 and end value representing the set of real numbers between them, inclusive.
-<p></dd><dt><a name="id100"></a><b>keyword&nbsp;symbol</b></dt><dd>
+<p></dd><dt><a name="id100"></a><b>journal&nbsp;streamer</b></dt><dd> 
+<a name="id101">An</a> object that is used as a saving destination for
+<a href="#gl:journaling">journaling</a> functions.
+<p></dd><dt><a name="gl:journaling"></a><b>journaling</b></dt><dd> 
+<a name="id103">Writing</a> changes made to the <a href="#id9">blackboard&nbsp;repository</a> to a file that can
+be loaded in order to perform the recorded changes.  Journaling can be used
+with or without repository saving to recreate a blackboard repository.
+<p></dd><dt><a name="id104"></a><b>keyword&nbsp;symbol</b></dt><dd>
 <a name="gl:keywords">A</a> symbol whose home package is the <code>keyword</code> package.
-<p></dd><dt><a name="id102"></a><b>knowledge&nbsp;source</b></dt><dd>
+<p></dd><dt><a name="id106"></a><b>knowledge&nbsp;source</b></dt><dd>
 <a name="gl:KSs">The</a> expertise associated with a collaborating computational entity in
 a blackboard application (often abbreviated as &#8220;KS&#8221;). More
 specifically, a KS is an object containing the expertise and other
 information associated with a computational entity. A <code>ks</code> object
-is also a <a href="#id234">unit&nbsp;instance</a>, but KSs are normally described
+is also a <a href="#id246">unit&nbsp;instance</a>, but KSs are normally described
 by their more specific categorization.
-<p></dd><dt><a name="id104"></a><b>KS&nbsp;activation</b></dt><dd>
+<p></dd><dt><a name="id108"></a><b>KS&nbsp;activation</b></dt><dd>
 <a name="gl:activations">The</a> application of a <a href="#gl:KSs">KS</a> to a specific computational context
 (often abbreviated as &#8220;KSA&#8221;).  More specifically, a KSA is a
 <a href="#gl:ksa-class">ksa-class</a> object representing the <a href="#gl:KSs">KS</a> activation.  A
-<code>ksa</code> is also a <a href="#id234">unit&nbsp;instance</a>, but they are normally
+<code>ksa</code> is also a <a href="#id246">unit&nbsp;instance</a>, but they are normally
 described by their more specific categorization.
-<p></dd><dt><a name="id106"></a><b>KS&nbsp;execution</b></dt><dd>
+<p></dd><dt><a name="id110"></a><b>KS&nbsp;execution</b></dt><dd>
 <a name="gl:KS-execution">The</a> execution of a <a href="#gl:activations">KS&nbsp;activation</a>.
-<p></dd><dt><a name="id108"></a><b>ks&nbsp;class</b></dt><dd>
+<p></dd><dt><a name="id112"></a><b>ks&nbsp;class</b></dt><dd>
 <a name="gl:ks-class">An</a> object that is a subclass of
 <nobr><b><a href="ref-standard-unit-class.html">standard-unit-class</a></b></nobr> that is used to represent a
 <a href="#gl:KSs">KS</a>.
-<p></dd><dt><a name="id110"></a><b>ksa&nbsp;class</b></dt><dd>
+<p></dd><dt><a name="id114"></a><b>ksa&nbsp;class</b></dt><dd>
 <a name="gl:ksa-class">An</a> object that is a subclass of
 <nobr><b><a href="ref-standard-ksa-class.html">standard-ksa-class</a></b></nobr> that is used to represent a
 <a href="#gl:activations">KSA</a>.
-<p></dd><dt><a name="id112"></a><b>left-leaning&nbsp;red-black&nbsp;tree</b></dt><dd>
-<a name="id113">An</a> <a href="#id114">LLRB&nbsp;tree</a>.
-<p></dd><dt><a name="id114"></a><b>LLRB&nbsp;tree</b></dt><dd>
+<p></dd><dt><a name="id116"></a><b>left-leaning&nbsp;red-black&nbsp;tree</b></dt><dd>
+<a name="id117">An</a> <a href="#id118">LLRB&nbsp;tree</a>.
+<p></dd><dt><a name="id118"></a><b>LLRB&nbsp;tree</b></dt><dd>
 <a name="gl:LLRB">A</a> binary search tree that is roughly balanced, keeping the worst-case time for
 operations such as inserting, deleting, and finding values proportional to the
 height of the tree. Left-leaning red-black (LLRB) trees are a simpler version
@@ -272,17 +279,17 @@ lean left except during inserts and deletes.
 by a pair of pointers, one at each unit instance pointing to the other unit
 instance.  GBBopen's link operators maintain the bi-directional consistency of
 link pointers.
-<p></dd><dt><a name="id118"></a><b>link&nbsp;slot</b></dt><dd>
+<p></dd><dt><a name="id122"></a><b>link&nbsp;slot</b></dt><dd>
 <a name="gl:link-slot">A</a> <a href="#gl:slot">slot</a> designated for the outgoing pointers of <a href="#gl:links">links</a>
 associated with that <a href="#gl:slot">slot</a>.
-<p></dd><dt><a name="id120"></a><b>link-pointer&nbsp;object</b></dt><dd> 
-<a name="gl:link-pointer-object">An</a> object that can be used as a pointer in a <nobr><a href="#id118">link&nbsp;slot</a></nobr>.  A
+<p></dd><dt><a name="id124"></a><b>link-pointer&nbsp;object</b></dt><dd> 
+<a name="gl:link-pointer-object">An</a> object that can be used as a pointer in a <nobr><a href="#id122">link&nbsp;slot</a></nobr>.  A
 link-pointer object must have a <nobr><b><a href="ref-link-instance-of.html">link-instance-of</a></b></nobr>
-method defined for it whose result returns the <a href="#id234">unit&nbsp;instance</a> to be
+method defined for it whose result returns the <a href="#id246">unit&nbsp;instance</a> to be
 used as the link pointer.
-<p></dd><dt><a name="id122"></a><b>link-slot&nbsp;place</b></dt><dd>
+<p></dd><dt><a name="id126"></a><b>link-slot&nbsp;place</b></dt><dd>
 <a name="gl:link-slot-place">A</a> form which is suitable for use as a <a href="#id86">generalized&nbsp;reference</a> to a
-<a href="#id118">link&nbsp;slot</a>.  Typical examples of link-slot-place forms include:
+<a href="#id122">link&nbsp;slot</a>.  Typical examples of link-slot-place forms include:
 <pre>
   (<var>slot-accessor unit-instance</var>)
   (slot-value <var>unit-instance slot-name</var>)
@@ -291,8 +298,8 @@ where:
 <br />&nbsp;<br /><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>slot-accessor</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> is a symbol specifying an accessor <a href="#gl:function">function</a> for
 a link slot
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> is a <a href="#id234">unit&nbsp;instance</a>
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> is a symbol naming a <a href="#id118">link&nbsp;slot</a> in
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> is a <a href="#id246">unit&nbsp;instance</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> is a symbol naming a <a href="#id122">link&nbsp;slot</a> in
 <var>unit-instance</var> 
 </td></tr></table>
 <p></dd><dt><a name="gl:lock"></a><b>lock</b></dt><dd> 
@@ -304,10 +311,10 @@ lock it will block. When the lock-holding <a href="#gl:thread">thread</a> unlock
 (releases) the lock, one of the blocked <a href="#gl:threads">threads</a> will acquire
 (lock) it and proceed.  If the <a href="#gl:thread">thread</a> that is holding the lock
 attempts to re-acquire it, an error is signaled (see
-<a href="#id180">recursive&nbsp;lock</a>).
+<a href="#id188">recursive&nbsp;lock</a>).
 <p></dd><dt><a name="gl:metaobject"></a><b>metaobject</b></dt><dd>
-<a name="id127">An</a> <a href="#gl:instances">instance</a> of a <a href="#id128">metaobject&nbsp;class</a>.
-<p></dd><dt><a name="id128"></a><b>metaobject&nbsp;class</b></dt><dd>
+<a name="id131">An</a> <a href="#gl:instances">instance</a> of a <a href="#id132">metaobject&nbsp;class</a>.
+<p></dd><dt><a name="id132"></a><b>metaobject&nbsp;class</b></dt><dd>
 <a name="gl:metaobject-class">A</a> <a href="#gl:class">class</a> object that is a subclass of exactly one of the following
 classes: <code>class</code>, <code>slot-definition</code>, <code>generic-function</code>,
 <code>method</code>, and <code>method-combination</code>.
@@ -315,50 +322,55 @@ classes: <code>class</code>, <code>slot-definition</code>, <code>generic-functio
 <a name="gl:modules">A</a> set of related files that form a component, library, or application.
 Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
 <p></dd><dt><a name="gl:namestring"></a><b>namestring</b></dt><dd>
-<a name="id133">A</a> string that represents a filename.
-<p></dd><dt><a name="id134"></a><b>non-keyword&nbsp;symbol</b></dt><dd>
-<a name="id135">A</a> symbol whose home package is not the <code>keyword</code> package.
-<p></dd><dt><a name="id136"></a><b>obviated&nbsp;KS&nbsp;activation</b></dt><dd>
+<a name="id137">A</a> string that represents a filename.
+<p></dd><dt><a name="id138"></a><b>network&nbsp;streamer</b></dt><dd> 
+<a name="id139">An</a> object that is used as a sending destination for
+<a href="#id140">network&nbsp;streaming</a> functions.
+<p></dd><dt><a name="id140"></a><b>network&nbsp;streaming</b></dt><dd> 
+<a name="gl:network-streaming">Sending</a> <a href="#gl:instances">unit&nbsp;instances</a> (and <a href="#gl:space-instance">space&nbsp;instances</a>, changes made to the <a href="#id9">blackboard&nbsp;repository</a>, and commands to a <a href="#id226">streamer&nbsp;node</a> (typically in another Common Lisp image).
+<p></dd><dt><a name="id142"></a><b>non-keyword&nbsp;symbol</b></dt><dd>
+<a name="id143">A</a> symbol whose home package is not the <code>keyword</code> package.
+<p></dd><dt><a name="id144"></a><b>obviated&nbsp;KS&nbsp;activation</b></dt><dd>
 <a name="gl:obviation">An</a> unexecuted <a href="#gl:activations">KS&nbsp;activation</a> that has been deemed unnecessary and will
 therefore never be executed.
-<p></dd><dt><a name="id138"></a><b>Offset&nbsp;Universal&nbsp;Time</b></dt><dd>
-<a name="id139">A</a> non-negative integer number of seconds measured from the beginning of a time
+<p></dd><dt><a name="id146"></a><b>Offset&nbsp;Universal&nbsp;Time</b></dt><dd>
+<a name="id147">A</a> non-negative integer number of seconds measured from the beginning of a time
 base later than the year 1900 (ignoring leap seconds).  Offset Universal Time
-is <a href="#id236">Universal&nbsp;Time</a> that is offset by an integer time-base value so that
+is <a href="#id248">Universal&nbsp;Time</a> that is offset by an integer time-base value so that
 the most often used Offset Universal Time values in an application are
 <a href="#gl:fixnums">fixnums</a>.
-<p></dd><dt><a name="id140"></a><b>ordered&nbsp;dimension</b></dt><dd>
+<p></dd><dt><a name="id148"></a><b>ordered&nbsp;dimension</b></dt><dd>
 <a name="gl:ordered-dimension">A</a> <a href="#gl:dimension">dimension</a> of <code>:ordered</code> <a href="#id33">dimension&nbsp;type</a> where
 <code>:point</code>, <code>:interval</code>, and <code>:mixed</code> <a href="#id36">dimension&nbsp;values</a>
 are points or intervals on a continuous, real-number extent.
-<p></dd><dt><a name="id142"></a><b>ordering&nbsp;dimension</b></dt><dd>
-<a name="id143">The</a> <a href="#gl:dimension">dimension</a> whose <a href="#id36">dimension&nbsp;values</a> are used to order a
-<a href="#id194">series-composite&nbsp;dimension&nbsp;value</a>.
-<p></dd><dt><a name="id144"></a><b>ordered&nbsp;queue</b></dt><dd>
-<a name="id145">
+<p></dd><dt><a name="id150"></a><b>ordering&nbsp;dimension</b></dt><dd>
+<a name="id151">The</a> <a href="#gl:dimension">dimension</a> whose <a href="#id36">dimension&nbsp;values</a> are used to order a
+<a href="#id202">series-composite&nbsp;dimension&nbsp;value</a>.
+<p></dd><dt><a name="id152"></a><b>ordered&nbsp;queue</b></dt><dd>
+<a name="id153">
 A</a> doubly linked, ordered queue.  A GBBopen queue is headed by an object that
 is a subclass of <nobr><b><a href="ref-ordered-queue.html">ordered-queue</a></b></nobr>.
-<p></dd><dt><a name="id146"></a><b>package&nbsp;designator</b></dt><dd>
-<a name="id147">A</a> <a href="#id216">string&nbsp;designator</a> (denoting a string that designates the name or
+<p></dd><dt><a name="id154"></a><b>package&nbsp;designator</b></dt><dd>
+<a name="id155">A</a> <a href="#id228">string&nbsp;designator</a> (denoting a string that designates the name or
 nickname of a package) or a package (denoting itself).
-<p></dd><dt><a name="id148"></a><b>passive&nbsp;socket</b></dt><dd>
-<a name="id149">A</a> socket that is used to accept a connection initiation to a specific service
+<p></dd><dt><a name="id156"></a><b>passive&nbsp;socket</b></dt><dd>
+<a name="id157">A</a> socket that is used to accept a connection initiation to a specific service
 port.
 <p></dd><dt><a name="gl:patch"></a><b>patch</b></dt><dd>
 <a name="gl:patches">A</a> modification to the existing code of an application that is loaded after the
 regular application code, either at startup or into an executing application.
-<p></dd><dt><a name="id152"></a><b>path&nbsp;expression</b></dt><dd>
-<a name="gl:path-expression">A</a> regular expression representing one or more <a href="#id211">space-instance&nbsp;paths</a>.
+<p></dd><dt><a name="id160"></a><b>path&nbsp;expression</b></dt><dd>
+<a name="gl:path-expression">A</a> regular expression representing one or more <a href="#id219">space-instance&nbsp;paths</a>.
 <p></dd><dt><a name="gl:pathname"></a><b>pathname</b></dt><dd>
-<a name="id155">A</a> structured representation of the name of a file. A pathname has six
+<a name="id163">A</a> structured representation of the name of a file. A pathname has six
 components: host, device, directory, name, type, and version.
-<p></dd><dt><a name="id156"></a><b>pathname&nbsp;designator</b></dt><dd>
-<a name="id157">A</a> <a href="#gl:namestring">namestring</a> (denoting the corresponding <a href="#gl:pathname">pathname</a>), a stream
+<p></dd><dt><a name="id164"></a><b>pathname&nbsp;designator</b></dt><dd>
+<a name="id165">A</a> <a href="#gl:namestring">namestring</a> (denoting the corresponding <a href="#gl:pathname">pathname</a>), a stream
 associated with a file (denoting the <a href="#gl:pathname">pathname</a> used to open the file),
 or a <a href="#gl:pathname">pathname</a> (denoting itself).
-<p></dd><dt><a name="id158"></a><b>pending&nbsp;KS&nbsp;activation</b></dt><dd>
-<a name="id159">A</a> <a href="#gl:activations">KS&nbsp;activation</a> that has not been executed or <a href="#gl:obviation">obviated</a>.
-<p></dd><dt><a name="id160"></a><b>periodic&nbsp;function</b></dt><dd>
+<p></dd><dt><a name="id166"></a><b>pending&nbsp;KS&nbsp;activation</b></dt><dd>
+<a name="id167">A</a> <a href="#gl:activations">KS&nbsp;activation</a> that has not been executed or <a href="#gl:obviation">obviated</a>.
+<p></dd><dt><a name="id168"></a><b>periodic&nbsp;function</b></dt><dd>
 <a name="gl:periodic">A</a> <a href="#gl:function">function</a> of no arguments that is run repeatedly at a specified
 interval, at a resolution as brief as supported by <code>sleep</code>. A separate
 <a href="#gl:thread">thread</a> is spawned to manage the periodic invocations of the specified
@@ -367,16 +379,16 @@ function.
 value is decremented prior to each invocation of the function and, when it is
 no longer positive, the periodic-function thread is terminated.
 </p>
-<p></dd><dt><a name="id162"></a><b>predicate&nbsp;function</b></dt><dd>
+<p></dd><dt><a name="id170"></a><b>predicate&nbsp;function</b></dt><dd>
 <a name="gl:predicate-function">A</a> <a href="#gl:function">function</a> that returns a <a href="#gl:generalized-boolean">generalized-boolean</a> value.
-<p></dd><dt><a name="id164"></a><b>proper&nbsp;list</b></dt><dd>
-<a name="id165">A</a> list terminated by the empty list. (The empty list is a proper list.)
+<p></dd><dt><a name="id172"></a><b>proper&nbsp;list</b></dt><dd>
+<a name="id173">A</a> list terminated by the empty list. (The empty list is a proper list.)
 <p></dd><dt><a name="gl:property"></a><b>property</b></dt><dd>
-<a name="gl:properties">(of</a> a <a href="#id168">property&nbsp;list</a>) 1. A pair of elements in a <a href="#id168">property&nbsp;list</a>
+<a name="gl:properties">(of</a> a <a href="#id176">property&nbsp;list</a>) 1. A pair of elements in a <a href="#id176">property&nbsp;list</a>
 representing the name of a property and its associated value. 2. The value of
 a property.
-<p></dd><dt><a name="id168"></a><b>property&nbsp;list</b></dt><dd>
-<a name="id169">A</a> list containing an even number of elements that represent alternating names
+<p></dd><dt><a name="id176"></a><b>property&nbsp;list</b></dt><dd>
+<a name="id177">A</a> list containing an even number of elements that represent alternating names
 (sometimes called indicators or keys) and their associated values.
 <p></dd><dt><a name="gl:pseudo-probability"></a><b>pseudo-probability</b></dt><dd>
 <p>A discretized <code><a href="#gl:fixnum">fixnum</a></code> representation for probability values that
@@ -389,19 +401,19 @@ of a <a href="#gl:pseudo-probability">pseudo-probability</a> value.  Pseudo-prob
 from [-6907756..0].
 </p>
 <p></dd><dt><a name="gl:queue"></a><b>queue</b></dt><dd>
-<a name="id173">A</a> doubly linked queue.  A GBBopen queue is headed by an object that is a
+<a name="id181">A</a> doubly linked queue.  A GBBopen queue is headed by an object that is a
 subclass of <b><a href="ref-queue.html">queue</a></b>.  GBBopen queues that maintain a
 sorted ordering of <a href="#gl:queue-element">queue&nbsp;elements</a> are provided by
-<a href="#id145">ordered&nbsp;queues</a>.
-<p></dd><dt><a name="id174"></a><b>queue&nbsp;element</b></dt><dd>
+<a href="#id153">ordered&nbsp;queues</a>.
+<p></dd><dt><a name="id182"></a><b>queue&nbsp;element</b></dt><dd>
 <a name="gl:queue-element">An</a> object that is a subclass of <nobr><b><a href="ref-queue-element.html">queue-element</a></b></nobr>.
 <p></dd><dt><a name="gl:quiescence"></a><b>quiescence</b></dt><dd>
-<a name="id177">A</a> control-shell state when no more <a href="#id59">executable&nbsp;KSAs</a> are in the queue of
-<a href="#id159">pending&nbsp;KSAs</a>.
+<a name="id185">A</a> control-shell state when no more <a href="#id59">executable&nbsp;KSAs</a> are in the queue of
+<a href="#id167">pending&nbsp;KSAs</a>.
 <p></dd><dt><a name="gl:rating"></a><b>rating</b></dt><dd>
-<a name="id179">An</a> integer between -32768 and 32767 inclusive, used by the Agenda Shell to
-order <a href="#id159">pending&nbsp;KSAs</a> (see <b><a href="ref-rating.html">rating</a></b>).
-<p></dd><dt><a name="id180"></a><b>recursive&nbsp;lock</b></dt><dd> 
+<a name="id187">An</a> integer between -32768 and 32767 inclusive, used by the Agenda Shell to
+order <a href="#id167">pending&nbsp;KSAs</a> (see <b><a href="ref-rating.html">rating</a></b>).
+<p></dd><dt><a name="id188"></a><b>recursive&nbsp;lock</b></dt><dd> 
 <a name="gl:recursive-lock">A</a> mutual-exclusion object that allows multiple <a href="#gl:threads">threads</a> to synchronize
 activities or access to shared resources. A recursive lock has two states,
 unlocked or locked by a specific <a href="#gl:thread">thread</a>. Once a recursive lock is held
@@ -411,27 +423,27 @@ lock, one of the blocked <a href="#gl:threads">threads</a> will acquire (lock) i
 If the <a href="#gl:thread">thread</a> that is holding the recursive lock attempts to
 re-acquire it, that <a href="#gl:thread">thread</a> is allowed to proceed as if it had acquired
 the lock (without error or blocking, see <a href="#gl:lock">lock</a>).
-<p></dd><dt><a name="id182"></a><b>relative&nbsp;directory</b></dt><dd>
+<p></dd><dt><a name="id190"></a><b>relative&nbsp;directory</b></dt><dd>
 <a name="gl:relative-directory">A</a> directory defined in relation to another directory definition.
 Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
-<p></dd><dt><a name="id184"></a><b>REPL&nbsp;command</b></dt><dd> 
+<p></dd><dt><a name="id192"></a><b>REPL&nbsp;command</b></dt><dd> 
 <a name="gl:keyword-command">A</a> <a href="#gl:keywords">keyword</a> command that can be entered at the top level read-eval-print
 loop (REPL) in your Common Lisp environment.  REPL commands (some with
 arguments) provide convenient shortcuts for often-used operations.
-<p></dd><dt><a name="id186"></a><b>retrieval&nbsp;pattern</b></dt><dd>
-<a name="id187">A</a> list argument to <nobr><b><a href="ref-filter-instances.html">filter-instances</a></b></nobr>,
+<p></dd><dt><a name="id194"></a><b>retrieval&nbsp;pattern</b></dt><dd>
+<a name="id195">A</a> list argument to <nobr><b><a href="ref-filter-instances.html">filter-instances</a></b></nobr>,
 <nobr><b><a href="ref-find-instances.html">find-instances</a></b></nobr>, and
 <nobr><b><a href="ref-map-instances-on-space-instances.html">map-instances-on-space-instances</a></b></nobr> specifying the
 <a href="#id35">dimension&nbsp;value</a> requirements for selecting <a href="#gl:instances">unit&nbsp;instances</a> to
 be returned.
-<p></dd><dt><a name="id188"></a><b>required&nbsp;module</b></dt><dd>
+<p></dd><dt><a name="id196"></a><b>required&nbsp;module</b></dt><dd>
 <a name="gl:required-module">A</a> sequence of <a href="#gl:modules">modules</a> that must be compiled (if needed) and loaded, in
 order, before the requiring <a href="#gl:module">module</a> is compiled (if needed) and loaded.
 Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
-<p></dd><dt><a name="id190"></a><b>root&nbsp;directory</b></dt><dd>
+<p></dd><dt><a name="id198"></a><b>root&nbsp;directory</b></dt><dd>
 <a name="gl:Root">A</a> fixed anchor directory for a tree of relative directory definitions.
 Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</a>.
-<p></dd><dt><a name="id192"></a><b>scheduled&nbsp;function</b></dt><dd>
+<p></dd><dt><a name="id200"></a><b>scheduled&nbsp;function</b></dt><dd>
 <a name="gl:scheduled">An</a> object that contains a <a href="#gl:function">function</a> that may be scheduled to run at an
 absolute or relative time. When that specified time arrives, the function
 is invoked with a single argument: the scheduled-function object.
@@ -444,77 +456,88 @@ current invocation.
 function invocations at brief time intervals are provided by
 <a href="#gl:periodic">periodic&nbsp;functions</a>.
 </p>
-<p></dd><dt><a name="id194"></a><b>series-composite&nbsp;dimension&nbsp;value</b></dt><dd>
-<a name="id195">A</a> <a href="#id35">dimension&nbsp;value</a> that is a series of <a href="#id36">dimension&nbsp;values</a> that
+<p></dd><dt><a name="id202"></a><b>series-composite&nbsp;dimension&nbsp;value</b></dt><dd>
+<a name="id203">A</a> <a href="#id35">dimension&nbsp;value</a> that is a series of <a href="#id36">dimension&nbsp;values</a> that
 are ordered by the <a href="#id36">dimension&nbsp;values</a> of another <a href="#gl:dimension">dimension</a> (the
-<a href="#id196">series-composite&nbsp;ordering&nbsp;dimension</a>).
-<p></dd><dt><a name="id196"></a><b>series-composite&nbsp;ordering&nbsp;dimension</b></dt><dd>
-<a name="id197">The</a> <a href="#gl:dimension">dimension</a> whose values are used to order a
-<a href="#id194">series-composite&nbsp;dimension&nbsp;value</a>.
-<p></dd><dt><a name="id198"></a><b>sequence-composite&nbsp;dimension&nbsp;value</b></dt><dd>
-<a name="id199">A</a> dimension value that is a sequence of <a href="#id36">dimension&nbsp;values</a>.
-<p></dd><dt><a name="id200"></a><b>set-composite&nbsp;dimension&nbsp;value</b></dt><dd>
-<a name="id201">A</a> dimension value that is a set of <a href="#id36">dimension&nbsp;values</a>.
+<a href="#id204">series-composite&nbsp;ordering&nbsp;dimension</a>).
+<p></dd><dt><a name="id204"></a><b>series-composite&nbsp;ordering&nbsp;dimension</b></dt><dd>
+<a name="id205">The</a> <a href="#gl:dimension">dimension</a> whose values are used to order a
+<a href="#id202">series-composite&nbsp;dimension&nbsp;value</a>.
+<p></dd><dt><a name="id206"></a><b>sequence-composite&nbsp;dimension&nbsp;value</b></dt><dd>
+<a name="id207">A</a> dimension value that is a sequence of <a href="#id36">dimension&nbsp;values</a>.
+<p></dd><dt><a name="id208"></a><b>set-composite&nbsp;dimension&nbsp;value</b></dt><dd>
+<a name="id209">A</a> dimension value that is a set of <a href="#id36">dimension&nbsp;values</a>.
 <p></dd><dt><a name="gl:slot"></a><b>slot</b></dt><dd>
-<a name="id203">A</a> component of an object that can store a value.
+<a name="id211">A</a> component of an object that can store a value.
 <p></dd><dt><a name="gl:space"></a><b>space</b></dt><dd>
-<a name="id205">Pertaining</a> to a <a href="#id206">space&nbsp;class</a> or <a href="#id208">space&nbsp;instance</a>.
-<p></dd><dt><a name="id206"></a><b>space&nbsp;class</b></dt><dd>
-<a name="id207">An</a> object that is a subclass of <nobr><b><a href="ref-standard-space-class.html">standard-space-class</a></b></nobr>.
-<p></dd><dt><a name="id208"></a><b>space&nbsp;instance</b></dt><dd>
+<a name="id213">Pertaining</a> to a <a href="#id214">space&nbsp;class</a> or <a href="#id216">space&nbsp;instance</a>.
+<p></dd><dt><a name="id214"></a><b>space&nbsp;class</b></dt><dd>
+<a name="id215">An</a> object that is a subclass of <nobr><b><a href="ref-standard-space-class.html">standard-space-class</a></b></nobr>.
+<p></dd><dt><a name="id216"></a><b>space&nbsp;instance</b></dt><dd>
 <a name="gl:space-instance">An</a> object whose class is a subclass of
 <nobr><b><a href="ref-standard-space-instance.html">standard-space-instance</a></b></nobr>.  A space instance is also a
-<a href="#id234">unit&nbsp;instance</a>, but space instances are normally described by their
+<a href="#id246">unit&nbsp;instance</a>, but space instances are normally described by their
 more specific categorization.
-<p></dd><dt><a name="id210"></a><b>space-instance&nbsp;path</b></dt><dd> 
-<a name="id211">A</a> complete list of space-instance names, starting with the most distant
+<p></dd><dt><a name="id218"></a><b>space-instance&nbsp;path</b></dt><dd> 
+<a name="id219">A</a> complete list of space-instance names, starting with the most distant
 indirect parent space-instance name, that uniquely identifies a
-<a href="#id208">space&nbsp;instance</a> in the <a href="#id9">blackboard&nbsp;repository</a>.
+<a href="#id216">space&nbsp;instance</a> in the <a href="#id9">blackboard&nbsp;repository</a>.
 <p></dd><dt><a name="gl:standard-gbbopen-instance"></a><b>standard-gbbopen-instance</b></dt><dd>
-<a name="id213">An</a> object whose class is a subclass of 
+<a name="id221">An</a> object whose class is a subclass of 
 <nobr><b><a href="ref-standard-gbbopen-instance.html">standard-gbbopen-instance</a></b></nobr>. It is a superclass of
 <nobr><b><a href="ref-standard-event-instance.html">standard-event-instance</a></b></nobr> and
 <nobr><b><a href="ref-standard-unit-instance.html">standard-unit-instance</a></b></nobr>.
-<p></dd><dt><a name="id214"></a><b>storage&nbsp;specification</b></dt><dd>
-<a name="id215">A</a> specification of how <a href="#gl:instances">unit&nbsp;instances</a> are to be stored on a
-<a href="#id208">space&nbsp;instance</a>.
-<p></dd><dt><a name="id216"></a><b>string&nbsp;designator</b></dt><dd>
-<a name="id217">An</a> object that denotes a string. One of: a character (denoting a
+<p></dd><dt><a name="id222"></a><b>storage&nbsp;specification</b></dt><dd>
+<a name="id223">A</a> specification of how <a href="#gl:instances">unit&nbsp;instances</a> are to be stored on a
+<a href="#id216">space&nbsp;instance</a>.
+<p></dd><dt><a name="gl:streamer"></a><b>streamer</b></dt><dd> 
+<a name="id225">An</a> object that is used as a saving or sending destination for
+<a href="#gl:journaling">journaling</a> or <a href="#gl:network-streaming">network-streaming</a> functions.
+<p></dd><dt><a name="id226"></a><b>streamer&nbsp;node</b></dt><dd> 
+<a name="id227">
+A</a> logical &#8220;host&#8221; for sending and receiving streamed updates to
+<a href="#gl:instances">unit&nbsp;instances</a> and to the <a href="#id9">blackboard&nbsp;repository</a>.  Each
+streaming node is resolved uniquely by <i>host</i> and <i>port</i> and
+should be defined with a unique <i>name</i>. Although multiple streaming
+nodes can be defined for the same Common Lisp image, typically only one
+streaming node is defined per image.
+<p></dd><dt><a name="id228"></a><b>string&nbsp;designator</b></dt><dd>
+<a name="id229">An</a> object that denotes a string. One of: a character (denoting a
 singleton string that has the character as its only element), a symbol
 (denoting the string that is its name), or a string (denoting itself).
 <p></dd><dt><a name="gl:subclasses"></a><b>subclasses</b></dt><dd>
-<a name="id219">The</a> classes that inherit from a <a href="#gl:class">class</a>.
+<a name="id231">The</a> classes that inherit from a <a href="#gl:class">class</a>.
 <p></dd><dt><a name="gl:subevents"></a><b>subevents</b></dt><dd>
-<a name="id221">The</a> classes that inherit from an <a href="#id50">event&nbsp;class</a>.
-<p></dd><dt><a name="id222"></a><b>system&nbsp;name</b></dt><dd> <a name="gl:system">A</a> <a href="#gl:keywords">keyword</a> associating a set of REPL commands, directory
+<a name="id233">The</a> classes that inherit from an <a href="#id50">event&nbsp;class</a>.
+<p></dd><dt><a name="id234"></a><b>system&nbsp;name</b></dt><dd> <a name="gl:system">A</a> <a href="#gl:keywords">keyword</a> associating a set of REPL commands, directory
 definitions, and module definitions with a specific library or application.
 <p></dd><dt><a name="gl:thread"></a><b>thread</b></dt><dd> 
 <a name="gl:threads">A</a> thread in a multi-threaded Common Lisp implementation or a Lisp process in a
 Common Lisp that provides multiprocessing.
-<p></dd><dt><a name="id226"></a><b>three-way&nbsp;comparison&nbsp;test</b></dt><dd> 
-<a name="id227">A</a> function of two arguments that returns: a negative <a href="#gl:fixnum">fixnum</a> if the
+<p></dd><dt><a name="id238"></a><b>three-way&nbsp;comparison&nbsp;test</b></dt><dd> 
+<a name="id239">A</a> function of two arguments that returns: a negative <a href="#gl:fixnum">fixnum</a> if the
 first argument is less than the second argument, zero if the two arguments are
 equal, and a positive <a href="#gl:fixnum">fixnum</a> if the first argument is greater than the
 second argument.
-<p></dd><dt><a name="id228"></a><b>time&nbsp;zone</b></dt><dd>
-<a name="id229">A</a> rational number between -24 (inclusive) and 24 (inclusive) that represents a
+<p></dd><dt><a name="id240"></a><b>time&nbsp;zone</b></dt><dd>
+<a name="id241">A</a> rational number between -24 (inclusive) and 24 (inclusive) that represents a
 time zone as a number of hours offset from Greenwich Mean Time. A non-integral
 time zone must be a multiple of 
 1/3600.  
 <p></dd><dt><a name="gl:unit"></a><b>unit</b></dt><dd>
-<a name="id231">Pertaining</a> to a <a href="#id232">unit&nbsp;class</a> or <a href="#id234">unit&nbsp;instance</a>.
-<p></dd><dt><a name="id232"></a><b>unit&nbsp;class</b></dt><dd>
+<a name="id243">Pertaining</a> to a <a href="#id244">unit&nbsp;class</a> or <a href="#id246">unit&nbsp;instance</a>.
+<p></dd><dt><a name="id244"></a><b>unit&nbsp;class</b></dt><dd>
 <a name="gl:unit-class">An</a> object that is a subclass of <nobr><b><a href="ref-standard-unit-class.html">standard-unit-class</a></b></nobr>.
-<p></dd><dt><a name="id234"></a><b>unit&nbsp;instance</b></dt><dd> 
+<p></dd><dt><a name="id246"></a><b>unit&nbsp;instance</b></dt><dd> 
 <a name="gl:instances">An</a> object whose class is a subclass of
-<nobr><b><a href="ref-standard-unit-instance.html">standard-unit-instance</a></b></nobr>. A <a href="#id208">space&nbsp;instance</a> is
+<nobr><b><a href="ref-standard-unit-instance.html">standard-unit-instance</a></b></nobr>. A <a href="#id216">space&nbsp;instance</a> is
 also a unit instance, but <a href="#gl:space-instance">space&nbsp;instances</a> are normally described by
 their more specific categorization.
-<p></dd><dt><a name="id236"></a><b>Universal&nbsp;Time</b></dt><dd>
-<a name="id237">A</a> non-negative integer number of seconds measured from the beginning of the
+<p></dd><dt><a name="id248"></a><b>Universal&nbsp;Time</b></dt><dd>
+<a name="id249">A</a> non-negative integer number of seconds measured from the beginning of the
 year 1900 (ignoring leap seconds).
-<p></dd><dt><a name="id238"></a><b>variable&nbsp;symbol</b></dt><dd>
-<a name="id239">A</a> symbol that can accept a binding.
+<p></dd><dt><a name="id250"></a><b>variable&nbsp;symbol</b></dt><dd>
+<a name="id251">A</a> symbol that can accept a binding.
 </dd></dl>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

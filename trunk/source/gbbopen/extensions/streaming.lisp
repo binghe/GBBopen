@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 01:59:17 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  2 16:31:29 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -53,8 +53,8 @@
             stream-command-form         ; not yet documented
             stream-add-to-space         ; not yet documented
             stream-delete-instance      ; not yet documented
-            stream-instance             ; not yet documented
-            stream-instances            ; not yet documented
+            stream-instance
+            stream-instances
             stream-instances-of-class   ; not yet documented
             stream-instances-on-space-instances ; not yet documented
             stream-link                 ; not yet documented

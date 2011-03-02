@@ -71,7 +71,7 @@ awakened by another thread.  Once awakened, the lock that it was holding is
 reacquired atomically before the thread is allowed to do anything else.
 </p>
 <p>A condition variable must always be associated with a <a href="ref-glossary.html#gl:lock">lock</a> (or
-<a href="ref-glossary.html#id180">recursive&nbsp;lock</a>) in order to avoid a race condition created when one
+<a href="ref-glossary.html#id188">recursive&nbsp;lock</a>) in order to avoid a race condition created when one
 thread signals a condition while another thread is preparing to wait on it.
 In this situation, the second thread would be perpetually waiting for the
 signal that has already been sent.  In the POSIX model, there is no explicit
@@ -84,20 +84,34 @@ lock entities.
 </p>
 <p><h4>Hibernation</h4>
 </p>
-<p>Sometimes it is desirable to put a thread to sleep (perhaps for a long time) until some event has occurred.  The Portable Threads Interface provides two entities that make this situation easy to code: <nobr><b><a href="ref-hibernate-thread.html">hibernate-thread</a></b></nobr> and <nobr><b><a href="ref-awaken-thread.html">awaken-thread</a></b></nobr>.  Thread hibernation can only be performed by the thread on itself, eliminating issues of a thread being hibernated at an undesirable time.  Note that there is the potential for a hibernate/awaken race condition if a thread hibernates itself again soon after being awakened (when a second <nobr><b><a href="ref-awaken-thread.html">awaken-thread</a></b></nobr> intended for the original hiberation is applied to the second hibernation rather than being ignored because the target thread is not hibernating).  Using a <nobr><b><a href="ref-condition-variable.html">condition-variable</a></b></nobr> is preferable in this situation.
+<p>Sometimes it is desirable to put a thread to sleep (perhaps for a long time)
+until some event has occurred.  The Portable Threads Interface provides two
+entities that make this situation easy to code:
+<nobr><b><a href="ref-hibernate-thread.html">hibernate-thread</a></b></nobr> and
+<nobr><b><a href="ref-awaken-thread.html">awaken-thread</a></b></nobr>.  Thread hibernation can only be
+performed by the thread on itself, eliminating issues of a thread being
+hibernated at an undesirable time.  Note that there is the potential for a
+hibernate/awaken race condition if a thread hibernates itself again soon after
+being awakened (when a second <nobr><b><a href="ref-awaken-thread.html">awaken-thread</a></b></nobr> intended
+for the original hiberation is applied to the second hibernation rather than
+being ignored because the target thread is not hibernating).  Using a
+<nobr><b><a href="ref-condition-variable.html">condition-variable</a></b></nobr> is preferable in this situation.
 </p>
-<p>When a thread is hibernating, it remains available to respond to <nobr><b><a href="ref-run-in-thread.html">run-in-thread</a></b></nobr> and <nobr><b><a href="ref-symbol-value-in-thread.html">symbol-value-in-thread</a></b></nobr> operations as well as to be awakened by a dynamically surrounding <nobr><b><a href="ref-with-timeout.html">with-timeout</a></b></nobr>.
+<p>When a thread is hibernating, it remains available to respond to
+<nobr><b><a href="ref-run-in-thread.html">run-in-thread</a></b></nobr> and
+<nobr><b><a href="ref-symbol-value-in-thread.html">symbol-value-in-thread</a></b></nobr> operations as well as to be
+awakened by a dynamically surrounding <nobr><b><a href="ref-with-timeout.html">with-timeout</a></b></nobr>.
 </p>
 <p><h4>What about Process Wait?</h4>
 </p>
 <p>Thread coordination functions, such as <nobr><code>process-wait</code></nobr>, are
 expensive to implement with operating-system threads.  Such functions stop the
-executing thread until a Common Lisp <a href="ref-glossary.html#id162">predicate&nbsp;function</a> returns a true
+executing thread until a Common Lisp <a href="ref-glossary.html#id170">predicate&nbsp;function</a> returns a true
 value.  With application-level threads, the Lisp-based scheduler evaluates the
-<a href="ref-glossary.html#id162">predicate&nbsp;function</a> periodically when looking for other threads that
+<a href="ref-glossary.html#id170">predicate&nbsp;function</a> periodically when looking for other threads that
 can be run.  With operating-system threads, however, thread scheduling is
 performed by the operating system and evaluating a Common Lisp
-<a href="ref-glossary.html#id162">predicate&nbsp;function</a> requires complex and expensive interaction between
+<a href="ref-glossary.html#id170">predicate&nbsp;function</a> requires complex and expensive interaction between
 the operating-system thread scheduling and the Common Lisp implementation.
 Given this cost and complexity, many Common Lisp implementations that use
 operating-system threads have elected not to provide
@@ -106,7 +120,7 @@ extends to the Portable Threads Interface as well.
 </p>
 <p>Fortunately, most uses of <nobr><code>process-wait</code></nobr> can be replaced by a
 different strategy that relies on the producer of a change that would affect
-the <nobr><code>process-wait</code></nobr> <a href="ref-glossary.html#id162">predicate&nbsp;function</a> to signal the event
+the <nobr><code>process-wait</code></nobr> <a href="ref-glossary.html#id170">predicate&nbsp;function</a> to signal the event
 rather than having the consumers of the change use predicate functions to poll
 for it.  Condition variables, the Portable Threads
 <nobr><b><a href="ref-hibernate-thread.html">hibernate-thread</a></b></nobr> and

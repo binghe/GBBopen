@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Tue Feb 22 14:33:09 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Mar  2 11:39:28 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
@@ -723,9 +723,9 @@ foolishly evaluate this expression:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(loop (print "This is repetitive...") (sleep 1))}
 
-  "This is repetitive." 
-  "This is repetitive." 
-       ...}
+  "This is repetitive..." 
+  "This is repetitive..." 
+     \textrm{\ldots{}}}
 \end{example}
 %
 Once I grow tired of watching this phrase repeat, it would be good to
@@ -741,11 +741,11 @@ associated with typing one or more Control-c (\code{\ctrl{c}}) characters:
 \textcolor{darkergray}{%
   cl-user> (loop (print "This is repetitive...") (sleep 1))
 
-  "This is repetitive." 
-  "This is repetitive." 
-       ...
-  "This is repetitive." 
-  "This is repetitive." 
+  "This is repetitive..." 
+  "This is repetitive..." 
+     \textrm{\ldots{}}
+  "This is repetitive..." 
+  "This is repetitive..." 
   "This is rep\textcolor{black}{\ctrl{C}}
   Error: Received keyboard interrupt \ctrl{C}
   cl-user>>}
@@ -759,11 +759,11 @@ can be resumed or aborted:
 \textcolor{darkergray}{%
   cl-user> (loop (print "This is repetitive...") (sleep 1))
 
-  "This is repetitive." 
-  "This is repetitive." 
-       ...
-  "This is repetitive." 
-  "This is repetitive." 
+  "This is repetitive..." 
+  "This is repetitive..." 
+     \textrm{\ldots{}}
+  "This is repetitive..." 
+  "This is repetitive..." 
   "This is rep\ctrl{C}
   Error: Received keyboard interrupt \ctrl{C}
   cl-user>> \textcolor{black}{:a}
@@ -884,11 +884,11 @@ was installed:
   ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.lisp
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/modules.lisp
   ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
   ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
-       ...
+     \textrm{\ldots{}}
   ;; Compiling \var{<install-dir>\/}/source/gbbopen/gbbopen-user.lisp
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   t
@@ -924,17 +924,17 @@ your Common Lisp implementation and platform.
   ;; Loading \var{<install-dir>\/}/initiate.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/startup.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.lisp
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/modules.lisp
   ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
   ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
-       ...
+     \textrm{\ldots{}}
   ;; Defining an ASDF defsystem for each Module Manager module...
   cl-user>}
 \end{smallexample}
@@ -949,17 +949,17 @@ or when ASDF is integrated with Common Lisp's \textbf{require}:
   ;; Loading \var{<install-dir>\/}/initiate.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/startup.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
   ;;  Loading \var{<install-dir>\/}/source/module-manager/module-manager-loader.lisp
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.lisp
-       ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/modules.lisp
   ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
   ;; No personal module definitions were found in \var{<homedir>\/}/gbbopen-modules/.
-       ...
+     \textrm{\ldots{}}
   ;; Defining an ASDF defsystem for each Module Manager module...
   cl-user>}
 \end{smallexample}
@@ -1024,7 +1024,7 @@ same name as the REPL command:
   #P"\var{<install-dir>\/}/initiate.lisp"
   cl-user> \textcolor{black}{(gbbopen-user)}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
 \end{example}
@@ -1056,7 +1056,7 @@ representation. For example:
 \begin{example}
   cl-user> :gbbopen-user :create-dirs
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>
 \end{example}
@@ -1073,7 +1073,7 @@ spread notation.  For example:
 \begin{example}
   cl-user> (:gbbopen-user :create-dirs)
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>
 \end{example}
@@ -1087,7 +1087,7 @@ used in place of the keyword REPL command processing:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(cl-user:gbbopen-user :create-dirs)}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
 \end{example}
@@ -1169,9 +1169,9 @@ session and evaluate the following forms:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
-     ...
+     \textrm{\ldots{}}
   cl-user> \textcolor{black}{:gbbopen-user}
-     ...
+     \textrm{\ldots{}}
   gbbopen-user>}
 \end{example}
 
@@ -1432,9 +1432,9 @@ session and evaluate the following forms:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
-     ...
+     \textrm{\ldots{}}
   cl-user> \textcolor{black}{:gbbopen-user}
-     ...
+     \textrm{\ldots{}}
   gbbopen-user> \textcolor{black}{(define-unit-class location ()
                   (x y))}
   #<location>
@@ -1795,9 +1795,9 @@ session and evaluate the following forms:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
-     ...
+     \textrm{\ldots{}}
   cl-user> \textcolor{black}{:gbbopen-user}
-     ...
+     \textrm{\ldots{}}
   gbbopen-user> \textcolor{black}{(define-unit-class location ()
                    (x y))}
   #<standard-unit-class location>
@@ -2440,9 +2440,9 @@ Thus far, we have entered the forms:
 \begin{example}
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{(load "\var{<install-dir>\/}/initiate.lisp")}
-     ...
+     \textrm{\ldots{}}
   cl-user> \textcolor{black}{:gbbopen-user}
-     ...
+     \textrm{\ldots{}}
   gbbopen-user>}
 \end{example}
 %
@@ -2710,7 +2710,7 @@ GBBopen HyperDoc pages from Common Lisp.  GBBopen's
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:os-interface}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/tools/os-interface.fasl
   gbbopen-tools> \textcolor{black}{(browse-hyperdoc 'define-unit-class)}
   t
@@ -2777,7 +2777,7 @@ module, using the REPL command we set up in the last exercise:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:gbbopen-user}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/gbbopen-user.fasl
   gbbopen-user>}
 \end{smallexample}
@@ -3591,7 +3591,7 @@ Start up a fresh Common Lisp session and load the
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:agenda-shell-user}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/
   ;;            control-shells/agenda-shell-user.fasl
   gbbopen-user>}
@@ -4692,7 +4692,7 @@ the \nobr{\code{location}} unit instances:
   #<location 20 (2 27)> 
   #<location 33 (-25 6)> 
   #<location 46 (-2 32)> 
-       ...
+     \textrm{\ldots{}}
   #<location 31 (-22 18)> 
   #<location 44 (-7 14)> 
   #<location 57 (2 41)> 
@@ -4735,7 +4735,7 @@ to unit instances.  We could do something like the following:
   #<location 8 (-6 20)> 
   #<location 9 (4 15)> 
   #<location 10 (-5 14)> 
-       ...
+     \textrm{\ldots{}}
   #<location 50 (5 26)> 
   #<location 51 (-2 16)> 
   #<location 52 (2 23)> 
@@ -4786,7 +4786,7 @@ that suits our needs:
   #<location 8 (-6 20)> 
   #<location 9 (4 15)> 
   #<location 10 (-5 14)> 
-       ...
+     \textrm{\ldots{}}
   #<location 50 (5 26)> 
   #<location 51 (-2 16)> 
   #<location 52 (2 23)> 
@@ -4854,7 +4854,7 @@ Here is one such random walk:
   #<location 8 (1 2)> 
   #<location 9 (8 0)> 
   #<location 10 (5 8)> 
-       ...
+     \textrm{\ldots{}}
   #<location 70 (-13 -11)> 
   #<location 71 (-13 -6)> 
   #<location 72 (-9 -6)> 
@@ -4879,7 +4879,7 @@ Here is one such random walk:
 \label{sec:connections}%
 
 %\begin{center}
-%\textcolor{caution}{[Construction ahead...]}
+%\textcolor{caution}{[Construction ahead\ldots{}]}
 %\end{center}
 
 We finally did some walking in the last exercise and learned how to display
@@ -5057,13 +5057,13 @@ relation would be specified as follows:
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
-      ...
+     \textrm{\ldots{}}
    \textcolor{blue}{(next-locations
     :link (location previous-location :singular t)))
    (previous-location
     :link (location next-locations)  
     :singular t)}
-      ...}
+     \textrm{\ldots{}}}
 \end{example}
 
 We've followed the natural GBBopen convention of giving singular link slots a
@@ -5350,7 +5350,7 @@ We can now follow the links to display the random walk:
   #<location 8 (7 -6)> 
   #<location 9 (10 4)> 
   #<location 10 (5 -5)> 
-       ...
+     \textrm{\ldots{}}
   #<location 60 (29 17)> 
   #<location 61 (31 21)> 
   #<location 62 (40 23)> 
@@ -5438,7 +5438,7 @@ Let's compile our latest changes and then run our application with the new
   8 (-17 8)
   9 (-21 15)
   10 (-12 14)
-       ...
+     \textrm{\ldots{}}
   35 (40 28)
   36 (50 22)
   37 (49 12)
@@ -5750,7 +5750,7 @@ the following files should be loaded:
 \W\supp
 \begin{smallexample}
 \textcolor{darkergray}{%
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<homedir>\/}/shared-init.lisp
   ;;   Loading \var{<install-dir>\/}/initiate.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
@@ -5778,7 +5778,7 @@ load only the \nobr{\code{:module-manager-user}} module:
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:module-manager-user}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;;     Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager-user.fasl
   ;;   Loading \var{<install-dir>\/}/modules.lisp
   ;; Loading module definitions from \var{<homedir>\/}/gbbopen-modules/...
@@ -5802,7 +5802,7 @@ needed) and load it:
 \textcolor{darkergray}{%
   module-manager-user> \textcolor{black}{:cm :tutorial}
   ;;   Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/tools/portable-threads.fasl
-     ...
+     \textrm{\ldots{}}
   ;;   Loading .../gbbopen/control-shells/agenda-shell-user.fasl
 
   Error: Directory \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/ 
@@ -5901,7 +5901,7 @@ the following files should be loaded:
 \W\supp
 \begin{smallexample}
 \textcolor{darkergray}{%
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<homedir>\/}/shared-init.lisp
   ;;   Loading \var{<install-dir>\/}/initiate.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
@@ -5927,7 +5927,7 @@ Now, we can compile and load the \code{:tutorial} module by simply issuing the
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:tutorial}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   gbbopen-user>}
 \end{smallexample}
@@ -6163,7 +6163,7 @@ a fresh Common Lisp session.  Next enter the
 \textcolor{darkergray}{%
   cl-user> \textcolor{black}{:tutorial}
   ;; Loading \var{<install-dir>\/}/startup.lisp
-     ...
+     \textrm{\ldots{}}
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   tutorial>}
 \end{smallexample}
@@ -6190,7 +6190,7 @@ still be able to run the random-walk application:
   8 (12 2)
   9 (3 12)
   10 (10 4)
-       ...
+     \textrm{\ldots{}}
   55 (50 40)
   56 (42 47)
   57 (47 41)
@@ -6282,7 +6282,7 @@ a random walk:
   3 (6 3)
   4 (3 -4)
   5 (10 -13)
-     ...
+     \textrm{\ldots{}}
   21 (-5 -46)
   22 (-9 -39)
   23 (1 -33)
@@ -6338,7 +6338,7 @@ be loaded and its ``autorun'' form evaluated:
   ;; Loading \var{<homedir>\/}/tutorial/modules.lisp
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
-     ...
+     \textrm{\ldots{}}
   tutorial>}
 \end{smallexample}
 %
@@ -6355,7 +6355,7 @@ Let's try the \code{:tutorial} command one more time, just to be certain that
   tutorial> \textcolor{black}{:tutorial}
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
-     ...
+     \textrm{\ldots{}}
   tutorial>}
 \end{smallexample}
 
@@ -6372,10 +6372,9 @@ we specify our \code{:tutorial} command:
   ;;   Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager.fasl
   ;;     Loading
   \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager-user.fasl
-
-     ...
+     \textrm{\ldots{}}
   ;; Control shell 1 started
-     ...
+     \textrm{\ldots{}}
   tutorial>}
 \end{example}
 %
@@ -6393,7 +6392,7 @@ command:
   tutorial> :tutorial :reload :nopropagate
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
-     ...
+     \textrm{\ldots{}}
   tutorial>}
 \end{smallexample}
 %
@@ -6422,7 +6421,7 @@ so we could have alternatively typed the \code{:cm} REPL command rather than
   ;; :cm :tutorial :propagate
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/tutorial-example.fasl
   ;; Control shell 1 started
-     ...
+     \textrm{\ldots{}}
   tutorial>}
 \end{smallexample}
 %
@@ -6519,7 +6518,7 @@ Let's double-check that everything is working:
   ;; Compiling \var{<homedir>\/}/tutorial/source/autorun.lisp
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/autorun.fasl
   ;; Control shell 1 started
-     ...
+     \textrm{\ldots{}}
   tutorial>}
 \end{smallexample}
 %
@@ -6535,7 +6534,7 @@ files have been modified:
   ;; :cm :tutorial :propagate
   ;; Loading \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/autorun.fasl
   ;; Control shell 1 started
-     ...
+     \textrm{\ldots{}}
   tutorial>}
 \end{smallexample}
 
@@ -6576,7 +6575,7 @@ Congratulations!  It's time to move to the next exercise.
 \label{sec:detour}%
 
 %\begin{center}
-%\textcolor{caution}{[Construction ahead...]}
+%\textcolor{caution}{[Construction ahead\textrm{\ldots{}}]}
 %\end{center}
 
 \T\medskip

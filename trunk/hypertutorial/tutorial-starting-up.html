@@ -325,9 +325,10 @@ foolishly evaluate this expression:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(loop (print "This is repetitive...") (sleep 1))</font>
 
-  "This is repetitive." 
-  "This is repetitive." 
-       ...</font>
+  "This is repetitive..." 
+  "This is repetitive..." 
+     <span 
+    style="font-family: serif; font-style: normal">...</span></font>
 </pre>
 Once I grow tired of watching this phrase repeat, it would be good to
 terminate the evaluation without having to kill the entire Common Lisp
@@ -339,11 +340,12 @@ associated with typing one or more Control-c (<code>^c</code>) characters:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; (loop (print "This is repetitive...") (sleep 1))
 
-  "This is repetitive." 
-  "This is repetitive." 
-       ...
-  "This is repetitive." 
-  "This is repetitive." 
+  "This is repetitive..." 
+  "This is repetitive..." 
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
+  "This is repetitive..." 
+  "This is repetitive..." 
   "This is rep<font color="#000000">^C</font>
   Error: Received keyboard interrupt ^C
   cl-user&gt;&gt;</font>
@@ -353,11 +355,12 @@ can be resumed or aborted:
 <pre>
 <font color="#667f66">  cl-user&gt; (loop (print "This is repetitive...") (sleep 1))
 
-  "This is repetitive." 
-  "This is repetitive." 
-       ...
-  "This is repetitive." 
-  "This is repetitive." 
+  "This is repetitive..." 
+  "This is repetitive..." 
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
+  "This is repetitive..." 
+  "This is repetitive..." 
   "This is rep^C
   Error: Received keyboard interrupt ^C
   cl-user&gt;&gt; <font color="#000000">:a</font>
@@ -456,11 +459,13 @@ was installed:
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.lisp
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
   ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
   ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Compiling <var>&lt;install-dir&gt;</var>/source/gbbopen/gbbopen-user.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   t
@@ -492,17 +497,20 @@ ASDF by entering:
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.lisp
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
   ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
   ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Defining an ASDF defsystem for each Module Manager module...
   cl-user&gt;</font>
 </pre></small>
@@ -512,17 +520,20 @@ or when ASDF is integrated with Common Lisp's <b>require</b>:
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.lisp
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
   ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
   ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Defining an ASDF defsystem for each Module Manager module...
   cl-user&gt;</font>
 </pre></small>
@@ -577,7 +588,8 @@ same name as the REPL command:
   #P"<var>&lt;install-dir&gt;</var>/initiate.lisp"
   cl-user&gt; <font color="#000000">(gbbopen-user)</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
 </pre>
@@ -599,7 +611,8 @@ representation. For example:
 <pre class="pretop">
   cl-user&gt; :gbbopen-user :create-dirs
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;
 </pre>
@@ -613,7 +626,8 @@ spread notation.  For example:
 <pre>
   cl-user&gt; (:gbbopen-user :create-dirs)
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;
 </pre>
@@ -624,7 +638,8 @@ used in place of the keyword REPL command processing:
 <pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">(cl-user:gbbopen-user :create-dirs)</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/gbbopen/gbbopen-user.fasl
   gbbopen-user&gt;</font>
 </pre>
