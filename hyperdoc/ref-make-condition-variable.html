@@ -31,7 +31,7 @@
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The name of the <a href="ref-glossary.html#gl:class">class</a> for the created
 <a href="ref-glossary.html#gl:condition-variable">condition-variable</a> instance (default is
 <nobr><code>condition-variable</code></nobr>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id180">recursive&nbsp;lock</a>, or a 
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>lock</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:lock">lock</a>, a <a href="ref-glossary.html#id188">recursive&nbsp;lock</a>, or a 
 <a href="ref-glossary.html#id25">condition&nbsp;variable</a> (default is a non-recursive lock)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>condition-variable</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id25">condition&nbsp;variable</a>
 </td></tr></table>
@@ -53,7 +53,7 @@
   &gt;
 </pre>
 Make a <nobr><b>condition-variable</b></nobr> instance with a
-<a href="ref-glossary.html#id180">recursive&nbsp;lock</a>:
+<a href="ref-glossary.html#id188">recursive&nbsp;lock</a>:
 <pre>
   &gt; (make-condition-variable :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))
   #&lt;condition-variable&gt;
@@ -68,7 +68,7 @@ Define a subclass of <nobr><b>condition-variable</b></nobr> that includes a
             :accessor state-of)))
 </pre>
 and then create a <nobr><code>state-cv</code></nobr> instance with a
-<a href="ref-glossary.html#id180">recursive&nbsp;lock</a>:
+<a href="ref-glossary.html#id188">recursive&nbsp;lock</a>:
 <pre>
   &gt; (make-condition-variable :class 'state-cv
                              :lock (<a href="ref-make-recursive-lock.html">make-recursive-lock</a>))

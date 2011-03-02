@@ -266,7 +266,8 @@ Common Lisp session.  If you have set up your environment according to the
 <a href="tutorial-development-environment.html">Enhancing Your Development Environment exercise</a>,
 the following files should be loaded:
 <small><pre class="pretop">
-<font color="#667f66">     ...
+<font color="#667f66">     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;homedir&gt;</var>/shared-init.lisp
   ;;   Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
@@ -291,7 +292,8 @@ load only the <nobr><code>:module-manager-user</code></nobr> module:
 <small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:module-manager-user</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;;     Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager-user.fasl
   ;;   Loading <var>&lt;install-dir&gt;</var>/modules.lisp
   ;; Loading module definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
@@ -309,7 +311,8 @@ needed) and load it:
 <pre class="pretop">
 <font color="#667f66">  module-manager-user&gt; <font color="#000000">:cm :tutorial</font>
   ;;   Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/tools/portable-threads.fasl
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;;   Loading .../gbbopen/control-shells/agenda-shell-user.fasl
 
   Error: Directory <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/ 
@@ -390,7 +393,8 @@ Common Lisp session.  If you have set up your environment according to the
 <a href="tutorial-development-environment.html">Enhancing Your Development Environment exercise</a>,
 the following files should be loaded:
 <small><pre class="pretop">
-<font color="#667f66">     ...
+<font color="#667f66">     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;homedir&gt;</var>/shared-init.lisp
   ;;   Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
@@ -412,7 +416,8 @@ directory has been loaded by
 <small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:tutorial</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
   gbbopen-user&gt;</font>
 </pre></small>
@@ -588,7 +593,8 @@ a fresh Common Lisp session.  Next enter the
 <small><pre class="pretop">
 <font color="#667f66">  cl-user&gt; <font color="#000000">:tutorial</font>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
   tutorial&gt;</font>
 </pre></small>
@@ -611,7 +617,8 @@ still be able to run the random-walk application:
   8 (12 2)
   9 (3 12)
   10 (10 4)
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   55 (50 40)
   56 (42 47)
   57 (47 41)
@@ -687,7 +694,8 @@ a random walk:
   3 (6 3)
   4 (3 -4)
   5 (10 -13)
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   21 (-5 -46)
   22 (-9 -39)
   23 (1 -33)
@@ -732,7 +740,8 @@ be loaded and its &#8220;autorun&#8221; form evaluated:
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/modules.lisp
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
   ;; Control shell 1 started
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   tutorial&gt;</font>
 </pre></small>
 The Module Manager noticed our updated <nobr><code>modules.lisp</code></nobr> file and
@@ -745,7 +754,8 @@ followed our <code>:reload</code> specification.
 <font color="#667f66">  tutorial&gt; <font color="#000000">:tutorial</font>
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
   ;; Control shell 1 started
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   tutorial&gt;</font>
 </pre></small>
 </p>
@@ -758,10 +768,11 @@ we specify our <code>:tutorial</code> command:
   ;;   Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.fasl
   ;;     Loading
   <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager-user.fasl
-
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Control shell 1 started
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   tutorial&gt;</font>
 </pre>
 however, this would also reload all the files of very module required by the
@@ -775,7 +786,8 @@ command:
 <font color="#667f66">  tutorial&gt; :tutorial :reload :nopropagate
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
   ;; Control shell 1 started
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   tutorial&gt;</font>
 </pre></small>
 which would eliminate reloading of all but the files in the <code>:tutorial</code>
@@ -799,7 +811,8 @@ so we could have alternatively typed the <code>:cm</code> REPL command rather th
   ;; :cm :tutorial :propagate
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/tutorial-example.fasl
   ;; Control shell 1 started
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   tutorial&gt;</font>
 </pre></small>
 Just the thing for lazy typists like me!  Note that the <code>:cm</code> command
@@ -871,7 +884,8 @@ Let's double-check that everything is working:
   ;; Compiling <var>&lt;homedir&gt;</var>/tutorial/source/autorun.lisp
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/autorun.fasl
   ;; Control shell 1 started
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   tutorial&gt;</font>
 </pre></small>
 The modified files are compiled and loaded and the Agenda Shell is invoked.
@@ -883,7 +897,8 @@ files have been modified:
   ;; :cm :tutorial :propagate
   ;; Loading <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/autorun.fasl
   ;; Control shell 1 started
-     ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   tutorial&gt;</font>
 </pre></small>
 </p>

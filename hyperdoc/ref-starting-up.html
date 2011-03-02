@@ -68,7 +68,7 @@ add some handy REPL <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;
 users.  Some interaction interfaces, such as
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a>, use their own REPL
 rather than the top-level listener provided by the Common Lisp implementation
-and, therefore, may not support <a href="ref-glossary.html#gl:keywords">keyword</a> <a href="ref-glossary.html#id184">REPL&nbsp;command</a>
+and, therefore, may not support <a href="ref-glossary.html#gl:keywords">keyword</a> <a href="ref-glossary.html#id192">REPL&nbsp;command</a>
 processing.  GBBopen provides a Swank extension to the
 <a target="_top" href="http://common-lisp.net/project/slime/">SLIME</a> REPL that supports
 REPL <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a>.
@@ -79,7 +79,8 @@ REPL <a href="ref-glossary.html#gl:keyword-command">keyword&nbsp;commands</a>.
 using a non-list (&#8220;spread&#8221;) representation.  For example:
 <pre class="pretop">
   &gt; :gbbopen-test :propagate :create-dirs
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   &gt;
 </pre>
 </p>
@@ -92,11 +93,12 @@ support REPL commands in non-spread (list) form in addition to the
 spread notation.  For example:
 <pre>
   &gt; (:gbbopen-test :propagate :create-dirs)
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   &gt;
 </pre>
 Equivalent functions in the <nobr><code>:common-lisp-user</code></nobr> package are always
-defined for each <a href="ref-glossary.html#id184">REPL&nbsp;command</a>, and these functions can be used in
+defined for each <a href="ref-glossary.html#id192">REPL&nbsp;command</a>, and these functions can be used in
 place of REPL <a href="ref-glossary.html#gl:keyword-command">keyword-command</a> processing.
 </p>
 <p><h4>Compiling all GBBopen modules</h4>
@@ -109,11 +111,13 @@ modules can be compiled by entering the following REPL command:
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.lisp
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
   ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
   ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;;; GBBopen modules compilation completed.
   <span 
     style="font-family: serif; font-style: normal">[Common Lisp will exit]</span></font>
@@ -151,17 +155,20 @@ ASDF by entering:
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.lisp
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
   ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
   ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Defining an ASDF defsystem for each Module Manager module...
   cl-user&gt;</font>
 </pre></small>
@@ -171,17 +178,20 @@ or when ASDF is integrated with Common Lisp's <b>require</b>:
   ;; Loading <var>&lt;install-dir&gt;</var>/initiate.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/startup.lisp
   ;; GBBopen is installed in <var>&lt;install-dir&gt;</var>
   ;; Your "home" directory is <var>&lt;homedir&gt;</var>
   ;;  Loading <var>&lt;install-dir&gt;</var>/source/module-manager/module-manager-loader.lisp
   ;; Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager.lisp
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Loading <var>&lt;install-dir&gt;</var>/modules.lisp
   ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
   ;; No personal module definitions were found in <var>&lt;homedir&gt;</var>/gbbopen-modules/.
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   ;; Defining an ASDF defsystem for each Module Manager module...
   cl-user&gt;</font>
 </pre></small>
@@ -242,7 +252,7 @@ file (source or compiled) is present in the user's &#8220;homedir&#8221; home di
 (as defined by <nobr><b>user-homedir-pathname</b></nobr>), it is loaded
 automatically by GBBopen's <nobr><code>initiate.lisp</code></nobr> file.  For example, the
 following personal <nobr><code>gbbopen-commands.lisp</code></nobr> file defines a
-<a href="ref-glossary.html#id184">REPL&nbsp;command</a> (named <nobr><code>:my-app</code></nobr>) and an equivalent
+<a href="ref-glossary.html#id192">REPL&nbsp;command</a> (named <nobr><code>:my-app</code></nobr>) and an equivalent
 <a href="ref-glossary.html#gl:function">function</a> <nobr>(<code>cl-user::my-app</code></nobr>) for compiling and loading the
 <nobr><code>:my-app</code></nobr> <a href="ref-glossary.html#gl:module">module</a> that was defined above:
 <pre>

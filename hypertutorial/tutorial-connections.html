@@ -174,13 +174,15 @@ temporarily assume that we want a <nobr><code>location</code></nobr> instance th
 have many next locations, but only a single previous location.  This link
 relation would be specified as follows:
 <pre class="pretop">
-<font color="#667f66">      ...
+<font color="#667f66">     <span 
+    style="font-family: serif; font-style: normal">...</span>
    <font color="#0000ff">(next-locations
     :link (location previous-location :singular t)))
    (previous-location
     :link (location next-locations)  
     :singular t)</font>
-      ...</font>
+     <span 
+    style="font-family: serif; font-style: normal">...</span></font>
 </pre>
 </p>
 <p>We've followed the natural GBBopen convention of giving singular link slots a
@@ -422,7 +424,8 @@ and its <nobr><code>previous-location</code></nobr> link slot points back to the
   #&lt;location 8 (7 -6)&gt; 
   #&lt;location 9 (10 4)&gt; 
   #&lt;location 10 (5 -5)&gt; 
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   #&lt;location 60 (29 17)&gt; 
   #&lt;location 61 (31 21)&gt; 
   #&lt;location 62 (40 23)&gt; 
@@ -498,7 +501,8 @@ would print the random walk over and over again.
   8 (-17 8)
   9 (-21 15)
   10 (-12 14)
-       ...
+     <span 
+    style="font-family: serif; font-style: normal">...</span>
   35 (40 28)
   36 (50 22)
   37 (49 12)
