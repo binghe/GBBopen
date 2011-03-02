@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jun 16 10:24:06 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Wed Mar  2 03:53:21 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -65,14 +65,16 @@
   ;; *read-default-float-format*, and saved/sent-value for reading by
   ;; read-saving/sending-block-info (in read-object.lisp) which is called by
   ;; with-reading-object-block:
-  (format stream "(~s ~s :~a ~s)~%" 
+  (format stream "(~s ~s :~a ~s)~%"
           *saving/sending-block-format-version*
           (get-universal-time)
-          ;; We write package-name as keyword symbol, to avoid package/modern-mode
-          ;; issues:
+          ;; We write package-name as keyword symbol, to avoid
+          ;; package/modern-mode issues:
           (package-name *package*)
           *read-default-float-format*)
-  (print-object-for-saving/sending saved/sent-value stream))
+  (print-object-for-saving/sending saved/sent-value stream)
+  ;; Required to help reading:
+  (write-char #\space stream))
 
 ;;; ===========================================================================
 ;;;  With-sending/saving-block

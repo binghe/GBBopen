@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 27 06:12:27 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  2 04:05:13 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -153,9 +153,7 @@
             *default-estimated-peak-forward-references*)
            (readtable
             '*reading-saved/sent-objects-readtable*)
-           (read-eval nil)
-           ;; internal use
-           (skip-block-info-reading nil))
+           (read-eval nil))
      &body body)
   `(with-standard-io-syntax 
      (setf *print-readably* nil)        ; Turn off to catch missing
@@ -190,9 +188,7 @@
            ;; Note that read-saving/sending-block-info also sets *package*,
            ;; *read-default-float-format*, and
            ;; *reading-saved/sent-class-name-translations* :
-           (if ,skip-block-info-reading
-               (get-universal-time)
-               (read-saving/sending-block-info ,stream ,class-name-translations))
+           (read-saving/sending-block-info ,stream ,class-name-translations)
          (multiple-value-prog1
              (progn ,@body)
            (when *coalesce-save/sent-strings-ht*

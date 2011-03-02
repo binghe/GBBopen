@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 28 11:03:45 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  2 10:05:51 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -35,16 +35,18 @@
 ;; Compile/load the :tutorial module (without running it):
 (cl-user::tutorial-example :create-dirs :noautorun)
 
-;; The slave host (me!):
+;; The host (me!):
 (define-streamer-node "slave"
     :host "127.0.0.1"
-    :package ':tutorial)
+    :package ':common-lisp
+    :passphrase "Open, says me!"
+    :authorized-nodes '("master"))
 
 ;; The master host:
 (define-streamer-node "master"
-    :host "127.0.0.1"
     :port (1+ (port-of (find-streamer-node "slave")))
-    :package ':tutorial)
+    :read-default-float-format 'long-float
+    :package ':gbbopen)
 
 ;; Help 
 #+IF-DEBUGGING
@@ -63,6 +65,11 @@
 ;; Silly command-form method:
 (defmethod handle-streamed-command-form ((command (eql ':print)) &rest args)
   (format t "~&;; Print:~{ ~s~}~%" args))
+
+;; Slightly more useful command-form method:
+(defmethod handle-streamed-command-form ((command (eql ':pa)) &rest args)
+  (declare (ignore args))
+  (format t "~&;; Package: ~s ~%" *package*))
 
 ;; A more useful command-form method:
 (defmethod handle-streamed-command-form ((command (eql ':disable-event-printing))

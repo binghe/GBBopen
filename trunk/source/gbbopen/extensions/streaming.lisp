@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 28 11:04:16 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  2 01:59:17 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -34,39 +34,39 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(add-mirroring
-            add-to-broadcast-streamer
-            begin-queued-streaming
-            broadcast-streamer          ; class-name
-            beginning-queued-read
-            describe-mirroring          ; not yet documented`
-            end-queued-streaming
-            ending-queued-read
-            handle-streamed-command-atom
-            handle-streamed-command-form
-            journal-streamer            ; class-name
+            add-to-broadcast-streamer   ; not yet documented
+            begin-queued-streaming      ; not yet documented
+            broadcast-streamer          ; class-name (not yet documented)
+            beginning-queued-read       ; not yet documented
+            describe-mirroring          ; not yet documented
+            end-queued-streaming        ; not yet documented
+            ending-queued-read          ; not yet documented
+            handle-streamed-command-atom ; not yet documented
+            handle-streamed-command-form ; not yet documented
+            journal-streamer            ; class-name (not yet documented)
             load-journal
-            make-broadcast-streamer
+            make-broadcast-streamer     ; not yet documented
             make-journal-streamer
-            open-streamer-p
-            remove-from-broadcast-streamer
+            open-streamer-p             ; not yet documented
+            remove-from-broadcast-streamer ; not yet documented
             remove-mirroring
-            stream-command-form
-            stream-add-to-space
-            stream-delete-instance
-            stream-instance
-            stream-instances
-            stream-instances-of-class
-            stream-instances-on-space-instances
-            stream-link
-            stream-remove-from-space
-            stream-slot-update
-            stream-unlink
-            streamer                    ; class-name
-            streamer-error              ; condition-name
-	    with-mirroring-disabled
-	    with-mirroring-enabled
-            with-queued-streaming
-            write-streamer-queue)))
+            stream-command-form         ; not yet documented
+            stream-add-to-space         ; not yet documented
+            stream-delete-instance      ; not yet documented
+            stream-instance             ; not yet documented
+            stream-instances            ; not yet documented
+            stream-instances-of-class   ; not yet documented
+            stream-instances-on-space-instances ; not yet documented
+            stream-link                 ; not yet documented
+            stream-remove-from-space    ; not yet documented
+            stream-slot-update          ; not yet documented
+            stream-unlink               ; not yet documented
+            streamer                    ; class-name (not yet documented)
+            streamer-error              ; condition-name (not yet documented)
+	    with-mirroring-disabled     ; not yet documented
+	    with-mirroring-enabled      ; not yet documented
+            with-queued-streaming       ; not yet documented
+            write-streamer-queue)))     ; not yet documented
 
 ;;; ===========================================================================
 ;;;   Streamer queues
@@ -91,9 +91,11 @@
   (lock
    (stream :initform nil)
    (closed :initform nil)
+   (recorded-class-descriptions-ht :initform (make-hash-table :test 'eq))
+   ;; Values used for writing:
    package
-   read-default-float-format 
-   (recorded-class-descriptions-ht :initform (make-hash-table :test 'eq))))
+   external-format
+   read-default-float-format))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -104,14 +106,21 @@
 ;;; ---------------------------------------------------------------------------
 
 (define-class streamer (basic-streamer)
-  (external-format
-   (broadcast-streamer :initform nil)))
+  ((broadcast-streamer :initform nil)))
 
 ;;; ---------------------------------------------------------------------------
 
 (define-class journal-streamer (streamer)
   ())
    
+;;; ---------------------------------------------------------------------------
+
+(defmethod print-instance-slots ((journal-streamer journal-streamer) stream)
+  (call-next-method)
+  (let ((pathname (stream-of journal-streamer)))
+    (when pathname
+      (format stream " ~s" (enough-namestring pathname)))))
+
 ;;; ---------------------------------------------------------------------------
 
 (define-condition streamer-error (error)
@@ -130,10 +139,10 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun make-broadcast-streamer-given-initargs 
-    (&key (package ':cl-user)
+    (&key (package ':common-lisp-user)
           (read-default-float-format *read-default-float-format*))
   (make-instance 'broadcast-streamer
-    :lock (make-recursive-lock :name "Broadcast streamer lock")
+    :lock (make-lock :name "Broadcast streamer lock")
     :package (ensure-package package)
     :read-default-float-format read-default-float-format))
 
@@ -696,33 +705,39 @@
 ;;; ---------------------------------------------------------------------------
 ;;;   Mirroring setup
 
-(defun add-mirroring (streamer unit-class-spec &optional (slot-names 't))
+(defun add-mirroring (streamer &optional (unit-class-spec 't)
+                                         (slot-names 't)
+                                         (paths 't))
   (add-event-function streamer '(instance-created-event +) unit-class-spec)
   (add-event-function streamer '(instance-deleted-event +) unit-class-spec)
-  (add-event-function streamer '(nonlink-slot-updated-event +) unit-class-spec)
-  (add-event-function streamer '(link-event +) unit-class-spec 
-                      :slot-names slot-names)
-  (add-event-function streamer '(unlink-event +) unit-class-spec
-                      :slot-names slot-names)
-  (add-event-function streamer '(instance-added-to-space-instance-event +)
+  (add-event-function streamer '(nonlink-slot-updated-event +) 
                       unit-class-spec)
+  (add-event-function streamer '(link-event +)
+                      unit-class-spec :slot-names slot-names)
+  (add-event-function streamer '(unlink-event +)
+                      unit-class-spec :slot-names slot-names)
+  (add-event-function streamer '(instance-added-to-space-instance-event +)
+                      unit-class-spec :paths paths)
   (add-event-function streamer '(instance-removed-from-space-instance-event +)
-                      unit-class-spec))
+                      unit-class-spec :paths paths))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun remove-mirroring (streamer unit-class-spec &optional (slot-names 't))
+(defun remove-mirroring (streamer &optional (unit-class-spec 't)
+                                            (slot-names 't)
+                                            (paths 't))
   (remove-event-function streamer '(instance-created-event +) unit-class-spec)
   (remove-event-function streamer '(instance-deleted-event +) unit-class-spec)
-  (remove-event-function streamer '(nonlink-slot-updated-event +) unit-class-spec)
-  (remove-event-function streamer '(link-event +) unit-class-spec
-                         :slot-names slot-names)
-  (remove-event-function streamer '(unlink-event +) unit-class-spec
-                         :slot-names slot-names)
-  (remove-event-function streamer '(instance-added-to-space-instance-event +)
+  (remove-event-function streamer '(nonlink-slot-updated-event +) 
                          unit-class-spec)
+  (remove-event-function streamer '(link-event +) 
+                         unit-class-spec :slot-names slot-names)
+  (remove-event-function streamer '(unlink-event +) 
+                         unit-class-spec :slot-names slot-names)
+  (remove-event-function streamer '(instance-added-to-space-instance-event +)
+                         unit-class-spec :paths paths)
   (remove-event-function streamer '(instance-removed-from-space-instance-event +)
-                         unit-class-spec))
+                         unit-class-spec :paths paths))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -821,14 +836,14 @@
 (defun make-journal-streamer (pathname
                               &rest initargs
                               &key (if-exists ':supersede)                   
-                                   (package ':cl-user)
+                                   (package ':common-lisp-user)
                                    (external-format ':default)
                                    (read-default-float-format 
                                     *read-default-float-format*)
                                    (streamer-class 'journal-streamer))
   (let ((stream (if (streamp pathname)
                     pathname
-                    (open (make-bb-pathname pathname)
+                    (open (make-jnl-pathname pathname)
                           ;; TODO: ** Deal with appended journaling **
                           :direction ':output
                           :if-exists if-exists
@@ -856,6 +871,7 @@
 (defun load-journal (pathname
                      &key (class-name-translations nil)
                           (coalesce-strings nil)
+                          (disable-events 't)
                           (estimated-peak-forward-references 
                            *default-estimated-peak-forward-references*)
                           (external-format ':default)
@@ -864,21 +880,22 @@
   (with-open-file (stream (make-jnl-pathname pathname)
                    :direction ':input
                    :external-format external-format)
-    (with-reading-saved/sent-objects-block 
-        (stream :class-name-translations class-name-translations
-                :coalesce-strings coalesce-strings
-                :estimated-peak-forward-references 
+    (let ((*%%events-enabled%%* (not disable-events)))
+      (with-reading-saved/sent-objects-block 
+          (stream :class-name-translations class-name-translations
+                  :coalesce-strings coalesce-strings
+                  :estimated-peak-forward-references 
                   estimated-peak-forward-references
-                :readtable readtable
-                :read-eval read-eval)
-    (with-blackboard-repository-locked ()
-      ;; Read everything:
-      (let ((eof-marker '#:eof))
-        (until (eq eof-marker (read stream nil eof-marker)))))
-      ;; Return the pathname, saved/sent-time, and saved/sent-value:
-      (values (pathname stream)
-              *block-saved/sent-time* 
-              *block-saved/sent-value*))))
+                  :readtable readtable
+                  :read-eval read-eval)
+        (with-blackboard-repository-locked ()
+          ;; Read everything:
+          (let ((eof-marker '#:eof))
+            (until (eq eof-marker (read stream nil eof-marker)))))
+        ;; Return the pathname, saved/sent-time, and saved/sent-value:
+        (values (pathname stream)
+                *block-saved/sent-time* 
+                *block-saved/sent-value*)))))
 
 ;;; ===========================================================================
 ;;;				  End of File
