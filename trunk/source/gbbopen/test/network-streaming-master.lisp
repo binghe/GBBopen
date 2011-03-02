@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 10:14:10 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  2 11:25:34 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -48,7 +48,7 @@
     :package ':cl-user)
 
 ;; Connect to slave image:
-(defparameter *streamer* (find-or-make-network-streamer "slave" "master"))
+(defparameter *streamer* (open-network-streamer "slave" "master"))
 
 ;; Slightly useful command-form method:
 (defmethod handle-streamed-command-form ((command (eql ':pa)) &rest args)
