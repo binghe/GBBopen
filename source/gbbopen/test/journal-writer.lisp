@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 27 05:38:40 2011 *-*
+;;;; *-* Last-Edit: Tue Mar  1 09:52:13 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -34,7 +34,7 @@
 
 ;; Create the journal streamer:
 (defparameter *streamer*
-    (make-journal-streamer "~/tutorial.jnl" :package ':tutorial))
+    (make-journal-streamer "tutorial" :package ':tutorial))
 
 (add-mirroring *streamer* 'standard-space-instance)
 (add-mirroring *streamer* 'path)

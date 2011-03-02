@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 28 11:03:13 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  2 10:14:10 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -38,16 +38,22 @@
 ;; The slave host:
 (define-streamer-node "slave"
     :host "127.0.0.1"
-    :package ':tutorial)
+    :passphrase "Open, says me!"
+    :package ':tutorial
+    :read-default-float-format 'double-float)
 
 ;; The master host (me!):
 (define-streamer-node "master"
-    :host "127.0.0.1"
     :port (1+ (port-of (find-streamer-node "slave")))
-    :package ':tutorial)
+    :package ':cl-user)
 
 ;; Connect to slave image:
 (defparameter *streamer* (find-or-make-network-streamer "slave" "master"))
+
+;; Slightly useful command-form method:
+(defmethod handle-streamed-command-form ((command (eql ':pa)) &rest args)
+  (declare (ignore args))
+  (format t "~&;; Package: ~s ~%" *package*))
 
 ;; Make a (trivial) broadcast streamer:
 (defparameter *broadcast-streamer* (make-broadcast-streamer *streamer*))

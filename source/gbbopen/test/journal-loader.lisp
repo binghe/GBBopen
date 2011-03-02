@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 24 19:19:01 2011 *-*
+;;;; *-* Last-Edit: Tue Mar  1 09:52:26 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -51,7 +51,7 @@
 (setf *warn-about-unusual-requests* nil)
 
 ;; Load the journal:
-(load-journal "~/tutorial.jnl")
+(load-journal "tutorial")
 
 ;; Check the results:
 (unless (find-instances 'location '(known-world) '(= time -10))

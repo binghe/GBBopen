@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 26 06:38:09 2011 *-*
+;;;; *-* Last-Edit: Mon Feb 28 15:55:10 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -465,7 +465,8 @@
 
 (define-class gbbopen-effective-slot-definition
     (standard-effective-slot-definition)
-  ((evfn-blks :initform nil))
+  ((evfn-blks :initform nil)
+   (source-for-dimensions :initform nil))
   (:generate-accessors-format :prefix))
 
 ;;; ---------------------------------------------------------------------------
