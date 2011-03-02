@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 10:08:47 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  2 11:24:41 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -40,7 +40,7 @@
             close-network-streamer      ; not yet documented
             define-streamer-node        ; not yet documented
             ensure-streamer-node        ; not yet documented
-            find-or-make-network-streamer ; not yet documented
+            find-or-make-network-streamer ; old name, remove soon
             find-streamer-node          ; not yet documented
             handle-stream-connection-exiting ; not yet documented
             host-of                     ; not yet documented
@@ -49,6 +49,7 @@
             network-stream-receiver     ; not yet documented
             network-stream-server-running-p ; not yet documented
             network-streamer            ; class-name (not yet documented)
+            open-network-streamer       ; not yet documented
             port-of                     ; not yet documented
             start-network-stream-server ; not yet documented
             streamer-node)))            ; class-name (not yet documented)
@@ -139,8 +140,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun find-or-make-network-streamer (streamer-node local-streamer-node
-                                      &rest initargs)
+(defun open-network-streamer (streamer-node local-streamer-node
+                              &rest initargs)
   ;; Lookup streamer nodes, if needed:
   (unless (typep streamer-node 'streamer-node)
     (setf streamer-node (find-streamer-node streamer-node 't)))
@@ -189,6 +190,14 @@
                                           connection)
                       initargs)))))))
           
+;;; ---------------------------------------------------------------------------
+;;;  Old name, remove soon:
+
+(defun find-or-make-network-streamer (streamer-node local-streamer-node
+                                      &rest initargs)
+  (declare (dynamic-extent initargs))
+  (apply 'open-network-streamer streamer-node local-streamer-node initargs))
+
 ;;; ---------------------------------------------------------------------------
 
 (defun close-network-streamer (network-streamer)
