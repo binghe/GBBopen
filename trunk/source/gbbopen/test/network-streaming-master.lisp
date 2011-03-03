@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 11:25:34 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 04:01:10 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -108,19 +108,22 @@
              *streamer*)
 
 ;; Remove a location from the known-world on the slave (but not here):
-(stream-remove-from-space (find-instance-by-name 8 'location) 
-                          (find-space-instance-by-path '(known-world))
-                          *streamer*)
+(stream-remove-instance-from-space-instance
+ (find-instance-by-name 8 'location) 
+ '(known-world)
+ *streamer*)
 
 ;; Add the location back to the known-world on the slave (but not here):
-(stream-add-to-space (find-instance-by-name 8 'location) 
-                     (find-space-instance-by-path '(known-world))
-                     *streamer*)
+(stream-add-instance-to-space-instance
+ (find-instance-by-name 8 'location) 
+ '(known-world)
+ *streamer*)
 
 ;; Remove another location from the known-world on the slave (but not here):
-(stream-remove-from-space (find-instance-by-name 5 'location) 
-                          (find-space-instance-by-path '(known-world))
-                          *streamer*)
+(stream-remove-instance-from-space-instance
+ (find-instance-by-name 5 'location) 
+ (find-space-instance-by-path '(known-world))
+ *streamer*)
 
 ;; Send a silly command:
 (stream-command-form '(:print "All done!") *streamer*)

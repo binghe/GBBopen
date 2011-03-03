@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Mar  2 17:03:14 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Mar  3 04:12:22 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -1770,7 +1770,9 @@ file) on Linux machines:
      #-(or lispworks sbcl) "opera")
 \end{example}
 
-\fnnote \xsitelink{LispWorks}{http://www.lispworks.com} (non-Windows
+\fnnote
+%
+\xsitelink{LispWorks}{http://www.lispworks.com} (non-Windows
 platforms) and \xsitelink{SBCL}{http://sbcl.sourceforge.net} do not perform a
 \code{PATH} search for programs, so the browser-program path must be explicitly
 included in the preferred browser setting.
@@ -2124,7 +2126,9 @@ associated with \glref{system} \nobr{\code{:my-app}}:
   >
 \end{example}
 
-\fnnotes A developer will typically wrap the
+\fnnotes
+%
+A developer will typically wrap the
 \nobr{\textbf{\entlink{define-repl-command}}} forms in an application's
 \nobr{\code{commands.lisp}} file with a single
 \nobr{\textbf{with-system-name}} macro and the definitions in the
@@ -4793,7 +4797,9 @@ the \var{count\/} is provided, and in that case only the rightmost
   >
 \end{example}
 
-\fnnote This is what \nobr{\code{delete}} should have been (and was on the
+\fnnote
+%
+This is what \nobr{\code{delete}} should have been (and was on the
 Lisp Machines).
 
 \end{functiondoc}
@@ -5511,7 +5517,9 @@ The scope of the binding of \var{var\/} does not include the
   >
 \end{example}
 
-\fnnote This \glref{function} will not work on a \glref{circular~list}.
+\fnnote
+%
+This \glref{function} will not work on a \glref{circular~list}.
 
 \end{functiondoc}
 
@@ -5646,7 +5654,8 @@ macro.
   >
 \end{example}
 
-\fnnote \inline
+\fnnote 
+\inline
 
 \end{functiondoc}
 
@@ -5687,7 +5696,8 @@ an atom, a newly consed list containing \var{object\/} as its sole element.
   >
 \end{example}
 
-\fnnote \inline
+\fnnote
+\inline
 
 \end{functiondoc}
 
@@ -6031,7 +6041,8 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
   >
 \end{example}
 
-\fnnote \inline
+\fnnote
+\inline
 
 \end{functiondoc}
 
@@ -6985,7 +6996,8 @@ implementation's low-level truncation operation.
   >
 \end{example}
 
-\fnnote \inline
+\fnnote
+\inline
 
 \end{functiondoc}
 
@@ -7044,7 +7056,8 @@ often used on the results of calling
   >>
 \end{example}
 
-\fnnote \inline
+\fnnote
+\inline
 
 \end{functiondoc}
 
@@ -7352,7 +7365,9 @@ end of \var{string\/})
   >
 \end{example}
 
-\fnnote The function \nobr{\textbf{trimmed-substring}} is semantically
+\fnnote 
+%
+The function \nobr{\textbf{trimmed-substring}} is semantically
 equivalent to
 %
 \W\supp
@@ -7423,7 +7438,9 @@ After creating an undesired method, use \nobr{\textbf{undefmethod}} to remove it
   >
 \end{example}
 
-\fnnote This macro may not be able to locate and undefine some methods with
+\fnnote
+%
+This macro may not be able to locate and undefine some methods with
 environment-specific eql specializers.
 
 \end{functiondoc}
@@ -12928,7 +12945,9 @@ list is always potentially outdated.
   >
 \end{example}
 
-\fnnotes On Common Lisp implementations without threads, \nil{} is returned.
+\fnnotes
+%
+On Common Lisp implementations without threads, \nil{} is returned.
 
 The returned list of \glref{threads} should not be destructively
 altered.
@@ -13592,7 +13611,9 @@ that are waiting on it:
     (condition-variable-broadcast condition-variable))
 \end{example}
 
-\fnnote On Common Lisp implementations without threads, this function does
+\fnnote
+%
+On Common Lisp implementations without threads, this function does
 nothing.
 
 \end{functiondoc}
@@ -13642,7 +13663,9 @@ that is waiting on it:
     (condition-variable-signal condition-variable))
 \end{example}
 
-\fnnote On Common Lisp implementations without threads, this function does
+\fnnote
+%
+On Common Lisp implementations without threads, this function does
 nothing.
 
 \end{functiondoc}
@@ -13782,7 +13805,9 @@ signaled by another \glref{thread} or until 5 seconds have elapsed:
   >
 \end{example}
 
-\fnnote On Common Lisp implementations without threads,
+\fnnote
+%
+On Common Lisp implementations without threads,
 the keyword symbol \nobr{\code{:threads-not-available}} is returned.
 
 \end{functiondoc}
@@ -13937,7 +13962,9 @@ and then create a \nobr{\code{state-cv}} instance with a
   >
 \end{example}
 
-\fnnote The \textbf{make-condition-variable} function is equivalent to using
+\fnnote 
+%
+The \textbf{make-condition-variable} function is equivalent to using
 \nobr{\textbf{\entlinknoex{make-instance}}} with the desired \glref{class} for
 the created \glref{condition-variable} instance.  However, using
 \nobr{\textbf{make-condition-variable}} is preferable stylistically.
@@ -13986,7 +14013,9 @@ the created \glref{condition-variable} instance.  However, using
   >
 \end{example}
 
-\fnnote On Common Lisp implementations without threads, a
+\fnnote
+%
+On Common Lisp implementations without threads, a
 ``pseudo-lock'' object is returned.
 
 \end{functiondoc}
@@ -14033,7 +14062,9 @@ the created \glref{condition-variable} instance.  However, using
   >
 \end{example}
 
-\fnnote On Common Lisp implementations without threads, a
+\fnnote 
+%
+On Common Lisp implementations without threads, a
 ``pseudo-recursive-lock'' object is returned.
 
 \end{functiondoc}
@@ -14316,7 +14347,9 @@ thread-local value is bound.
   >
 \end{example}
 
-\fnnote On Common Lisp implementations without threads, this function obtains
+\fnnote
+%
+On Common Lisp implementations without threads, this function obtains
 the global symbol value.
 
 \end{functiondoc}
@@ -14416,7 +14449,9 @@ the global symbol value.
   >
 \end{example}
 
-\fnnote Digitool's \xsitelink{Macintosh Common Lisp}{http://www.digitool.com}
+\fnnote
+%
+Digitool's \xsitelink{Macintosh Common Lisp}{http://www.digitool.com}
 does not support changing the thread name via \nobr{\textbf{setf}}.
 
 \end{functiondoc}
@@ -14466,7 +14501,9 @@ does not support changing the thread name via \nobr{\textbf{setf}}.
   >
 \end{example}
 
-\fnnote Although the \var{whostate\/} value can provide helpful information
+\fnnote
+%
+Although the \var{whostate\/} value can provide helpful information
 when debugging, specific \nobr{\var{whostate\/}} values and their meanings
 vary among Common Lisp implementations and should not be used
 programmatically.
@@ -14500,7 +14537,9 @@ implementations.
   (thread-yield)
 \end{example}
 
-\fnnote On Common Lisp implementations without thread support, this function
+\fnnote
+%
+On Common Lisp implementations without thread support, this function
 executes \nobr{\textbf{\entlink{run-polling-functions}}} if the
 \nobr{\code{:polling-functions}} module has been loaded.  Otherwise, it is a
 no-op on non-threaded implementations.
@@ -14687,7 +14726,9 @@ then signal all blocked \glref{threads} that are waiting on it:
     (\entlink{condition-variable-signal} condition-variable))
 \end{example}
 
-\fnnote The \var{whostate\/} value is ignored by
+\fnnote
+%
+The \var{whostate\/} value is ignored by
 \xsitelink{SBCL}{http://sbcl.sourceforge.net}.
 
 \end{functiondoc}
@@ -14838,7 +14879,9 @@ critical sections of code:
     (critical-section-2))
 \end{example}
 
-\fnnote The \var{whostate\/} value is ignored by
+\fnnote
+%
+The \var{whostate\/} value is ignored by
 \xsitelink{SBCL}{http://sbcl.sourceforge.net}.
 
 \end{functiondoc}
@@ -15032,7 +15075,9 @@ currently scheduled.
   >
 \end{example}
 
-\fnnotes On Common Lisp implementations without threads, \nil{} is returned.
+\fnnotes
+%
+On Common Lisp implementations without threads, \nil{} is returned.
 
 \bfindexit{schedule-function}%
 \bfindexit{unschedule-function}%
@@ -15601,7 +15646,9 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
   >
 \end{example}
 
-\fnnote The form \nobr{\code{(schedule-function-relative}
+\fnnote
+%
+The form \nobr{\code{(schedule-function-relative}
   \nobr{\var{scheduled-function\/}} \code{10)}} is equivalent to
 \nobr{\code{(\entlink{schedule-function}} \var{scheduled-function\/}
 \code{(+ (get-universal-time) 10))}}.
@@ -16459,7 +16506,8 @@ Run the polling functions (once, in sequence):
 \bfindexit{start-control-shell}%
 \index{polling function!called by the control shell}%
 
-\fnnote \pollingnote
+\fnnote
+\pollingnote
 
 \end{functiondoc}
 
@@ -16530,7 +16578,9 @@ Accept a connection made to a newly created passive socket:
   >
 \end{example}
 
-\fnnote Connections should always be closed using \nobr{\textbf{close}} (from
+\fnnote
+%
+Connections should always be closed using \nobr{\textbf{close}} (from
 both sides) to free up operating-system resources when they are no longer
 needed.
 
@@ -16687,7 +16737,9 @@ Create a passive socket, listening on port 5555:
 \end{example}
 
 \bfindexit{close-passive-socket}%
-\fnnote The passive socket should be closed using
+\fnnote
+%
+The passive socket should be closed using
 \nobr{\textbf{\entlink{close-passive-socket}}} when the service is no longer
 needed in order to free up operating system resources.
 
@@ -16748,7 +16800,9 @@ Open a socket connection to the GBBopen Project web server:
   >
 \end{example}
 
-\fnnote Connections should always be closed using \nobr{\textbf{close}} (from
+\fnnote
+%
+Connections should always be closed using \nobr{\textbf{close}} (from
 both sides) when they are no longer needed to free up operating-system
 resources.
 
@@ -16856,7 +16910,9 @@ output on the socket stream (send an end-of-file indication):
   (shutdown-socket-stream socket-stream ':output)
 \end{example}
 
-\fnnote Connections should always be closed using \nobr{\textbf{close}} (from
+\fnnote
+%
+Connections should always be closed using \nobr{\textbf{close}} (from
 both sides) when they are no longer needed to free up operating-system
 resources.
 
@@ -16936,7 +16992,9 @@ Start a simple connection server that accepts connections on port
 \end{verbatim}
 
 \bfindexit{kill-thread}%
-\fnnote Use \nobr{\textbf{\entlink{kill-thread}}} to kill the
+\fnnote
+%
+Use \nobr{\textbf{\entlink{kill-thread}}} to kill the
 connection-server thread.
 
 \end{functiondoc}
@@ -18693,7 +18751,9 @@ might have:
   >
 \end{example}
 
-\fnnote The returned list of \glref{dimension} specifications for a
+\fnnote
+%
+The returned list of \glref{dimension} specifications for a
 \glref{space~instance} or for a \glref{unit~class} should not be destructively
 altered.
 
@@ -19127,7 +19187,9 @@ Return all \glref{dimension~values} of the \glref{unit~instance}, \code{word}:
   >
 \end{example}
 
-\fnnote Using \nobr{\textbf{\entlink{instance-dimension-value}}} is preferable
+\fnnote
+%
+Using \nobr{\textbf{\entlink{instance-dimension-value}}} is preferable
 to using \nobr{\textbf{instance-dimension-values}} when obtaining individual
 \glref{dimension~values} of a \glref{unit~instance}.
 
@@ -19726,7 +19788,9 @@ Create a new \code{hyp} \glref{unit~instance}:
   >
 \end{example}
 
-\fnnote \bfindexit{make-space-instance}%
+\fnnote
+\bfindexit{make-space-instance}%
+%
 The \glref{function} \nobr{\textbf{\entlinknoex{make-space-instance}}}
 provides a clear and convenient shorthand for creating
 \glref{space~instances}.
@@ -19913,7 +19977,9 @@ Return the \glref{space~instances} on which the \glref{unit~instance},
   >
 \end{example}
 
-\fnnote The returned list of \glref{space~instances} should not be
+\fnnote
+%
+The returned list of \glref{space~instances} should not be
 destructively altered.
 
 \end{functiondoc}
@@ -20654,7 +20720,9 @@ an existing \glref{link-pointer~object}:
   >
 \end{example}
 
-\fnnote \bfindexit{unlinkf-all}%
+\fnnote 
+\bfindexit{unlinkf-all}%
+%
 The form \nobr{\code{(link-setf} \var{\glref{link-slot-place}\/} \code{nil)}}
 is semantically equivalent to \nobr{\code{(\entlinknoex{unlinkf-all}}
   \var{\glref{link-slot-place}\/}\code{)}}.  However, using
@@ -21713,6 +21781,7 @@ Resume all suspended event printing:
 \end{example}
 
 \fnnote
+%
 Resuming event printing does not enable event printing that is disabled.
 
 \instanceevfnsnyi
@@ -22824,6 +22893,7 @@ An \nobr{\code{instance-added-to-space-instance-event}} is signaled.
 
 \fnexamples
 \bfindexit{find-space-instance-by-path}%
+%
 Add a highly plausible hypothesis \glref{unit~instance},
 \nobr{\code{good-hyp}}, to the \code{hyps} \glref{space~instance}:
 %
@@ -23081,7 +23151,9 @@ Return the child space instances  of the \code{(bb)} \glref{space~instance}:
   >
 \end{example}
 
-\fnnote The returned list of child \glref{space~instances} should not be
+\fnnote
+%
+The returned list of child \glref{space~instances} should not be
 destructively altered.
 
 \end{functiondoc}
@@ -24295,7 +24367,9 @@ retrieve match candidates via \nobr{\code{classification}}
   >
 \end{example}
 
-\fnnote The \nobr{\textbf{make-space-instance}} function is equivalent to
+\fnnote
+%
+The \nobr{\textbf{make-space-instance}} function is equivalent to
 using \nobr{\textbf{\entlinknoex{make-instance}}} with the desired
 \glref{space~class} and with the initialization argument
 \nobr{\code{:instance-name}} containing the \glref{space-instance~path}.
@@ -24678,7 +24752,9 @@ Lock the blackboard repository and do some stuff:
     (do-some-stuff))
 \end{example}
 
-\fnnote The \var{whostate\/} value is ignored by
+\fnnote
+%
+The \var{whostate\/} value is ignored by
 \xsitelink{SBCL}{http://sbcl.sourceforge.net}.
 
 \end{functiondoc}
@@ -24883,7 +24959,8 @@ or simply:
     (\entlink{delete-instance} instance))
 \end{example} 
 
-\fnnote \bfindexit{delete-space-instance}%
+\fnnote 
+\bfindexit{delete-space-instance}%
 \bfindexit{standard-space-instance}%
 %
 The consequences are unspecified if an attempt is made to add or delete a
@@ -25637,7 +25714,9 @@ Return the list of all \code{hyp} \glref{unit~instances}:
   >
 \end{example} 
 
-\fnnote In general, \nobr{\textbf{\entlink{do-instances-of-class}}} or
+\fnnote
+%
+In general, \nobr{\textbf{\entlink{do-instances-of-class}}} or
 \nobr{\textbf{\entlink{map-instances-of-class}}} is preferred over operating
 on the list created by \nobr{\textbf{find-instances-of-class}}.
 
@@ -28082,6 +28161,67 @@ Stream a \code{hyp} unit instance to \glref{streamer} \code{*streamer*}:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{stream-add-instance-to-space-instance}%
+  {\var{unit-instance \nobr{space-instance-or-path\/} streamer\/}
+    \nobr{\returns{} \var{instance\/}}}
+\index{streaming!adding an instance to a space instance}%
+\index{journaling!adding an instance to a space instance}%
+\index{network streaming!adding an instance to a space instance}%
+
+\fnsyntax 
+
+\fnpurpose Write adding a \glref{unit~instance} to a \glref{space~instance} to
+a \glref{streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{instance}
+\arg[unit-instance] The added \glref{unit~instance}
+\arg[space-instance-or-path] The \glref{space~instance} or 
+  \glref{space-instance~path} to which the \glref{unit~instance} is added
+\arg[streamer] A \glref{streamer}
+\end{args}
+
+\fnreturns The \var{unit-instance}.
+
+\begin{alsos}{stream-remove-instance-from-space-instance}
+\also[stream-instance]
+\also[stream-instances]
+\also[stream-remove-instance-from-space-instance]
+\end{alsos}
+
+\fnexamples
+\fnexamples
+\bfindexit{find-space-instance-by-path}%
+%
+Stream to \glref{streamer} \code{*streamer*} the addition of a highly
+plausible hypothesis \glref{unit~instance}, \nobr{\code{good-hyp}}, to the
+\code{hyps} \glref{space~instance}:
+%
+\W\supp
+\begin{example}
+  > (stream-add-instance-to-space-instance
+      good-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
+\end{example}
+%
+or
+%
+\W\supp\notpretop
+\begin{example}
+  > (stream-add-instance-to-space-instance good-hyp '(bb hyps))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{stream-instances}{\var{instances streamer\/}
     \nobr{\returns{} \var{instances\/}}}
 \index{streaming!multiple instances}%
@@ -28106,8 +28246,10 @@ Stream a \code{hyp} unit instance to \glref{streamer} \code{*streamer*}:
 
 \fnreturns The \var{instances}.
 
-\begin{alsos}{stream-instance}
+\begin{alsos}{stream-remove-instance-from-space-instance}
+\also[stream-add-instance-to-space-instance]
 \also[stream-instance]
+\also[stream-remove-instance-from-space-instance]
 \end{alsos}
 
 \fnexample
@@ -28127,6 +28269,67 @@ Stream the results of a blackboard retrieval to \glref{streamer}
    #<hyp 183 (1835 4791) 0.82 [0..35]>
    #<hyp 233 (1835 4791) 0.89 [5..35]>
    #<hyp 419 (1835 4791) 0.85 [5..35]>)
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{stream-remove-instance-from-space-instance}%
+  {\var{unit-instance \nobr{space-instance-or-path\/} streamer\/}
+    \nobr{\returns{} \var{instance\/}}}
+\index{streaming!removing an instance from a space instance}%
+\index{journaling!removing an instance from a space instance}%
+\index{network streaming!removing an instance from a space instance}%
+
+\fnsyntax 
+
+\fnpurpose Write removing a \glref{unit~instance} from a
+\glref{space~instance} to a \glref{streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{instance}
+\arg[unit-instance] The removed \glref{unit~instance}
+\arg[space-instance-or-path] The \glref{space~instance} or 
+  \glref{space-instance~path} from which the \glref{unit~instance} is removed
+\arg[streamer] A \glref{streamer}
+\end{args}
+
+\fnreturns The \var{unit-instance}.
+
+\begin{alsos}{stream-remove-instance-from-space-instance}
+\also[stream-instance]
+\also[stream-instances]
+\also[stream-remove-instance-from-space-instance]
+\end{alsos}
+
+\fnexamples
+\fnexamples
+\bfindexit{find-space-instance-by-path}%
+%
+Stream to \glref{streamer} \code{*streamer*} the
+removal of an incorrect hypothesis \glref{unit~instance},
+\nobr{\code{incorrect-hyp}}, from the \code{hyps} \glref{space~instance}:
+%
+\W\supp
+\begin{example}
+  > (stream-remove-instance-from-space-instance
+      incorrect-hyp (\entlink{find-space-instance-by-path} '(bb hyps)))
+  #<hyp 311 (896 388) 0.68 [0..6]>
+  >
+\end{example}
+%
+or
+%
+\W\supp\notpretop
+\begin{example}
+  > (stream-remove-instance-from-space-instance incorrect-hyp '(bb hyps))
+  #<hyp 311 (896 388) 0.68 [0..6]>
   >
 \end{example}
 
@@ -28177,8 +28380,10 @@ expression where the following reserved symbols are interpreted as
 follows:
 \spaceinstanceregexp
 
-\begin{alsos}{add-mirroring}
+\begin{alsos}{stream-remove-instance-from-space-instance}
+\also[stream-add-instance-to-space-instance]
 \also[add-mirroring]
+\also[stream-remove-instance-from-space-instance]
 \end{alsos}
 
 \fnexample 
@@ -28538,7 +28743,9 @@ Define a streamer node:
  >
 \end{example}
 
-\fnnote Modifications to a \glref{streamer~node} object apply the next time
+\fnnote
+%
+Modifications to a \glref{streamer~node} object apply the next time
 that a \glref{network~streamer} is created for the \glref{streamer~node}---the
 changes to not affect an established network streamer.
 
@@ -30377,6 +30584,7 @@ Return the rating of a \glref{KSA}:
 \end{example}
 
 \fnnote 
+%
 The rating of a \glref{pending~KSA} can be changed by using {\bf setf} or
 related macros with this accessor.
 
@@ -30463,7 +30671,8 @@ Restart the Agenda Shell (in this case, without any \glref{KSs} defined):
 \end{example}
 
 \bfindexit{run-polling-functions}%
-\fnnote \pollingnote
+\fnnote 
+\pollingnote
 
 \end{functiondoc}
 
@@ -30856,7 +31065,8 @@ stepping enabled):
 \end{example}
 
 \bfindexit{run-polling-functions}%
-\fnnote \pollingnote
+\fnnote
+\pollingnote
 
 \end{functiondoc}
 
