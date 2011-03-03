@@ -76,11 +76,11 @@ or not the instances reside on any <a href="ref-glossary.html#gl:space-instance"
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-instances-on-space-instances.html"><b>map-instances-on-space-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the class <code>hyp</code>:
+<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the <a href="ref-glossary.html#id244">unit&nbsp;class</a> <code>hyp</code>:
 <pre class="pretop">
   (map-instances-of-class #'<a href="ref-delete-instance.html">delete-instance</a> 'hyp)
 </pre> 
-Delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the class <code>hyp</code> and
+Delete all unit instances of the unit class <code>hyp</code> and
 instances of subclasses of <code>hyp</code>:
 <pre>
   (map-instances-of-class #'<a href="ref-delete-instance.html">delete-instance</a> '(hyp :plus-subclasses))
