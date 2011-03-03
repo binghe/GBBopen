@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  3 04:01:10 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 12:41:52 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -67,6 +67,8 @@
 ;; Send everything else (as a single queued block):
 (with-queued-streaming (*streamer* ':tutorial)
   (stream-instances-of-class 'path *broadcast-streamer*)
+  (clear-streamer-queue *streamer*)
+  (stream-instances-of-class 'path *broadcast-streamer*)
   (stream-instances-of-class 'location *broadcast-streamer*))
 
 ;; Test empty queue writing:
@@ -86,13 +88,13 @@
 ;; Change some nonlink-slot values on the slave (but not here), also testing a
 ;; unit-instance tag and WRITE-STREAMER-QUEUE:
 (with-queued-streaming (*streamer* (find-instance-by-name 11 'location))
-  (stream-slot-update 
+  (stream-nonlink-slot-update 
    (find-instance-by-name 11 'location) 'time 9 *streamer*)
   (write-streamer-queue *streamer*)
-  (stream-slot-update 
+  (stream-nonlink-slot-update 
    (find-instance-by-name 12 'location) 'time 10 *streamer*)
   (write-streamer-queue *streamer* :tag (find-instance-by-name 13 'location))
-  (stream-slot-update 
+  (stream-nonlink-slot-update 
    (find-instance-by-name 13 'location) 'time 10 *streamer*))
 
 ;; Perform an unlink on the slave (but not here):

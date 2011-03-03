@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  3 04:33:53 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 12:50:18 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -38,6 +38,7 @@
             begin-queued-streaming      ; not yet documented
             broadcast-streamer          ; class-name (not yet documented)
             beginning-queued-read       ; not yet documented
+            clear-streamer-queue        ; not yet documented
             describe-mirroring          ; not yet documented
             end-queued-streaming        ; not yet documented
             ending-queued-read          ; not yet documented
@@ -59,9 +60,10 @@
             stream-instances-of-class   ; not yet documented
             stream-instances-on-space-instances ; not yet documented
             stream-link                 ; not yet documented
+            stream-nonlink-slot-update
             stream-remove-from-space    ; old name, remove soon
             stream-remove-instance-from-space-instance
-            stream-slot-update          ; not yet documented
+            stream-slot-update          ; old name, remove soon
             stream-unlink               ; not yet documented
             streamer                    ; class-name (not yet documented)
             streamer-error              ; condition-name (not yet documented)
@@ -375,6 +377,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun clear-streamer-queue (streamer)
+  (let ((streamer-queue
+         (or (cdr (assq streamer gbbopen::*%%streamer-queues%%*))
+             (no-streamer-queue-error streamer))))
+    ;; Substitute a new (empty) string stream:
+    (setf (streamer-queue.stream streamer-queue) (make-string-output-stream))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun write-streamer-queue (streamer 
                              &key (tag nil tag-supplied-p)
                                   (write-empty-queue-p nil weqp-supplied-p))
@@ -622,7 +633,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun stream-slot-update (instance slot/slot-name new-value streamer)
+(defun stream-nonlink-slot-update (instance slot/slot-name new-value streamer)
   (%with-streamer-stream (stream streamer)
     (format stream "#GS(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
@@ -630,31 +641,41 @@
                               slot/slot-name
                               (slot-definition-name slot/slot-name)))
     (print-object-for-saving/sending new-value stream)
-    (princ ")" stream)))
+    (princ ")" stream))
+  ;; Return the new value:
+  new-value)
+
+;;; ---------------------------------------------------------------------------
+
+;;  Old name, remove soon:
+(defun stream-slot-update (instance slot/slot-name new-value streamer)
+  (stream-nonlink-slot-update instance slot/slot-name new-value streamer))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun stream-link (instance slot/slot-name other-instances streamer)
-  (%with-streamer-stream (stream streamer)
-    (format stream "#G+(~s " (type-of instance))
-    (print-object-for-saving/sending (instance-name-of instance) stream)
-    (format stream " ~s " (if (symbolp slot/slot-name)
-                              slot/slot-name
-                              (slot-definition-name slot/slot-name)))
-    (print-object-for-saving/sending other-instances stream)
-    (princ ")" stream)))
+  (when other-instances
+    (%with-streamer-stream (stream streamer)
+      (format stream "#G+(~s " (type-of instance))
+      (print-object-for-saving/sending (instance-name-of instance) stream)
+      (format stream " ~s " (if (symbolp slot/slot-name)
+                                slot/slot-name
+                                (slot-definition-name slot/slot-name)))
+      (print-object-for-saving/sending other-instances stream)
+      (princ ")" stream))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun stream-unlink (instance slot/slot-name other-instances streamer)
-  (%with-streamer-stream (stream streamer)
-    (format stream "#G-(~s " (type-of instance))
-    (print-object-for-saving/sending (instance-name-of instance) stream)
-    (format stream " ~s " (if (symbolp slot/slot-name)
-                              slot/slot-name
-                              (slot-definition-name slot/slot-name)))
-    (print-object-for-saving/sending other-instances stream)
-    (princ ")" stream)))
+  (when other-instances
+    (%with-streamer-stream (stream streamer)
+      (format stream "#G-(~s " (type-of instance))
+      (print-object-for-saving/sending (instance-name-of instance) stream)
+      (format stream " ~s " (if (symbolp slot/slot-name)
+                                slot/slot-name
+                                (slot-definition-name slot/slot-name)))
+      (print-object-for-saving/sending other-instances stream)
+      (princ ")" stream))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -670,8 +691,8 @@
     (princ ")" stream)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Old name, remove soon
 
+;;  Old name, remove soon
 (defun stream-add-to-space (instance space-instance streamer)
   (stream-add-instance-to-space-instance instance space-instance streamer))
 
@@ -690,8 +711,8 @@
     (princ ")" stream)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  Old name, remove soon
 
+;;  Old name, remove soon
 (defun stream-remove-from-space (instance space-instance streamer)
   (stream-remove-instance-from-space-instance instance space-instance streamer))
 
