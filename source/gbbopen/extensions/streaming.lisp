@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 16:31:29 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 04:00:20 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -51,14 +51,16 @@
             remove-from-broadcast-streamer ; not yet documented
             remove-mirroring
             stream-command-form         ; not yet documented
-            stream-add-to-space         ; not yet documented
+            stream-add-instance-to-space-instance
+            stream-add-to-space         ; old name, remove soon
             stream-delete-instance      ; not yet documented
             stream-instance
             stream-instances
             stream-instances-of-class   ; not yet documented
             stream-instances-on-space-instances ; not yet documented
             stream-link                 ; not yet documented
-            stream-remove-from-space    ; not yet documented
+            stream-remove-from-space    ; old name, remove soon
+            stream-remove-instance-from-space-instance
             stream-slot-update          ; not yet documented
             stream-unlink               ; not yet documented
             streamer                    ; class-name (not yet documented)
@@ -656,7 +658,10 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun stream-add-to-space (instance space-instance streamer)
+(defun stream-add-instance-to-space-instance (instance space-instance streamer)
+  (unless (typep space-instance 'standard-space-instance)
+    (setf space-instance 
+          (find-space-instance-by-path space-instance ':with-error)))
   (%with-streamer-stream (stream streamer)
     (format stream "#Ga(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
@@ -665,14 +670,30 @@
     (princ ")" stream)))
 
 ;;; ---------------------------------------------------------------------------
+;;;  Old name, remove soon
 
-(defun stream-remove-from-space (instance space-instance streamer)
+(defun stream-add-to-space (instance space-instance streamer)
+  (stream-add-instance-to-space-instance instance space-instance streamer))
+
+;;; ---------------------------------------------------------------------------
+
+(defun stream-remove-instance-from-space-instance (instance space-instance
+                                                   streamer)
+  (unless (typep space-instance 'standard-space-instance)
+    (setf space-instance 
+          (find-space-instance-by-path space-instance ':with-error)))
   (%with-streamer-stream (stream streamer)
     (format stream "#Gr(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " (type-of space-instance))
     (print-object-for-saving/sending (instance-name-of space-instance) stream)
     (princ ")" stream)))
+
+;;; ---------------------------------------------------------------------------
+;;;  Old name, remove soon
+
+(defun stream-remove-from-space (instance space-instance streamer)
+  (stream-remove-instance-from-space-instance instance space-instance streamer))
 
 ;;; ---------------------------------------------------------------------------
 

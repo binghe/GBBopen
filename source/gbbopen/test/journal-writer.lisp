@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  1 09:52:13 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 04:01:42 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -60,19 +60,22 @@
        (find-instance-by-name 9 'location))
 
 ;; Remove a location from the known-world:
-(stream-remove-from-space (find-instance-by-name 8 'location) 
-                          (find-space-instance-by-path '(known-world))
-                          *streamer*)
+(stream-remove-instance-from-space-instance
+ (find-instance-by-name 8 'location) 
+ '(known-world)
+ *streamer*)
 
 ;; Add the location back to the known-world:
-(stream-add-to-space (find-instance-by-name 8 'location) 
-                     (find-space-instance-by-path '(known-world))
-                     *streamer*)
+(stream-add-instance-to-space-instance
+ (find-instance-by-name 8 'location) 
+ '(known-world)
+ *streamer*)
 
 ;; Remove another location from the known-world:
-(stream-remove-from-space (find-instance-by-name 5 'location) 
-                          (find-space-instance-by-path '(known-world))
-                          *streamer*)
+(stream-remove-instance-from-space-instance
+ (find-instance-by-name 5 'location) 
+ (find-space-instance-by-path '(known-world))
+ *streamer*)
 
 ;; Create a new world:
 (make-space-instance 
