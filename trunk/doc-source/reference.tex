@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Mar  3 04:12:22 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Mar  3 04:33:29 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -18355,7 +18355,7 @@ subclasses of \code{hyp}) \glref{unit~instances}:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{describe-instance}%
-  {\var{instance\/}}
+  {\var{unit-instance\/}}
 \index{unit instance!printing information about}%
 \index{printing!information about!unit instance}%
 \index{printing!information about!space instance, as a unit instance}%
@@ -18367,7 +18367,7 @@ subclasses of \code{hyp}) \glref{unit~instances}:
 
 \fnmethods
 \fnalternate{describe-instance}%
- {\code{(}\var{instance\/} \code{standard-unit-instance)}
+ {\code{(}\var{unit-instance\/} \code{standard-unit-instance)}
     \nobr{\code{\&optional} \var{stream\/}}}
 
 \fnpackage \code{:gbbopen}
@@ -18377,7 +18377,7 @@ subclasses of \code{hyp}) \glref{unit~instances}:
 \bfindexit{*standard-output*}%
 \fnargs
 \begin{args}{instance}
-\arg[instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[unit-instance] A \glref{unit~instance} (or \glref{space~instance})
 \arg[stream] A stream (default is \nobr{\code{*standard-output*}})
 \end{args}
 
@@ -18440,7 +18440,7 @@ which also sets \code{=} to the described \glref{unit~instance}.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Generic~Function}{describe-instance-slot-value}%
-  {\var{instance \nobr{slot-name} value\/}
+  {\var{unit-instance \nobr{slot-name} value\/}
     \nobr{\code{\&optional} \var{stream\/}}}
 \index{unit instance!printing information about}%
 \index{printing!information about!unit instance}%
@@ -18453,7 +18453,7 @@ which also sets \code{=} to the described \glref{unit~instance}.
 
 \fnmethods
 \fnalternate{describe-instance-slot-value}%
-  {\code{(}\var{instance\/} \code{standard-unit-instance)}
+  {\code{(}\var{unit-instance\/} \code{standard-unit-instance)}
     \var{slot-name value\/}
     \nobr{\code{\&optional} \var{stream\/}}}
 
@@ -18463,8 +18463,8 @@ which also sets \code{=} to the described \glref{unit~instance}.
 
 \bfindexit{*standard-output*}%
 \fnargs
-\begin{args}{instance}
-\arg[instance] A \glref{unit~instance} (or \glref{space~instance})
+\begin{args}{unit-instance}
+\arg[unit-instance] A \glref{unit~instance} (or \glref{space~instance})
 \arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[value] An object
 \arg[stream] A stream (default is \nobr{\code{*standard-output*}})
@@ -19197,7 +19197,8 @@ to using \nobr{\textbf{instance-dimension-values}} when obtaining individual
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Generic~Function}{instance-name-of}{\var{instance\/}
+\begin{functiondoc}{Generic~Function}{instance-name-of}%
+  {\var{unit-instance\/}
     \nobr{\returns{} \var{instance-name\/}}}
 
 \fnsyntax
@@ -19210,10 +19211,10 @@ Return the \glref{instance~name} of a \glref{unit~instance}.
 
 \fnmethods
 \fnalternate{instance-name-of}%
-  {\code{(}\var{instance\/} \code{standard-event-instance)}
+  {\code{(}\var{unit-instance\/} \code{standard-event-instance)}
   \returns{} \var{instance-name}}
 \fnalternate{instance-name-of}%
-  {\code{(}\var{instance\/} \code{standard-unit-instance)}
+  {\code{(}\var{unit-instance\/} \code{standard-unit-instance)}
   \returns{} \var{instance-name}}
 
 \fnpackage \code{:gbbopen}
@@ -19221,18 +19222,18 @@ Return the \glref{instance~name} of a \glref{unit~instance}.
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{instance}
-\arg[instance] A \glref{unit~instance} or an \glref{event~instance}
+\begin{args}{unit-instance}
+\arg[unit-instance] A \glref{unit~instance} or an \glref{event~instance}
 \arg[instance-name] An object
 \end{args}
 
-\fnreturns The \glref{instance~name} of the \var{instance}.
+\fnreturns The \glref{instance~name} of the \var{unit-instance}.
 
 \fnerrors
 %
 The supplied \var{instance-name\/} provided to \nobr{\textbf{(setf
     instance-name-of)}} is identical to the instance name of an existing
-\glref{unit~instance} of the same \glref{class} as \var{instance}.
+\glref{unit~instance} of the same \glref{class} as \var{unit-instance}.
 
 \begin{alsos}{make-instance}
 \also[make-instance]
@@ -26947,7 +26948,7 @@ in \nobr{\var{object\/}} to \nobr{\var{stream\/}} when saving or sending.
 \nobr{\code{:gbbopen-core}})
 
 \fnargs
-\begin{args}{stream}
+\begin{args}{slot-name}
 \arg[instance] A \code{standard-object} \glref{instance}
 \arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[stream] A stream
@@ -28117,50 +28118,6 @@ Add full mirroring of \code{hyp} \glref{unit~instances} to
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Function}{stream-instance}{\var{instance streamer\/}
-    \nobr{\returns{} \var{instance\/}}}
-\index{streaming!an instance}%
-\index{journaling!an instance}%
-\index{network streaming!an instance}%
-\index{instance!writing to a streamer}% 
-
-\fnsyntax 
-
-\fnpurpose Write a \glref{unit~instance} (or \glref{space~instance}) to a
-\glref{streamer}.
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:streaming}
-
-\fnargs
-\begin{args}{instance}
-\arg[instance] A \glref{unit~instance} (or \glref{space~instance})
-\arg[streamer] A \glref{streamer}
-\end{args}
-
-\fnreturns The \var{instance}.
-
-\begin{alsos}{stream-instances}
-\also[stream-instances]
-\end{alsos}
-
-\fnexample
-\bfindexit{find-instance-by-name}
-% 
-Stream a \code{hyp} unit instance to \glref{streamer} \code{*streamer*}:
-%
-\W\supp
-\begin{example}
-  > (stream-instance (\entlink{find-instance-by-name} 419 'hyp) *streamer*)
-  #<hyp 419 (1835 4791) 0.85 [5..35]>
-  >
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
 \begin{functiondoc}{Function}{stream-add-instance-to-space-instance}%
   {\var{unit-instance \nobr{space-instance-or-path\/} streamer\/}
     \nobr{\returns{} \var{instance\/}}}
@@ -28188,12 +28145,12 @@ a \glref{streamer}.
 \fnreturns The \var{unit-instance}.
 
 \begin{alsos}{stream-remove-instance-from-space-instance}
+\also[stream-delete-instance]
 \also[stream-instance]
 \also[stream-instances]
 \also[stream-remove-instance-from-space-instance]
 \end{alsos}
 
-\fnexamples
 \fnexamples
 \bfindexit{find-space-instance-by-path}%
 %
@@ -28214,6 +28171,102 @@ or
 \W\supp\notpretop
 \begin{example}
   > (stream-add-instance-to-space-instance good-hyp '(bb hyps))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{stream-delete-instance}%
+  {\var{unit-instance streamer\/}
+    \nobr{\returns{} \var{instance\/}}}
+\index{streaming!deleting an instance}%
+\index{journaling!deleting an instance}%
+\index{network streaming!deleting an instance}%
+\index{instance!writing deletion to a streamer}% 
+
+\fnsyntax 
+
+\fnpurpose Write deleting a \glref{unit~instance} (or \glref{space~instance})
+to a \glref{streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{unit-instance}
+\arg[unit-instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[streamer] A \glref{streamer}
+\end{args}
+
+\fnreturns The \var{unit-instance}.
+
+\begin{alsos}{stream-remove-instance-from-space-instance}
+\also[stream-add-instance-to-space-instance]
+\also[stream-instance]
+\also[stream-instances]
+\also[stream-remove-instance-from-space-instance]
+\end{alsos}
+
+\fnexample
+\bfindexit{find-instance-by-name}
+% 
+Stream deleting a \code{hyp} unit instance to \glref{streamer} \code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  > (stream-delete-instance (\entlink{find-instance-by-name} 419 'hyp) *streamer*)
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{stream-instance}%
+  {\var{unit-instance streamer\/}
+    \nobr{\returns{} \var{instance\/}}}
+\index{streaming!an instance}%
+\index{journaling!an instance}%
+\index{network streaming!an instance}%
+\index{instance!writing to a streamer}% 
+
+\fnsyntax 
+
+\fnpurpose Write a \glref{unit~instance} (or \glref{space~instance}) to a
+\glref{streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{unit-instance}
+\arg[unit-instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[streamer] A \glref{streamer}
+\end{args}
+
+\fnreturns The \var{unit-instance}.
+
+\begin{alsos}{stream-remove-instance-from-space-instance}
+\also[stream-add-instance-to-space-instance]
+\also[stream-delete-instance]
+\also[stream-instances]
+\also[stream-remove-instance-from-space-instance]
+\end{alsos}
+
+\fnexample
+\bfindexit{find-instance-by-name}
+% 
+Stream a \code{hyp} unit instance to \glref{streamer} \code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  > (stream-instance (\entlink{find-instance-by-name} 419 'hyp) *streamer*)
   #<hyp 419 (1835 4791) 0.85 [5..35]>
   >
 \end{example}
@@ -28248,6 +28301,7 @@ or
 
 \begin{alsos}{stream-remove-instance-from-space-instance}
 \also[stream-add-instance-to-space-instance]
+\also[stream-delete-instance]
 \also[stream-instance]
 \also[stream-remove-instance-from-space-instance]
 \end{alsos}
@@ -28303,9 +28357,10 @@ Stream the results of a blackboard retrieval to \glref{streamer}
 \fnreturns The \var{unit-instance}.
 
 \begin{alsos}{stream-remove-instance-from-space-instance}
+\also[stream-add-instance-to-space-instance]
+\also[stream-delete-instance]
 \also[stream-instance]
 \also[stream-instances]
-\also[stream-remove-instance-from-space-instance]
 \end{alsos}
 
 \fnexamples
