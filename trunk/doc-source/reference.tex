@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Mar  3 12:55:34 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Mar  7 10:25:27 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -22031,7 +22031,7 @@ Create a \code{hyp} without signaling any events:
     \nobr{\var{declaration\/}\superstar{}}
     \nobr{\var{form\/}\superstar{}}
     \nobr{\returns{} \var{result\/}\superstar}}
-\index{enabling event signaling}%
+\index{enabling!event signaling}%
 \index{events!enabling signaling of}%
   
 \fnsyntax
@@ -22059,6 +22059,7 @@ Create a \code{hyp} without signaling any events:
 
 \fnexample
 \bfindexit{make-instance}%
+\bfindexit{with-events-disabled}%
 Create a \code{hyp} without signaling any events, then add
 supporting-hypothesis links with events enabled:
 %
@@ -26096,7 +26097,7 @@ Print a list of all \code{hyp} \glref{instance~names}, in ascending order:
 
 \begin{functiondoc}{Function}{report-find-stats}%
   {\code{\&key} \var{reset\/}}
-\index{displaying retrieval statistics}%
+\index{displaying!retrieval statistics}%
 \index{find statistics!displaying}%
 \index{retrieval!statistics, displaying}%
   
@@ -26170,8 +26171,8 @@ report is displayed.
     \nobr{\var{declaration\/}\superstar{}}
     \nobr{\var{form\/}\superstar{}}
     \nobr{\returns{} \var{result\/}\superstar}}
-\index{enabling retrieval statistics gathering}%
-\index{displaying retrieval statistics}%
+\index{enabling!retrieval statistics gathering}%
+\index{displaying!retrieval statistics}%
 \index{find statistics!collecting and displaying}%
 \index{retrieval!statistics, collecting and displaying}%
   
@@ -28506,9 +28507,62 @@ than 0.5:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{stream-link}%
+  {\var{unit-instance slot other-unit-instances streamer\/}
+    \nobr{\returns{} \var{other-unit-instances\/}}}
+\index{streaming!added links}%
+\index{journaling!added links}%
+\index{network streaming!added links}%
+\index{unit instance!streaming adding links between}%
+\index{link!writing to a streamer}% 
+
+\fnsyntax 
+
+\fnpurpose Write links added between a \glref{unit~instance} and one
+or more \glref{unit~instances} to a \glref{streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{unit-instance}
+\arg[unit-instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[slot] A non-\nil, \glref{non-keyword~symbol} naming the link slot or a slot meta object
+\arg[other-unit-instances] A \glref{unit~instance}, a 
+\glref{link-pointer~object}, or a list of \glref{unit~instances} and 
+\glref{link-pointer~objects}
+\arg[streamer] A \glref{streamer}
+\end{args}
+
+\fnreturns The supplied \var{other-unit-instances}.
+
+\begin{alsos}{stream-nonlink-slot-update}
+\also[stream-nonlink-slot-update]
+\also[stream-unlink]
+\end{alsos}
+
+\fnexample
+% 
+Stream adding a link of \code{support-hyp} to the
+\nobr{\code{supporting-hyps}} \glref{link~slot} of the \code{hyp}
+\glref{unit~instance} \nobr{\code{unit-instance}} to \glref{streamer}
+\code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  > (stream-link unit-instance 'supporting-hyps support-hyp *streamer*)
+  #<hyp 231 (1488 7405) 0.63 [0..8]>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{stream-nonlink-slot-update}%
   {\var{unit-instance slot new-value streamer\/}
-    \nobr{\returns{} \var{instance\/}}}
+    \nobr{\returns{} \var{new-value\/}}}
 \index{streaming!a nonlink-slot update}%
 \index{journaling!a nonlink-slot update}%
 \index{network streaming!a nonlink-slot update}%
@@ -28533,10 +28587,10 @@ than 0.5:
 
 \fnreturns The supplied \var{new-value}.
 
-%\begin{alsos}{stream-unlink}
-%\also[stream-link]
-%\also[stream-unlink]
-%\end{alsos}
+\begin{alsos}{stream-unlink}
+\also[stream-link]
+\also[stream-unlink]
+\end{alsos}
 
 \fnexample
 \bfindexit{find-instance-by-name}
@@ -28620,6 +28674,59 @@ or
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{stream-unlink}%
+  {\var{unit-instance slot other-unit-instances streamer\/}
+    \nobr{\returns{} \var{other-unit-instances\/}}}
+\index{streaming!added links}%
+\index{journaling!added links}%
+\index{network streaming!added links}%
+\index{unit instance!streaming adding links between}%
+\index{link!writing to a streamer}% 
+
+\fnsyntax 
+
+\fnpurpose Write links removed between a \glref{unit~instance} and one
+or more \glref{unit~instances} to a \glref{streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{unit-instance}
+\arg[unit-instance] A \glref{unit~instance} (or \glref{space~instance})
+\arg[slot] A non-\nil, \glref{non-keyword~symbol} naming the link slot or a slot meta object
+\arg[other-unit-instances] A \glref{unit~instance}, a 
+\glref{link-pointer~object}, or a list of \glref{unit~instances} and 
+\glref{link-pointer~objects}
+\arg[streamer] A \glref{streamer}
+\end{args}
+
+\fnreturns The supplied \var{other-unit-instances}.
+
+\begin{alsos}{stream-nonlink-slot-update}
+\also[stream-link]
+\also[stream-nonlink-slot-update]
+\end{alsos}
+
+\fnexample
+% 
+Stream removing a link of \code{support-hyp} from the
+\nobr{\code{supporting-hyps}} \glref{link~slot} of the \code{hyp}
+\glref{unit~instance} \nobr{\code{unit-instance}} to \glref{streamer}
+\code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  > (stream-unlink unit-instance 'supporting-hyps support-hyp *streamer*)
+  #<hyp 231 (1488 7405) 0.63 [0..8]>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{remove-mirroring}%
   {\var{streamer\/} 
     \nobr{[\var{unit-class-or-instance-specifier\/}]]}
@@ -28681,6 +28788,118 @@ Remove full mirroring of \code{hyp} \glref{unit~instances} to
 
 \fnnote
 \instancemirroringnyi
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{with-mirroring-disabled}%
+  {\nobr{\code{(}\var{option\/}\superstar{}\code{)}}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
+\index{disabling!mirroring}%
+\index{mirroring!disabling}%
+  
+\fnsyntax
+
+\fnpurpose Disable mirroring during evaluation of \var{forms}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{options}
+\arg[option] No options are currently supported
+\arg[declaration] A declare expression (not evaluated)
+\arg[forms] An implicit \nobr{\textbf{progn}} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\begin{alsos}{with-mirroring-enabled}
+\also[add-mirroring]
+\also[remove-mirroring]
+\also[with-mirroring-enabled]
+\end{alsos}
+
+\fnexample
+\bfindexit{make-instance}%
+Create a \code{hyp} without mirroring:
+%
+\W\supp
+\begin{example}
+  > (with-mirroring-disabled ()
+       (\entlink{make-instance} 'hyp 
+          :location (list x y)
+          :classification '(:car :truck)
+          :color ':red
+          :belief .85
+          :velocity-range '(5 35)
+          :supporting-hyps supporting-hyps))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Macro}{with-mirroring-enabled}%
+  {\nobr{\code{(}\var{option\/}\superstar{}\code{)}}
+    \nobr{\var{declaration\/}\superstar{}}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
+\index{enabling!mirroring}%
+\index{mirroring!enabling}%
+  
+\fnsyntax
+
+\fnpurpose Restore mirroring during evaluation of \var{forms}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{options}
+\arg[option] No options are currently supported
+\arg[declaration] A declare expression (not evaluated)
+\arg[forms] An implicit \nobr{\textbf{progn}} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\begin{alsos}{with-mirroring-disabled}
+\also[add-mirroring]
+\also[remove-mirroring]
+\also[with-mirroring-disabled]
+\end{alsos}
+
+\fnexample
+\bfindexit{make-instance}%
+\bfindexit{with-events-disabled}%
+Create a \code{hyp} without mirroring, then add
+supporting-hypothesis links with mirroring:
+%
+\W\supp
+\begin{example}
+  > (\entlink{with-mirroring-disabled}
+       (let ((hyp (\entlink{make-instance} 'hyp 
+                     :location (list x y)
+                     :classification '(:car :truck)
+                     :color ':red
+                     :belief .85
+                     :velocity-range '(5 35))))
+          (with-mirroring-enabled ()
+             (linkf (supporting-hyps-of hyp) supporting-hyps))
+          hyp))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
+\end{example}
 
 \end{functiondoc}
 

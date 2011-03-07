@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 11:25:44 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 15:49:45 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -47,6 +47,10 @@
     :port (1+ (port-of (find-streamer-node "slave")))
     :package ':tutorial)
 
+;; Define a link pointer:
+(define-class link-ptr-with-value (standard-link-pointer)
+  ((value :initform nil)))
+
 ;; Connect to slave image:
 (defparameter *streamer* (open-network-streamer "slave" "master"))
 
@@ -69,9 +73,11 @@
 (unlinkf (previous-location-of (find-instance-by-name 9 'location))
          (find-instance-by-name 8 'location))
 
-;; Perform a link:
+;; Perform a link (with a link-pointer):
 (linkf (next-location-of (find-instance-by-name 8 'location))
-       (find-instance-by-name 9 'location))
+       (make-instance 'link-ptr-with-value
+         :link-instance (find-instance-by-name 9 'location) 
+         :value 0.9))
 
 ;; Remove a location from the known-world:
 (remove-instance-from-space-instance 

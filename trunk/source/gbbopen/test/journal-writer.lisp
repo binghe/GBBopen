@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  3 04:01:42 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 14:42:03 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -32,6 +32,10 @@
 ;; Compile/load the :tutorial module (without running it):
 (cl-user::tutorial-example :create-dirs :noautorun)
 
+;; Define a link pointer:
+(define-class link-ptr-with-value (standard-link-pointer)
+  ((value :initform nil)))
+
 ;; Create the journal streamer:
 (defparameter *streamer*
     (make-journal-streamer "tutorial" :package ':tutorial))
@@ -55,9 +59,11 @@
 (unlinkf (previous-location-of (find-instance-by-name 9 'location))
          (find-instance-by-name 8 'location))
 
-;; Perform a link:
+;; Perform a link (with a link-pointer):
 (linkf (next-location-of (find-instance-by-name 8 'location))
-       (find-instance-by-name 9 'location))
+       (make-instance 'link-ptr-with-value
+         :link-instance (find-instance-by-name 9 'location) 
+         :value 0.9))
 
 ;; Remove a location from the known-world:
 (stream-remove-instance-from-space-instance

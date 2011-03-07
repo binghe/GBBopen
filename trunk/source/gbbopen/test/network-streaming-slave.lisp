@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 10:05:51 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 14:37:04 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -51,6 +51,10 @@
 ;; Help 
 #+IF-DEBUGGING
 (setf gbbopen:*break-on-receive-errors* 't)
+
+;; Define a link pointer:
+(define-class link-ptr-with-value (standard-link-pointer)
+  ((value :initform nil)))
 
 ;; Silly queued-reception methods:
 (defmethod beginning-queued-read ((tag (eql ':tutorial)))

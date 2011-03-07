@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  1 09:52:26 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 14:42:56 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -31,6 +31,10 @@
 
 ;; Compile/load the :tutorial module (without running it):
 (cl-user::tutorial-example :create-dirs :noautorun)
+
+;; Define a link pointer:
+(define-class link-ptr-with-value (standard-link-pointer)
+  ((value :initform nil)))
 
 ;; Silly queued-reception methods:
 (defmethod beginning-queued-read ((tag (eql ':tutorial)))

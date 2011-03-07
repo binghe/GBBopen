@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  3 12:41:52 2011 *-*
+;;;; *-* Last-Edit: Thu Mar  3 14:42:34 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -58,6 +58,10 @@
 ;; Make a (trivial) broadcast streamer:
 (defparameter *broadcast-streamer* (make-broadcast-streamer *streamer*))
 
+;; Define a link pointer:
+(define-class link-ptr-with-value (standard-link-pointer)
+  ((value :initform nil)))
+
 ;; Generate some data (locally):
 (take-a-walk)
 
@@ -103,10 +107,12 @@
                (find-instance-by-name 8 'location) 
                *streamer*)
 
-;; Perform a link on the slave (but not here):
+;; Perform a link on the slave (but not here; with a link-pointer):
 (stream-link (find-instance-by-name 8 'location) 
              'next-location
-             (find-instance-by-name 9 'location) 
+             (make-instance 'link-ptr-with-value
+               :link-instance (find-instance-by-name 9 'location) 
+               :value 0.9)
              *streamer*)
 
 ;; Remove a location from the known-world on the slave (but not here):
