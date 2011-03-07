@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Mar  7 10:25:27 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Mar  7 14:23:48 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -6154,7 +6154,7 @@ are more values than \var{places}, the extra values are discarded.
   nil
   > *x*
   (nil)\goodpagebreak
->
+  >
 \end{example}
 
 \end{functiondoc}
@@ -11297,7 +11297,7 @@ parse ended.
   0
   30
   10
- -11/2
+  -11/2
   nil
   9\goodpagebreak
   > (parse-time "10:30 UTC-7")
@@ -16982,13 +16982,13 @@ Start a simple connection server that accepts connections on port
 %
 \W\supp
 \begin{verbatim}
-> (start-connection-server
-     #'(lambda (connection)
-          (let ((line (read-line connection nil)))
-             (format t "~&;; New Connection: ~a~%" line)
-             (close connection)))
-     5555)
-#<thread Connection Server>
+  > (start-connection-server
+       #'(lambda (connection)
+            (let ((line (read-line connection nil)))
+               (format t "~&;; New Connection: ~a~%" line)
+               (close connection)))
+       5555)
+  #<thread Connection Server>
 \end{verbatim}
 
 \bfindexit{kill-thread}%
@@ -17049,20 +17049,21 @@ Open a socket connection to the GBBopen Project web server:
 %
 \W\supp
 \begin{verbatim}
-> (with-open-connection (connection "GBBopen.org" 80)
-     (flet ((write-crlf (stream)
-              ;; HTTP requires CR/LF line termination: 
-              (write-char #\return stream)
-              (write-char #\linefeed stream)))
-        (format connection "GET / HTTP/1.1")
-        (write-crlf connection)
-        (format connection "Host: ~a:~a" host port)
-        (write-crlf connection)
-        (write-crlf connection)
-        (force-output connection)
-        (let ((line (read-line connection)))
-          (format t "~&;; Received: ~a~%" line))))
-;; Received: HTTP/1.1 200 OK
+  > (with-open-connection (connection "GBBopen.org" 80)
+       (flet ((write-crlf (stream)
+                ;; HTTP requires CR/LF line termination: 
+                (write-char #\return stream)
+                (write-char #\linefeed stream)))
+          (format connection "GET / HTTP/1.1")
+          (write-crlf connection)
+          (format connection "Host: ~a:~a" host port)
+          (write-crlf connection)
+          (write-crlf connection)
+          (force-output connection)
+          (let ((line (read-line connection)))
+            (format t "~&;; Received: ~a~%" line))))
+  ;; Received: HTTP/1.1 200 OK
+  > 
 \end{verbatim}
 
 \end{functiondoc}
@@ -25632,10 +25633,11 @@ Some examples finding a \code{word} \glref{unit~instance}:
 %
 \W\supp
 \begin{verbatim}
-> (find-instances 'word '(words) '(is character #\s))
-(#<word 1>)
-> (find-instances 'word '(words) '(is character #\x))
-nil
+  > (find-instances 'word '(words) '(is character #\s))
+  (#<word 1>)
+  > (find-instances 'word '(words) '(is character #\x))
+  nil
+  >
 \end{verbatim}
 %
 Find \code{word} \glref{unit~instances} with special characters in them:
@@ -29178,6 +29180,47 @@ a \glref{streamer~node}.
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
+ 
+\begin{functiondoc}{Function}{close-network-streamer}%
+  {\var{network-streamer\/}}
+\index{network streamer!closing}%
+
+\fnsyntax
+
+\fnpurpose Close a \glref{network~streamer} (connection to an external
+\glref{streamer~node}).
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:network-streaming}
+
+\fnargs
+\begin{args}{network-streamer}
+\arg[network-streamer] A \glref{network~streamer}
+\end{args}
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{close-network-streamer}
+\also[define-streamer-node]
+\also[find-streamer-node]
+\also[close-network-streamer]
+\also[open-network-streamer]
+\end{alsos}
+
+\fnexample
+%
+Close the \glref{network~streamer} \code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  (close-network-streamer *streamer*)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{define-streamer-node}{%
     \nobr{\var{name\/}}
@@ -29227,6 +29270,8 @@ is \nobr{\textbf{\entlink{*default-network-stream-server-port*}}})
 
 \begin{alsos}{*default-network-stream-server-port*}
 \also[*default-network-stream-server-port*]
+\also[close-network-streamer]
+\also[find-streamer-node]
 \also[open-network-streamer]
 \end{alsos}
 
@@ -29241,8 +29286,8 @@ Define a streamer node:
       :package ':gbbopen-user
       :passphrase "Who goes there?"
       :authorized-nodes '("you"))
- #<streamer-node "me">
- >
+  #<streamer-node "me">
+  >
 \end{example}
 
 \fnnote
@@ -29277,6 +29322,11 @@ changes to not affect an established network streamer.
 \fnreturns The \glref{streamer~node} named \nobr{\var{name\/}}
 or \nil, if none has been defined.
 
+\begin{alsos}{open-network-streamer}
+\also[define-streamer-node]
+\also[open-network-streamer]
+\end{alsos}
+
 \fnexamples
 %
 Return the streamer node named \nobr{\code{"master"}}:
@@ -29285,6 +29335,7 @@ Return the streamer node named \nobr{\code{"master"}}:
 \begin{example}
   > (find-streamer-node "master")
   #<streamer-node "master">
+  >
 \end{example}
 %
 Find a non-existent streamer node:
@@ -29296,6 +29347,106 @@ Find a non-existent streamer node:
   > (find-streamer-node "missing" 't)
   Error: No streamer node named "missing"
   >>
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{kill-network-stream-server}%
+  {\var{streamer-node\/}
+    \nobr{\returns{} \var{thread\/}}}
+\index{network streamer!accepting connections}%
+\index{network streamer!connection server}%
+\index{network-stream server!killing}%
+\index{killing!a network-stream server}%
+
+\fnsyntax
+
+\fnpurpose Create a connection-server thread that accepts network-stream
+connections.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:network-streaming}
+
+\fnargs
+\begin{args}{streamer-node}
+\arg[streamer-node] A local \glref{streamer~node} or its name
+\end{args}
+
+\fnreturns True if the network-stream connection server was running when
+killed; \nil{} otherwise.
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{network-stream-server-running-p}
+\also[define-streamer-node]
+\also[find-streamer-node]
+\also[network-stream-server-running-p]
+\also[start-network-stream-server]
+\end{alsos}
+
+\fnexample 
+%
+Kill the network-stream connection server running at local
+\glref{streamer~node} \code{"me"}:
+%
+\W\supp
+\begin{example}
+  > (kill-network-stream-server "me")
+  t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+ 
+\begin{functiondoc}{Function}{network-stream-server-running-p}%
+  {\var{streamer-node\/}
+    \nobr{\returns{} \var{boolean\/}}}
+\index{running-p!a network-stream server}%
+
+\fnsyntax
+
+\fnpurpose Return a value indicating whether a network-stream connection server
+for a local \glref{streamer~node} is running.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:network-streaming}
+
+\fnargs
+\begin{args}{streamer-node}
+\arg[streamer-node] A local \glref{streamer~node} or its name
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the network-stream connection server is alive; \nil{}
+otherwise.
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{start-network-stream-server}
+\also[define-streamer-node]
+\also[find-streamer-node]
+\also[kill-network-stream-server]
+\also[start-network-stream-server]
+\end{alsos}
+
+\fnexample
+%
+See if the a network-stream connection server
+\glref{streamer~node} \code{"me"} is running:
+%
+\W\supp
+\begin{example}
+  > (network-stream-server-running-p "me")
+  t
+  >
 \end{example}
 
 \end{functiondoc}
@@ -29335,7 +29486,14 @@ that \glref{network~streamer} is returned.
 The class of the created \glref{network~streamer} is specified by
 the \code{streamer-class} slot of \var{streamer-node}.
 
-\fnexamples
+\begin{alsos}{network-stream-server-running-p}
+\also[close-network-streamer]
+\also[define-streamer-node]
+\also[find-streamer-node]
+\also[network-stream-server-running-p]
+\end{alsos}
+
+\fnexample
 %
 Return a \glref{network~streamer} connecting \glref{streamer~node} \code{"me"}
 and \glref{streamer~node} \code{"you"}:
@@ -29344,6 +29502,57 @@ and \glref{streamer~node} \code{"you"}:
 \begin{example}
   > (open-network-streamer "me" "you")
   #<network-streamer 127.0.0.1:1969>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{start-network-stream-server}%
+  {\var{streamer-node\/}
+    \nobr{\returns{} \var{thread\/}}}
+\index{network streamer!accepting connections}%
+\index{network streamer!connection server}%
+\index{network-stream server!starting}%
+\index{starting!a network-stream server}%
+
+\fnsyntax
+
+\fnpurpose Create a connection-server thread that accepts network-stream
+connections to a local \glref{streamer~node}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:network-streaming}
+
+\fnargs
+\begin{args}{streamer-node}
+\arg[streamer-node] A local \glref{streamer~node} or its name
+\arg[thread] A \glref{thread}
+\end{args}
+
+\fnreturns The new connection-server thread \glref{thread}.
+
+\fnerrors
+\nothreads{}
+
+\begin{alsos}{kill-network-stream-server}
+\also[define-streamer-node]
+\also[find-streamer-node]
+\also[kill-network-stream-server]
+\end{alsos}
+
+\fnexample
+%
+Start a network-stream connection server at local \glref{streamer~node}
+\code{"me"}:
+%
+\W\supp
+\begin{example}
+  > (start-network-stream-server "me")
+  #<thread Network Connection Server>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -31671,18 +31880,15 @@ forms are all equivalent:
        :trigger-events '((control-shell-started-event)) 
        :execution-function #'initial-ks-function)
   #<deleted-unit-instance ks initial>\goodpagebreak
-
   > (undefine-ks initial)
   #<deleted-unit-instance ks initial>\goodpagebreak
-
   > (\entlink{delete-instance} 
        (\entlink{find-instance-by-name} 'initial '(ks :plus-subclasses)))
-  #<deleted-unit-instance ks initial>
-  
+  #<deleted-unit-instance ks initial>  
   > (\entlink{delete-instance} 
        (\entlink{find-instance-by-name} 'initial '(ks +)))
   #<deleted-unit-instance ks initial>
-
+  >
 \end{example}
 
 \end{functiondoc}

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 16:32:29 2011 *-*
+;;;; *-* Last-Edit: Mon Mar  7 13:43:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -37,21 +37,21 @@
   (export '(*break-on-receive-errors*   ; not yet documented
             *default-network-stream-server-port* ; not yet documented
             *remove-mirroring-when-streamer-closes* ; not yet documented
-            close-network-streamer      ; not yet documented
+            close-network-streamer
             define-streamer-node
             ensure-streamer-node        ; not yet documented
             find-or-make-network-streamer ; old name, remove soon
             find-streamer-node
             handle-stream-connection-exiting ; not yet documented
             host-of                     ; not yet documented
-            kill-network-stream-server  ; not yet documented
+            kill-network-stream-server
             name-of                     ; not yet documented
             network-stream-receiver     ; not yet documented
-            network-stream-server-running-p ; not yet documented
+            network-stream-server-running-p
             network-streamer            ; class-name (not yet documented)
             open-network-streamer
             port-of                     ; not yet documented
-            start-network-stream-server ; not yet documented
+            start-network-stream-server
             streamer-node)))            ; class-name (not yet documented)
 
 ;;; ---------------------------------------------------------------------------
@@ -151,7 +151,7 @@
     (or 
       ;; A streamer already exists, return it:
      streamer
-     ;; A new streamer is needed; try to connect to GBBopen Network Server:
+     ;; A new streamer is needed; try to connect to the network server:
      (let ((connection 
             ;; TODO: ** Extend open-connection to accept external-format
             (open-connection (host-of streamer-node) (port-of streamer-node) 
@@ -383,7 +383,7 @@
          #'(lambda (connection)         ; indefinite-extent fn
              (network-stream-connection-server streamer-node connection))
          (port-of streamer-node)
-         :name "GBBopen Network Connection Server"
+         :name "Network Connection Server"
          :keepalive 't
          :reuse-address 't)))
 
