@@ -417,10 +417,11 @@ and <nobr><code>within&#37;</code></nobr>.
 </p>
 <p>Some examples finding a <code>word</code> <a href="ref-glossary.html#id246">unit&nbsp;instance</a>:
 <pre class="pretop">
-&gt; (find-instances 'word '(words) '(is character #\s))
-(#&lt;word 1&gt;)
-&gt; (find-instances 'word '(words) '(is character #\x))
-nil
+  &gt; (find-instances 'word '(words) '(is character #\s))
+  (#&lt;word 1&gt;)
+  &gt; (find-instances 'word '(words) '(is character #\x))
+  nil
+  &gt;
 </pre>
 Find <code>word</code> <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> with special characters in them:
 <pre>

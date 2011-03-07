@@ -52,18 +52,15 @@ forms are all equivalent:
        :trigger-events '((control-shell-started-event)) 
        :execution-function #'initial-ks-function)
   #&lt;deleted-unit-instance ks initial&gt;
-
   &gt; (undefine-ks initial)
   #&lt;deleted-unit-instance ks initial&gt;
-
   &gt; (<a href="ref-delete-instance.html">delete-instance</a> 
        (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 'initial '(ks :plus-subclasses)))
-  #&lt;deleted-unit-instance ks initial&gt;
-  
+  #&lt;deleted-unit-instance ks initial&gt;  
   &gt; (<a href="ref-delete-instance.html">delete-instance</a> 
        (<a href="ref-find-instance-by-name.html">find-instance-by-name</a> 'initial '(ks +)))
   #&lt;deleted-unit-instance ks initial&gt;
-
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

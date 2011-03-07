@@ -52,20 +52,21 @@ the file <nobr><code>services</code></nobr> in the <nobr><code>Windows</code></n
 </p>
 <p><span class="fndoclabel">Example</span> <br />Open a socket connection to the GBBopen Project web server:
 <pre class="pretop">
-&gt; (with-open-connection (connection "GBBopen.org" 80)
-     (flet ((write-crlf (stream)
-              ;; HTTP requires CR/LF line termination: 
-              (write-char #\return stream)
-              (write-char #\linefeed stream)))
-        (format connection "GET / HTTP/1.1")
-        (write-crlf connection)
-        (format connection "Host: ~a:~a" host port)
-        (write-crlf connection)
-        (write-crlf connection)
-        (force-output connection)
-        (let ((line (read-line connection)))
-          (format t "~&amp;;; Received: ~a~%" line))))
-;; Received: HTTP/1.1 200 OK
+  &gt; (with-open-connection (connection "GBBopen.org" 80)
+       (flet ((write-crlf (stream)
+                ;; HTTP requires CR/LF line termination: 
+                (write-char #\return stream)
+                (write-char #\linefeed stream)))
+          (format connection "GET / HTTP/1.1")
+          (write-crlf connection)
+          (format connection "Host: ~a:~a" host port)
+          (write-crlf connection)
+          (write-crlf connection)
+          (force-output connection)
+          (let ((line (read-line connection)))
+            (format t "~&amp;;; Received: ~a~%" line))))
+  ;; Received: HTTP/1.1 200 OK
+  &gt; 
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

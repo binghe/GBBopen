@@ -64,13 +64,13 @@ still awaiting an <nobr><b><a href="ref-accept-connection.html">accept-connectio
 <p><span class="fndoclabel">Example</span> <br />Start a simple connection server that accepts connections on port
 5555, reads one line of input, and closes the connection:
 <pre class="pretop">
-&gt; (start-connection-server
-     #'(lambda (connection)
-          (let ((line (read-line connection nil)))
-             (format t "~&amp;;; New Connection: ~a~%" line)
-             (close connection)))
-     5555)
-#&lt;thread Connection Server&gt;
+  &gt; (start-connection-server
+       #'(lambda (connection)
+            (let ((line (read-line connection nil)))
+               (format t "~&amp;;; New Connection: ~a~%" line)
+               (close connection)))
+       5555)
+  #&lt;thread Connection Server&gt;
 </pre>
 </p>
 <a name="id2"></a><p><span class="fndoclabel">Note</span> <br />Use <nobr><b><a href="ref-kill-thread.html">kill-thread</a></b></nobr> to kill the
