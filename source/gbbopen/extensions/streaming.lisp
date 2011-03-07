@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  3 12:50:18 2011 *-*
+;;;; *-* Last-Edit: Mon Mar  7 10:17:32 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -57,14 +57,14 @@
             stream-delete-instance
             stream-instance
             stream-instances
-            stream-instances-of-class   ; not yet documented
-            stream-instances-on-space-instances ; not yet documented
-            stream-link                 ; not yet documented
+            stream-instances-of-class
+            stream-instances-on-space-instances
+            stream-link
             stream-nonlink-slot-update
             stream-remove-from-space    ; old name, remove soon
             stream-remove-instance-from-space-instance
             stream-slot-update          ; old name, remove soon
-            stream-unlink               ; not yet documented
+            stream-unlink
             streamer                    ; class-name (not yet documented)
             streamer-error              ; condition-name (not yet documented)
 	    with-mirroring-disabled     ; not yet documented
