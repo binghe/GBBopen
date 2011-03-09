@@ -20,7 +20,7 @@
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>ot-base</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Set the <a href="ref-glossary.html#id146">Offset&nbsp;Universal&nbsp;Time</a> time-base value.
+<p><span class="fndoclabel">Purpose</span> <br />Set the <a href="ref-glossary.html#id148">Offset&nbsp;Universal&nbsp;Time</a> time-base value.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-tools</code>
 </p>
@@ -39,12 +39,12 @@ integer is between 0 and 99, the &#8220;obvious&#8221; year is assumed.
 (default is zero)
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id146">Offset&nbsp;Universal&nbsp;Time</a> time-base value
+<p><span class="fndoclabel">Returns</span> <br />The <a href="ref-glossary.html#id148">Offset&nbsp;Universal&nbsp;Time</a> time-base value
 </p>
 <p><span class="fndoclabel">Description</span> <br />Without any arguments, <nobr><b>set-ot-base</b></nobr> sets the
 time-base value to the current date.  Setting the time base to the current
 date can be used in applications that do not need to represent historical
-dates and that do not save or communicate <a href="ref-glossary.html#id146">Offset&nbsp;Universal&nbsp;Time</a> values.
+dates and that do not save or communicate <a href="ref-glossary.html#id148">Offset&nbsp;Universal&nbsp;Time</a> values.
 However, setting the time base to a specific date is recommended for most
 applications.
 </p>
@@ -54,20 +54,20 @@ applications.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-ot2ut.html"><b>ot2ut</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-ut2ot.html"><b>ut2ot</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Set the time base for <a href="ref-glossary.html#id146">Offset&nbsp;Universal&nbsp;Time</a> to today:
+<p><span class="fndoclabel">Examples</span> <br />Set the time base for <a href="ref-glossary.html#id148">Offset&nbsp;Universal&nbsp;Time</a> to today:
 <pre class="pretop">
   &gt; (set-ot-base)
   3436662016
   &gt;
 </pre>
-Note that the returned <a href="ref-glossary.html#id146">Offset&nbsp;Universal&nbsp;Time</a> time-base value (above) is not the current <a href="ref-glossary.html#id248">Universal&nbsp;Time</a> value:
+Note that the returned <a href="ref-glossary.html#id148">Offset&nbsp;Universal&nbsp;Time</a> time-base value (above) is not the current <a href="ref-glossary.html#id254">Universal&nbsp;Time</a> value:
 <pre>
   &gt; (get-universal-time)
   3419947437
   &gt;
 </pre>
 </p>
-<p>Set the time base for <a href="ref-glossary.html#id146">Offset&nbsp;Universal&nbsp;Time</a> to July 1, 2007:
+<p>Set the time base for <a href="ref-glossary.html#id148">Offset&nbsp;Universal&nbsp;Time</a> to July 1, 2007:
 <pre class="pretop">
   &gt; (set-ot-base 1 7 2007)
   3409014016
