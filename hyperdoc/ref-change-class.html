@@ -74,9 +74,9 @@
 </p>
 <p><span class="fndoclabel">Returns</span> <br />The destructively modified <var>instance</var>.
 </p>
-<p><span class="fndoclabel">Events</span> <br /><a name="id1">If</a> <var>instance</var> is a <a href="ref-glossary.html#id246">unit&nbsp;instance</a>, a
+<p><span class="fndoclabel">Events</span> <br /><a name="id1">If</a> <var>instance</var> is a <a href="ref-glossary.html#id252">unit&nbsp;instance</a>, a
 <nobr><code>change-instance-class-event</code></nobr> is signaled at the start of the
-class-change process.  If <var>new-class</var> is a <a href="ref-glossary.html#id244">unit&nbsp;class</a>, an
+class-change process.  If <var>new-class</var> is a <a href="ref-glossary.html#id250">unit&nbsp;class</a>, an
 <nobr><code>instance-changed-class-event</code></nobr> is signaled when the class change has been
 completed.
 </p>
@@ -90,11 +90,11 @@ completed.
 </ul>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />The existing or supplied instance name of <var>instance</var> is
-identical to the instance name of an existing <a href="ref-glossary.html#id246">unit&nbsp;instance</a> of
+identical to the instance name of an existing <a href="ref-glossary.html#id252">unit&nbsp;instance</a> of
 <var>new-class</var>.
 </p>
-<p><span class="fndoclabel">Description</span> <br />When <var>new-class</var> is a <a href="ref-glossary.html#id244">unit&nbsp;class</a>, an instance-name conflict with
-an existing <a href="ref-glossary.html#id246">unit&nbsp;instance</a> of <var>new-class</var> must be avoided.  If
+<p><span class="fndoclabel">Description</span> <br />When <var>new-class</var> is a <a href="ref-glossary.html#id250">unit&nbsp;class</a>, an instance-name conflict with
+an existing <a href="ref-glossary.html#id252">unit&nbsp;instance</a> of <var>new-class</var> must be avoided.  If
 the old <a href="ref-glossary.html#gl:class">class</a> of <var>instance</var> and <var>new-class</var> are both unit
 classes that use the global instance-name counter, the old instance-name value
 can be retained safetly.  If <var>new-class</var> is a unit class with a
@@ -115,7 +115,7 @@ instances.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-make-duplicate-instance-changing-class.html"><b>make-duplicate-instance-changing-class</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-next-class-instance-number.html"><b>next-class-instance-number</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br /><a name="id2">Change</a> the class of <a href="ref-glossary.html#id246">unit&nbsp;instance</a> <code>hyp</code> from
+<p><span class="fndoclabel">Example</span> <br /><a name="id2">Change</a> the class of <a href="ref-glossary.html#id252">unit&nbsp;instance</a> <code>hyp</code> from
 <nobr><code>probable-hyp</code></nobr> to <nobr><code>rejected-hyp</code></nobr>:
 <pre class="pretop">
   &gt; (change-class hyp 'rejected-hyp 

@@ -20,7 +20,7 @@
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>unit-instance</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Retrieve a <a href="ref-glossary.html#id246">unit&nbsp;instance</a> by its <a href="ref-glossary.html#id96">instance&nbsp;name</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Retrieve a <a href="ref-glossary.html#id252">unit&nbsp;instance</a> by its <a href="ref-glossary.html#id96">instance&nbsp;name</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -31,10 +31,10 @@
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-class-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id65">extended&nbsp;unit-class&nbsp;specification</a>
 (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>errorp</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>) 
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id246">unit&nbsp;instance</a> or <code>nil</code>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id252">unit&nbsp;instance</a> or <code>nil</code>
 </td></tr></table>
 </p>
-<p><span class="fndoclabel">Returns</span> <br />The first <a href="ref-glossary.html#id246">unit&nbsp;instance</a> found of the specified
+<p><span class="fndoclabel">Returns</span> <br />The first <a href="ref-glossary.html#id252">unit&nbsp;instance</a> found of the specified
 <nobr><var>class(es)</var></nobr> that has the specified <nobr><var>instance-name</var></nobr>
 if one exists; <code>nil</code> otherwise.
 </p>
@@ -79,7 +79,7 @@ those unit instances.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-instances.html"><b>find-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-all-instances-by-name.html"><b>find-all-instances-by-name</b></a>
 </p>
-<p><span class="fndoclabel">Example</span> <br />Find the <code>hyp</code> <a href="ref-glossary.html#id246">unit&nbsp;instance</a> 419:
+<p><span class="fndoclabel">Example</span> <br />Find the <code>hyp</code> <a href="ref-glossary.html#id252">unit&nbsp;instance</a> 419:
 <pre class="pretop">
   &gt; (find-instance-by-name 419 'hyp)
   #&lt;hyp 419 (1835 4791) 0.85 [5..35]&gt;
@@ -90,14 +90,14 @@ those unit instances.
   &gt;
 </pre>
 </p>
-<p><span class="fndoclabel">REPL Note</span> <br /><a name="id2"></a><b>Find-instance-by-name</b> can be invoked using the <a href="ref-glossary.html#id192">REPL&nbsp;command</a>:
+<p><span class="fndoclabel">REPL Note</span> <br /><a name="id2"></a><b>Find-instance-by-name</b> can be invoked using the <a href="ref-glossary.html#id194">REPL&nbsp;command</a>:
 <pre class="pretop">
   :fi <var>instance-name</var> <span 
     style="font-family: serif; font-style: normal">[</span><var>unit-classes-specifier</var> <span 
     style="font-family: serif; font-style: normal">[</span><var>errorp</var><span 
     style="font-family: serif; font-style: normal">]]</span>
 </pre>
-which sets <code>=</code> to the found <a href="ref-glossary.html#id246">unit&nbsp;instance</a>.
+which sets <code>=</code> to the found <a href="ref-glossary.html#id252">unit&nbsp;instance</a>.
 </p>
 <hr /><address><a target="_top" class="address"
     href="http://GBBopen.org/"><p>The GBBopen Project</a></address><br />

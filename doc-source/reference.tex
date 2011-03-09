@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Mar  7 14:23:48 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Mar  9 12:02:12 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -28072,7 +28072,7 @@ The \code{:streaming} \glref{module} provides common entities used with
 
 \fnsyntax
 
-\fnpurpose Add mirroring of one or more \glref{unit~classes}.
+\fnpurpose Add mirroring of one or more \nobr{\glref{unit~classes}}.
 
 \fnpackage \code{:gbbopen}
 
@@ -28098,7 +28098,7 @@ regular expression
 
 \fndescription 
 The \var{paths\/} argument is either the symbol \code{t} (indicating
-all \glref{space~instances}) or a list representing a regular
+all \nobr{\glref{space~instances}}) or a list representing a regular
 expression where the following reserved symbols are interpreted as
 follows:
 \spaceinstanceregexp
@@ -28109,7 +28109,7 @@ follows:
 
 \fnexample 
 %
-Add full mirroring of \code{hyp} \glref{unit~instances} to
+Add full mirroring of \code{hyp} \nobr{\glref{unit~instances}} to
 \var{streamer\/}:
 %
 \W\supp
@@ -28124,6 +28124,141 @@ Add full mirroring of \code{hyp} \glref{unit~instances} to
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Generic~Function}{beginning-queued-read}{\var{tag}}
+\index{streamer!reading queued block}%
+
+\fnsyntax 
+
+\fnpurpose Perform initialization activities associated with reading a
+queued-streamer block.
+
+\fnmethods
+\fnalternate{beginning-queued-read}{\code{(}\var{tag\/} \code{t)}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{tag}
+\arg[tag] An object
+\end{args}
+
+\fndescription 
+%
+\textbf{Beginning-queued-read} is called when the start of a queued-streamer
+block is read; it should not be called directly.
+
+\begin{alsos}{with-queued-streaming}
+\also[ending-queued-read]
+\also[with-queued-streaming]
+\also[write-streamer-queue]
+\end{alsos}
+
+\fnexample
+\bfindexit{full-date-and-time}%
+% 
+Write a method that prints the time a queued-streamer block was started
+(recorded as the block's \var{tag\/}) when the block is read from a
+\glref{journal} file or \glref{network~streamer} connection:
+%
+\W\supp
+\begin{example}
+  (defmethod beginning-queued-read ((tag integer))
+    (format t "~&;; Reading block started at ~a...~\%"
+              (\entlink{full-date-and-time} tag)))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{clear-streamer-queue}{\var{streamer}}
+\index{streamer queue!clearing}%
+
+\fnsyntax 
+
+\fnpurpose Clear the contents of a \glref{streamer~queue} without writing its
+contents, emptying the queue for further queueing.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{streamer}
+\arg[streamer] A \glref{streamer}
+\end{args}
+
+\begin{alsos}{with-queued-streaming}
+\also[with-queued-streaming]
+\also[write-streamer-queue]
+\end{alsos}
+
+\fnexample
+% 
+Clear \glref{streamer} \code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  (clear-streamer-queue *streamer* :tag (get-universal-time))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{ending-queued-read}{\var{tag}}
+\index{streamer!reading queued block}%
+
+\fnsyntax 
+
+\fnpurpose Perform completion activities associated with reading a
+queued-streamer block.
+
+\fnmethods
+\fnalternate{ending-queued-read}{\code{(}\var{tag\/} \code{t)}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{tag}
+\arg[tag] An object
+\end{args}
+
+\fndescription 
+%
+\textbf{Ending-queued-read} is called when the end of a queued-streamer block
+is read; it should not be called directly.  It will always be called with the
+same (but not necessarily \code{eq}) \var{tag\/} value as the corresponding
+\nobr{\textbf{\entlink{beginning-queued-read}}}. The matching
+\nobr{\textbf{ending-queued-read}} will not be called if reading of the
+queued-streamer block is not completed due to error (such as a premature
+ending of the input stream).
+
+\begin{alsos}{with-queued-streaming}
+\also[beginning-queued-read]
+\also[with-queued-streaming]
+\also[write-streamer-queue]
+\end{alsos}
+
+\fnexample
+% 
+Write a method that prints a notice when an empty queued-streamer block
+(tagged with the \var{tag\/} \code{:empty}) has been read:
+%
+\W\supp
+\begin{example}
+  (defmethod ending-queued-read ((tag (eql ':empty)))
+    (format t "~&;; An empty queued-streamer block was read.~\%"))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{stream-add-instance-to-space-instance}%
   {\var{unit-instance \nobr{space-instance-or-path\/} streamer\/}
     \nobr{\returns{} \var{instance\/}}}
@@ -28133,8 +28268,8 @@ Add full mirroring of \code{hyp} \glref{unit~instances} to
 
 \fnsyntax 
 
-\fnpurpose Write adding a \glref{unit~instance} to a \glref{space~instance} to
-a \glref{streamer}.
+\fnpurpose Write adding a \nobr{\glref{unit~instance}} to a
+\nobr{\glref{space~instance}} to a \glref{streamer}.
 
 \fnpackage \code{:gbbopen}
 
@@ -28143,8 +28278,9 @@ a \glref{streamer}.
 \fnargs
 \begin{args}{instance}
 \arg[unit-instance] The added \glref{unit~instance}
-\arg[space-instance-or-path] The \glref{space~instance} or 
-  \glref{space-instance~path} to which the \glref{unit~instance} is added
+\arg[space-instance-or-path] The \glref{space~instance} or
+\nobr{\glref{space-instance~path}} to which the \nobr{\glref{unit~instance}}
+is added
 \arg[streamer] A \glref{streamer}
 \end{args}
 
@@ -28163,8 +28299,8 @@ a \glref{streamer}.
 \bfindexit{find-space-instance-by-path}%
 %
 Stream to \glref{streamer} \code{*streamer*} the addition of a highly
-plausible hypothesis \glref{unit~instance}, \nobr{\code{good-hyp}}, to the
-\code{hyps} \glref{space~instance}:
+plausible hypothesis \nobr{\glref{unit~instance}}, \nobr{\code{good-hyp}}, to the
+\code{hyps} \nobr{\glref{space~instance}}:
 %
 \W\supp
 \begin{example}
@@ -28197,8 +28333,8 @@ or
 
 \fnsyntax 
 
-\fnpurpose Write deleting a \glref{unit~instance} (or \glref{space~instance})
-to a \glref{streamer}.
+\fnpurpose Write deleting a \glref{unit~instance} (or
+\nobr{\glref{space~instance}}) to a \glref{streamer}.
 
 \fnpackage \code{:gbbopen}
 
@@ -28297,7 +28433,7 @@ Stream a \code{hyp} unit instance to \glref{streamer} \code{*streamer*}:
 \fnsyntax 
 
 \fnpurpose Write a list of \glref{unit~instances} (and
-\glref{space~instances}) to a \glref{streamer}.
+\nobr{\glref{space~instances}}) to a \glref{streamer}.
 
 \fnpackage \code{:gbbopen}
 
@@ -28356,7 +28492,7 @@ Stream the results of a blackboard retrieval to \glref{streamer}
 \fnsyntax 
 
 \fnpurpose Write all \glref{unit~instances} of the specified
-\glref{unit~classes} to a \glref{streamer}.
+\nobr{\glref{unit~classes}} to a \glref{streamer}.
 
 \fnpackage \code{:gbbopen}
 
@@ -28387,8 +28523,8 @@ Stream the results of a blackboard retrieval to \glref{streamer}
 \bfindexit{find-instances}%
 \bfindexit{find-space-instance-by-path}%
 % 
-Stream all \glref{unit~instances} of the \glref{unit~class} \code{hyp} to
-\glref{streamer} \code{*streamer*}:
+Stream all \glref{unit~instances} of the \nobr{\glref{unit~class}} \code{hyp}
+to \glref{streamer} \code{*streamer*}:
 %
 \W\supp
 \begin{example}
@@ -28416,8 +28552,8 @@ Stream all \glref{unit~instances} of the \glref{unit~class} \code{hyp} to
 
 \fnsyntax 
 
-\fnpurpose Write \glref{unit~instances} on \glref{space~instances}, optionally
-selected by a \glref{retrieval~pattern}, to a \glref{streamer}.
+\fnpurpose Write \glref{unit~instances} on \nobr{\glref{space~instances}}, optionally
+selected by a \nobr{\glref{retrieval~pattern}}, to a \glref{streamer}.
 
 \fnpackage \code{:gbbopen}
 
@@ -28428,8 +28564,8 @@ selected by a \glref{retrieval~pattern}, to a \glref{streamer}.
 \arg[unit-classes-specifier] An \glref{extended~unit-classes~specification}
 (see below)
 \arg[space-instances] A \glref{space~instance}, a list of
-  \glref{space~instances}, a \glref{space-instance~path} regular expression, or
-  \code{t} (indicating all space instances)
+\nobr{\glref{space~instances}}, a \nobr{\glref{space-instance~path}} regular
+expression, or \code{t} (indicating all space instances)
 \arg[streamer] A \glref{streamer}
 \arg[pattern] A \glref{retrieval~pattern} (see below; default is \code{t})
 \arg[filter-before] A single-argument predicate to be applied before
@@ -28462,13 +28598,14 @@ selected by a \glref{retrieval~pattern}, to a \glref{streamer}.
 \fndescription
 %
 A \glref{unit~instance} will be streamed only once, even if the
-\glref{unit~instance} resides on multiple \glref{space~instances}.
+\nobr{\glref{unit~instance}} resides on multiple
+\nobr{\glref{space~instances}}.
 
 The \var{pattern\/} \code{t} matches all \glref{unit~instances} whose
-\glref{dimension~values} overlap the \glref{dimensional~extent} of at least
-one \glref{space~instance} in \nobr{\var{space-instances}}. The
+\nobr{\glref{dimension~values}} overlap the \nobr{\glref{dimensional~extent}}
+of at least one \glref{space~instance} in \nobr{\var{space-instances}}. The
 \nobr{\var{pattern\/}} \code{:all} matches every \glref{unit~instance} on a
-\glref{space~instance} in \nobr{\var{space-instances}}, regardless of
+\nobr{\glref{space~instance}} in \nobr{\var{space-instances}}, regardless of
 dimensional overlap.
 
 \reflink{Declared numeric}{sec:declared-numerics} and \reflink{pseudo
@@ -28493,7 +28630,7 @@ and \nobr{\code{within\%}}.
 % 
 Stream all \glref{unit~instances} of the \glref{unit~class} \code{hyp} to
 \glref{streamer} \code{*streamer*} that reside on the \nobr{\code{(bb
-    probable-hyps)}} \glref{space~instance} that have a belief value greater
+    probable-hyps)}} \nobr{\glref{space~instance}} that have a belief value greater
 than 0.5:
 %
 \W\supp
@@ -28632,7 +28769,7 @@ Stream a new belief value for a \code{hyp} unit instance to \glref{streamer}
 \begin{args}{instance}
 \arg[unit-instance] The removed \glref{unit~instance}
 \arg[space-instance-or-path] The \glref{space~instance} or 
-  \glref{space-instance~path} from which the \glref{unit~instance} is removed
+  \glref{space-instance~path} from which the \nobr{\glref{unit~instance}} is removed
 \arg[streamer] A \glref{streamer}
 \end{args}
 
@@ -28907,6 +29044,146 @@ supporting-hypothesis links with mirroring:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Macro}{with-queued-streaming}%
+  {\code{(}\var{streamer\/} 
+    \nobr{[\var{tag} [\var{write-empty-queue-p\/}]]}\code{)}
+    \nobr{\var{form\/}\superstar{}}
+    \nobr{\returns{} \var{result\/}\superstar}}
+\index{queued streaming}%
+\index{streaming!queued}%
+\index{streamer queue}%
+  
+\fnsyntax
+
+\fnpurpose Queue streaming during evaluation of \var{forms}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{write-empty-queue-p}
+\arg[streamer] A \glref{streamer}
+\arg[tag] An object (default is \nil)
+\arg[write-empty-queue-p] A \glref{generalized~boolean} (default is \nil)
+\arg[forms] An implicit \nobr{\textbf{progn}} of \glref{forms} to be evaluated
+\arg[results] The values returned by evaluating the last \var{form}
+\end{args}
+
+\fnreturns The values returned by evaluating the last \var{form}.
+
+\fndescription
+%
+Instead of writing changes directly to a \glref{streamer}'s \glref{journal}
+file or network connection, the changes are queued until the last \var{form}
+has been evaluated.  Then the queued changes are written as a block that is
+marked with the \var{tag\/} value.  Queued streaming is \glref{thread-local}
+(so different threads can have their own open queues at the same time) and
+\textbf{with-queued-streaming} forms can be nested within a single thread.
+
+If the value of \var{write-empty-queue-p\/} is true, the streamer queue is
+written even if it is empty (and
+\nobr{\textbf{\entlink{beginning-queued-read}}} and
+\nobr{\textbf{\entlink{ending-queued-read}}} will be called with the
+\var{tag\/} value when the empty queue is received at a
+\nobr{\glref{streamer~node}} or read during \glref{journal} loading).
+
+\begin{alsos}{beginning-queued-read}
+\also[beginning-queued-read]
+\also[clear-streamer-queue]
+\also[ending-queued-read]
+\also[write-streamer-queue]
+\end{alsos}
+
+\fnexamples
+\bfindexit{find-space-instance-by-path}%
+\bfindexit{make-instance}%
+%
+Assuming that \code{hyp} ~\glref{unit~instances} are being mirrored to
+\glref{streamer} \code{*streamer*}, queue the mirroring of a created \code{hyp} tagged
+with the \glref{space~instance} \nobr{\code{(bb hyps)}}:
+%
+\W\supp
+\begin{example}
+  > (with-queued-streaming (*streamer* (\entlink{find-space-instance-by-path} '(bb hyps)))
+       (\entlink{make-instance} 'hyp 
+          :location (list x y)
+          :classification '(:car :truck)
+          :color ':red
+          :belief .85
+          :velocity-range '(5 35)
+          :supporting-hyps supporting-hyps))
+  #<hyp 419 (1835 4791) 0.85 [5..35]>
+  >
+\end{example}
+
+Write an empty queue (with tag \code{:empty}) to \glref{streamer}
+\code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  > (with-queued-streaming (*streamer* ':empty 't))
+  nil
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{write-streamer-queue}{\var{streamer}
+    \code{\&key} 
+    \var{tag \nobr{write-empty-queue-p}\/}}
+\index{streamer queue!writing}%
+
+\fnsyntax 
+
+\fnpurpose Write the contents of a \glref{streamer~queue}, emptying it for
+further queueing.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{write-empty-queue-p}
+\arg[streamer] A \glref{streamer}
+\arg[tag] An object (default is \nil)
+\arg[write-empty-queue-p] A \glref{generalized~boolean} (default is \nil)
+\end{args}
+
+\begin{alsos}{with-queued-streaming}
+\also[beginning-queued-read]
+\also[clear-streamer-queue]
+\also[ending-queued-read]
+\also[with-queued-streaming]
+\end{alsos}
+
+\fnexamples
+% 
+Write the contents of \glref{streamer} \code{*streamer*}, using and retaining
+the existing \var{tag\/} and \var{write-empty-queue-p\/} values associated
+with the queue:
+%
+\W\supp
+\begin{example}
+  (write-streamer-queue *streamer*)
+\end{example}
+
+Write the contents of \glref{streamer} \code{*streamer*}, using
+the existing \var{tag\/} and \nobr{\var{write-empty-queue-p\/}} values associated
+with the queue (and retaining the \nobr{\var{write-empty-queue-p\/}} value), but
+establishing a new \var{tab\/} value for the emptied queue:
+%
+\W\supp
+\begin{example}
+  (write-streamer-queue *streamer* :tag (get-universal-time))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \T\markright{}%
 \T\pagestyle{plain}
 \T\clearpage
@@ -28921,7 +29198,7 @@ supporting-hypothesis links with mirroring:
 \index{module!:streaming@\code{:streaming}}%
 \index{:streaming@\code{:streaming} module}%
 %
-Journal writing and reading is also provided by the \code{:streaming} \glref{module}.
+Journal writing and reading is provided by the \code{:streaming} \glref{module}.
 
 \begin{center}
 \experimental\\

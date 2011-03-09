@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  7 10:17:32 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  9 11:15:29 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -37,11 +37,11 @@
             add-to-broadcast-streamer   ; not yet documented
             begin-queued-streaming      ; not yet documented
             broadcast-streamer          ; class-name (not yet documented)
-            beginning-queued-read       ; not yet documented
-            clear-streamer-queue        ; not yet documented
+            beginning-queued-read
+            clear-streamer-queue
             describe-mirroring          ; not yet documented
             end-queued-streaming        ; not yet documented
-            ending-queued-read          ; not yet documented
+            ending-queued-read
             handle-streamed-command-atom ; not yet documented
             handle-streamed-command-form ; not yet documented
             journal-streamer            ; class-name (not yet documented)
@@ -67,9 +67,9 @@
             stream-unlink
             streamer                    ; class-name (not yet documented)
             streamer-error              ; condition-name (not yet documented)
-	    with-mirroring-disabled     ; not yet documented
-	    with-mirroring-enabled      ; not yet documented
-            with-queued-streaming       ; not yet documented
+	    with-mirroring-disabled
+	    with-mirroring-enabled
+            with-queued-streaming
             write-streamer-queue)))     ; not yet documented
 
 ;;; ===========================================================================

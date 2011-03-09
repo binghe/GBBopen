@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Wed Mar  2 16:49:24 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Mar  9 11:52:41 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -565,6 +565,14 @@ instances of the same class.
 %
 A \glref{cons}, two-element list, or two-element array containing the start
 and end value representing the set of real numbers between them, inclusive.
+
+%% ------------------------------------------------------------------------
+
+\glent[journal] 
+\index{journal}%
+%
+A file containing changes made to the \glref{blackboard~repository} that can
+be loaded in order to perform the recorded changes.
 
 %% ------------------------------------------------------------------------
 
@@ -1271,6 +1279,14 @@ streaming node is defined per image.
 
 %% ------------------------------------------------------------------------
 
+\glent[streamer~queue] 
+\index{streamer queue}%
+%
+A \glref{thread~local} queue of changes associated with a \glref{streamer}
+that are being held until in memory until the queue is written or cleared.
+
+%% ------------------------------------------------------------------------
+
 \glent[string~designator]
 \index{string designator}%
 %
@@ -1309,6 +1325,15 @@ definitions, and module definitions with a specific library or application.
 %
 A thread in a multi-threaded Common Lisp implementation or a Lisp process in a
 Common Lisp that provides multiprocessing.
+
+%% ------------------------------------------------------------------------
+
+\glent[thread-local binding] 
+\gllabel{thread~local}
+\gllabel{thread-local}
+\index{thread-local binding}%
+%
+A dynamic binding that is visible only to a single \glref{thread}.
 
 %% ------------------------------------------------------------------------
 
