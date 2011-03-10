@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  9 19:42:05 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 10 11:53:20 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -229,6 +229,8 @@
    (t (with-lock-held ((lock-of broadcast-streamer))
         (let ((streamers (cons streamer (streamers-of broadcast-streamer))))
           (check-broadcast-streamer-compatibility streamer broadcast-streamer)
+          ;; Clear the recorded class descriptions of the broadcast streamer:
+          (clrhash (recorded-class-descriptions-ht-of broadcast-streamer))
           (setf (broadcast-streamer-of streamer) broadcast-streamer)
           (set-broadcast-streamers broadcast-streamer streamers)))
       ;; Return streamer:

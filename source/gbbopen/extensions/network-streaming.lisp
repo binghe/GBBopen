@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar  7 13:43:15 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 10 03:02:18 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -213,7 +213,7 @@
 ;; Default handler method:
 (defmethod handle-stream-connection-exiting ((network-streamer network-streamer)
                                              exit-status)
-  (format t "~&;; Network stream connection ~s closing~@[: (~s)~]~%"
+  (format t "~&;; Network stream connection ~s closing~@[: (~s)~]...~%"
           (name-of (streamer-node-of network-streamer)) exit-status))
 
 ;;; ---------------------------------------------------------------------------
