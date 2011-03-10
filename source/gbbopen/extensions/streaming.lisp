@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  9 11:15:29 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  9 19:42:05 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -29,7 +29,8 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen-tools::*recorded-class-descriptions-ht*
+  (import '(gbbopen-tools::*newly-recorded-class-descriptions-ht*
+            gbbopen-tools::*recorded-class-descriptions-ht*
             gbbopen-tools::write-saving/sending-block-info)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -46,7 +47,7 @@
             handle-streamed-command-form ; not yet documented
             journal-streamer            ; class-name (not yet documented)
             load-journal
-            make-broadcast-streamer     ; not yet documented
+            make-broadcast-streamer
             make-journal-streamer
             open-streamer-p             ; not yet documented
             remove-from-broadcast-streamer ; not yet documented
@@ -86,7 +87,10 @@
   stream
   tag
   write-empty-queue-p
-  tag-string)
+  tag-string
+  ;; Record queued additions to *recorded-class-descriptions-ht*:
+  (newly-recorded-class-descriptions-ht
+   (make-keys-only-hash-table-if-supported :test 'eq)))
 
 ;;; ===========================================================================
 ;;;   Streamers
@@ -267,7 +271,10 @@
           (flet ((do-it ()
                    (if streamer-queue
                        ;; queued streaming:
-                       (funcall body-form-fn (streamer-queue.stream streamer-queue))
+                       (let ((*newly-recorded-class-descriptions-ht* 
+                              (streamer-queue.newly-recorded-class-descriptions-ht
+                               streamer-queue)))
+                         (funcall body-form-fn (streamer-queue.stream streamer-queue)))
                        ;; regular streaming:
                        (with-lock-held ((lock-of streamer))
                          (let ((stream (stream-of streamer-for-writing)))
@@ -382,7 +389,22 @@
          (or (cdr (assq streamer gbbopen::*%%streamer-queues%%*))
              (no-streamer-queue-error streamer))))
     ;; Substitute a new (empty) string stream:
-    (setf (streamer-queue.stream streamer-queue) (make-string-output-stream))))
+    (setf (streamer-queue.stream streamer-queue) (make-string-output-stream))
+    ;; Remove queued but now unwritten class-descriptions from the recorded
+    ;; ones for this streamer (may result in redundant class-description
+    ;; writing when other threads are also queuing this streamer):
+    (let ((recorded-class-descriptions-ht 
+           (recorded-class-descriptions-ht-of streamer)))
+      (flet ((clear-it (key value)
+               (declare (ignore value))
+               (remhash key recorded-class-descriptions-ht )))
+        (declare (dynamic-extent #'clear-it))
+        (maphash #'clear-it
+                 (streamer-queue.newly-recorded-class-descriptions-ht
+                  streamer-queue))))
+    ;; And clear the new newly-recorded class-descriptions hash table:
+    (clrhash (streamer-queue.newly-recorded-class-descriptions-ht
+              streamer-queue))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -410,6 +432,9 @@
             (write-sequence string stream)
             (princ "#G!(:EB) " stream)
             (force-output stream)))))
+    ;; Clear the record of newly written class descriptions:
+    (clrhash (streamer-queue.newly-recorded-class-descriptions-ht
+              streamer-queue))
     ;; Setup tag & write-empty-queue-p values, using the previous tag and
     ;; write-empty-queue-p values if they weren't supplied:
     (if tag-supplied-p
