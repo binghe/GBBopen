@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 03:53:21 2011 *-*
+;;;; *-* Last-Edit: Wed Mar  9 17:53:22 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -80,6 +80,7 @@
 ;;;  With-sending/saving-block
 
 (defvar *recorded-class-descriptions-ht*)
+(defvar *newly-recorded-class-descriptions-ht* nil)
 
 (defmacro with-saving/sending-block ((stream 
                                       &key (package '':cl-user)
@@ -168,7 +169,10 @@
                                (memq (slot-definition-name slot)
                                      omitted-slot-names)))
                         (declare (dynamic-extent #'fn))
-                        (remove-if #'fn (class-slots class))))))
+                        (remove-if #'fn (class-slots class)))))
+          ;; Remember newly-recorded class descriptions
+          (when *newly-recorded-class-descriptions-ht*
+            (setf (gethash class-name *newly-recorded-class-descriptions-ht*) 't)))
         (print-class-description-for-saving/sending class stream))
       slots-for-saving/sending)))
 
