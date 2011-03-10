@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  3 15:49:45 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 10 02:33:31 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -41,6 +41,12 @@
     :passphrase "Open, says me!"
     :package ':tutorial)
 
+;; The a 2nd slave host:
+(define-streamer-node "slave2"
+    :host "127.0.0.1"
+    :port (1- (port-of (find-streamer-node "slave")))
+    :package ':tutorial)
+
 ;; The master host (me!):
 (define-streamer-node "master"
     :host "127.0.0.1"
@@ -51,19 +57,27 @@
 (define-class link-ptr-with-value (standard-link-pointer)
   ((value :initform nil)))
 
-;; Connect to slave image:
+;; Connect to slave images:
 (defparameter *streamer* (open-network-streamer "slave" "master"))
+(defparameter *streamer2* (ignore-errors (open-network-streamer "slave2" "master")))
 
-(add-mirroring *streamer* 'standard-space-instance)
-(add-mirroring *streamer* 'path)
-(add-mirroring *streamer* 'location)
+;; Create a broadcast streamer:
+
+(defparameter *broadcast-streamer* (make-broadcast-streamer *streamer*))
+(when *streamer2* 
+  (format t "~&;; Adding ~s to ~s...~%" *streamer2* *broadcast-streamer*)
+  (add-to-broadcast-streamer *streamer2* *broadcast-streamer*))
+
+(add-mirroring *broadcast-streamer* 'standard-space-instance)
+(add-mirroring *broadcast-streamer* 'path)
+(add-mirroring *broadcast-streamer* 'location)
 
 ;; Generate some data (locally), sending everything as a single queued block:
-(with-queued-streaming (*streamer* ':tutorial)
+(with-queued-streaming (*broadcast-streamer* ':tutorial)
   (take-a-walk))
   
 ;; Delete an instance:
-(with-queued-streaming (*streamer* ':with-queued)
+(with-queued-streaming (*broadcast-streamer* ':with-queued)
   (delete-instance (find-instance-by-name 10 'location)))
 
 ;; Change a nonlink-slot value:
@@ -123,8 +137,10 @@
 
 ;; Create a bunch of new locations (with event-printing disabled on the
 ;; slave):
-(stream-command-form '(:disable-event-printing t) *streamer*)
+(stream-command-form '(:disable-event-printing t) *broadcast-streamer*)
 (time (create-a-bunch 1000))
+#+BIGGER-TEST
+(time (create-a-bunch 5000))
 #+NON-REMOVAL-TEST
 (progn
   (setf *remove-mirroring-when-streamer-closes* nil)
@@ -142,7 +158,7 @@
 (time (update-a-bunch 20000))
 
 ;; Send a silly command:
-(stream-command-form '(:print "All done!") *streamer*)
+(stream-command-form '(:print "All done!") *broadcast-streamer*)
 
 ;;; ===========================================================================
 ;;;				  End of File
