@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Wed Mar  9 11:52:41 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Mar  9 17:30:04 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -60,6 +60,15 @@ The internal storage containing all \glref{unit~instance} and
 A \glref{dimension} of \code{:boolean} \glref{dimension~type} where
 \code{:boolean} \glref{dimension~values} are either true (non-\nil) or
 false (\nil).
+
+%% ------------------------------------------------------------------------
+
+\glent[broadcast~streamer] 
+\index{broadcast streamer}%
+\index{streamer!broadcast}%
+%
+An object that is used as a saving or sending destination for multiple
+\glref{journal~} and \glref{network~}\glref{streamers}.
 
 %% ------------------------------------------------------------------------
 
@@ -577,6 +586,7 @@ be loaded in order to perform the recorded changes.
 %% ------------------------------------------------------------------------
 
 \glent[journal~streamer] 
+\gllabel{journal~}%
 \index{journal streamer}%
 \index{streamer!journal}%
 %
@@ -803,6 +813,7 @@ A string that represents a filename.
 %% ------------------------------------------------------------------------
 
 \glent[network~streamer] 
+\gllabel{network~}%
 \index{network streamer}%
 \index{streamer!network}%
 %
@@ -1258,6 +1269,7 @@ A specification of how \glref{unit~instances} are to be stored on a
 %% ------------------------------------------------------------------------
 
 \glent[streamer] 
+\gllabel{streamers} 
 \index{streamer}%
 %
 An object that is used as a saving or sending destination for

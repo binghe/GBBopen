@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 21 17:16:13 2011 *-*
+;;;; *-* Last-Edit: Sat Mar 12 11:14:46 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -182,7 +182,7 @@
 
 (declaim (special *automatically-create-missing-directories*))
 (unless (boundp '*automatically-create-missing-directories*)
-  (setf *automatically-create-missing-directories* nil))
+  (setf *automatically-create-missing-directories* 't))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Controls whether the Module Manager Facility compiles/loads patches only:
@@ -2058,7 +2058,7 @@
                             (all-source-p (mm-module.files module)))))
             (when (or *automatically-create-missing-directories*
                       (restart-case
-                          (error "Directory ~a in module ~s doesn't exist."
+                          (error "Directory ~a in module ~s is does not exist."
                                  compiled-directory (mm-module.name module))
                         (create-it ()
                             :report "Create this directory."

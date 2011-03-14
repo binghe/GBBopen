@@ -19,7 +19,7 @@
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>other-unit-instances</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Write links removed between a <a href="ref-glossary.html#id252">unit&nbsp;instance</a> and one
+<p><span class="fndoclabel">Purpose</span> <br />Write links removed between a <a href="ref-glossary.html#id254">unit&nbsp;instance</a> and one
 or more <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> to a <a href="ref-glossary.html#gl:streamer">streamer</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
@@ -27,10 +27,10 @@ or more <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> to a <a
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:streaming</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id252">unit&nbsp;instance</a> (or <a href="ref-glossary.html#id218">space&nbsp;instance</a>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id144">non-keyword&nbsp;symbol</a> naming the link slot or a slot meta object
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>other-unit-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id252">unit&nbsp;instance</a>, a 
-<a href="ref-glossary.html#id126">link-pointer&nbsp;object</a>, or a list of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> and 
+<tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id254">unit&nbsp;instance</a> (or <a href="ref-glossary.html#id220">space&nbsp;instance</a>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A non-<code>nil</code>, <a href="ref-glossary.html#id146">non-keyword&nbsp;symbol</a> naming the link slot or a slot meta object
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>other-unit-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id254">unit&nbsp;instance</a>, a 
+<a href="ref-glossary.html#id128">link-pointer&nbsp;object</a>, or a list of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> and 
 <a href="ref-glossary.html#gl:link-pointer-object">link-pointer&nbsp;objects</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>streamer</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:streamer">streamer</a>
 </td></tr></table>
@@ -42,8 +42,8 @@ or more <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> to a <a
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-stream-nonlink-slot-update.html"><b>stream-nonlink-slot-update</b></a>
 </p>
 <p><span class="fndoclabel">Example</span> <br />Stream removing a link of <code>support-hyp</code> from the
-<nobr><code>supporting-hyps</code></nobr> <a href="ref-glossary.html#id124">link&nbsp;slot</a> of the <code>hyp</code>
-<a href="ref-glossary.html#id252">unit&nbsp;instance</a> <nobr><code>unit-instance</code></nobr> to <a href="ref-glossary.html#gl:streamer">streamer</a>
+<nobr><code>supporting-hyps</code></nobr> <a href="ref-glossary.html#id126">link&nbsp;slot</a> of the <code>hyp</code>
+<a href="ref-glossary.html#id254">unit&nbsp;instance</a> <nobr><code>unit-instance</code></nobr> to <a href="ref-glossary.html#gl:streamer">streamer</a>
 <code>*streamer*</code>:
 <pre class="pretop">
   &gt; (stream-unlink unit-instance 'supporting-hyps support-hyp *streamer*)

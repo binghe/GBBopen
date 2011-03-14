@@ -43,7 +43,7 @@ block is read; it should not be called directly.
 </p>
 <p><span class="fndoclabel">Example</span> <br /><a name="id1">Write</a> a method that prints the time a queued-streamer block was started
 (recorded as the block's <var>tag</var>) when the block is read from a
-<a href="ref-glossary.html#gl:journal">journal</a> file or <a href="ref-glossary.html#id140">network&nbsp;streamer</a> connection:
+<a href="ref-glossary.html#gl:journal">journal</a> file or <a href="ref-glossary.html#id142">network&nbsp;streamer</a> connection:
 <pre class="pretop">
   (defmethod beginning-queued-read ((tag integer))
     (format t "~&amp;;; Reading block started at ~a...~&#37;"

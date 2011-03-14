@@ -25,7 +25,7 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:module-manager</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id106">keyword&nbsp;symbol</a> naming a <a href="ref-glossary.html#gl:module">module</a>
+<tr valign="top"><td valign="baseline" nowrap><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id108">keyword&nbsp;symbol</a> naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>module-options</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> See below
 </td></tr></table>
 </p>
@@ -70,13 +70,13 @@
 <td valign="baseline" colspan="1" align="left"></td></tr></tbody></table>
 <p><span class="fndoclabel">Terms</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>root-or-relative-directory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:keywords">keyword</a> naming a <a href="ref-glossary.html#gl:Root">root</a> or
-<a href="ref-glossary.html#id192">relative&nbsp;directory</a>, a <a href="ref-glossary.html#gl:keywords">keyword</a> naming another <a href="ref-glossary.html#gl:module">module</a>,
+<a href="ref-glossary.html#id194">relative&nbsp;directory</a>, a <a href="ref-glossary.html#gl:keywords">keyword</a> naming another <a href="ref-glossary.html#gl:module">module</a>,
 or <code>nil</code>, indicating that the module is rooted at the
 <nobr><code>*load-truename*</code></nobr> value in effect when the module definition is
 loaded
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>subdirectory</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a subdirectory
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>file-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A string naming a file
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id106">keyword&nbsp;symbol</a> naming a <a href="ref-glossary.html#gl:module">module</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>module-name</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id108">keyword&nbsp;symbol</a> naming a <a href="ref-glossary.html#gl:module">module</a>
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Description</span> <br />The <var>module-options</var> <nobr><code>:requires</code></nobr>,
@@ -90,7 +90,7 @@ file containing the <nobr><b>define-module</b></nobr> form) is used.  If the
 another <a href="ref-glossary.html#gl:module">module</a>, the directory specification of the named module is
 used as the base (root or relative) directory for the module that is being
 defined.  If both a <a href="ref-glossary.html#gl:module">module</a> and a <a href="ref-glossary.html#gl:Root">root</a> or
-<a href="ref-glossary.html#id192">relative&nbsp;directory</a> definition have the same name, the directory
+<a href="ref-glossary.html#id194">relative&nbsp;directory</a> definition have the same name, the directory
 definition takes precedence over the module directory specification.
 </p>
 <p>The <code>:requires</code> module option specifies, in order, the <a href="ref-glossary.html#gl:modules">modules</a>
@@ -163,7 +163,7 @@ loaded already</td></tr>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-system-name.html"><b>with-system-name</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-with-module-redefinitions.html"><b>with-module-redefinitions</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a <a href="ref-glossary.html#id200">root&nbsp;directory</a> and <a href="ref-glossary.html#gl:module">module</a> for <nobr><code>:my-app</code></nobr>:
+<p><span class="fndoclabel">Examples</span> <br /><a name="id2">Define</a> a <a href="ref-glossary.html#id202">root&nbsp;directory</a> and <a href="ref-glossary.html#gl:module">module</a> for <nobr><code>:my-app</code></nobr>:
 <pre class="pretop">
   (<a href="ref-define-root-directory.html">define-root-directory</a> :my-app-root 
     (make-pathname :directory "~/my-app"))

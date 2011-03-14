@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Mar  9 12:02:12 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Mar 14 03:30:57 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -2320,28 +2320,36 @@ in the compiled-file tree should be created when needed.
 
 \fnvaluetype A \glref{generalized~boolean}
 
-\fninitialvalue \nil
+\fninitialvalue \code{t}
 
-\fndescription By default,
-\nobr{\textbf{*automatically-create-missing-directories*}} is set to \nil, but
-it can be set or bound to true to instruct
-\nobr{\textbf{\entlink{compile-module}}} to create any needed directories in
-the compiled-file tree rather than generating a continuable error. The
-compile-module option \nobr{\code{:create-dirs}} can also be specified to bind
+\fndescription
+%
+By default, the Module Manager will create any needed directories in the
+compiled-file tree automatically during module compilation.  For tighter
+control over new directory creation,
+\nobr{\textbf{*automatically-create-missing-directories*}} can be set to \nil,
+causing \nobr{\textbf{\entlink{compile-module}}} to signal a continuable error
+during compilation if a needed directory is missing in the compiled-file tree.
+When \nobr{\textbf{*automatically-create-missing-directories*}} has been set
+to \nil, the \nobr{\textbf{\entlink{compile-module}}} option
+\nobr{\code{:create-dirs}} provides a convenient way to bind
 \nobr{\textbf{*automatically-create-missing-directories*}} to true during
-\glref{module} compilation.
+compilation of a specified \glref{module}.
 
 \begin{alsos}{compile-module}
 \also[compile-module]
 \end{alsos}
 
-\fnexample 
-Automatically create, as needed, any missing directory in the compiled-file
-tree, rather than generating a continuable error:
+\fnexample
+%
+Have the Module Manager generate a continuable error during module compilation
+when a needed directory in the compiled-file tree is missing (and the
+compile-module option \nobr{\code{:create-dirs}} was not specified when
+compiling the module needing that missing directory):
 %
 \W\supp
 \begin{example}
-  (setf common-lisp-user::*automatically-create-missing-directories* 't)
+  (setf common-lisp-user::*automatically-create-missing-directories* nil)
 \end{example}
 
 \end{functiondoc}
@@ -28259,6 +28267,85 @@ Write a method that prints a notice when an empty queued-streamer block
 
 %% ------------------------------------------------------------------------
 
+% \begin{functiondoc}{Function}{make-broadcast-streamer}%
+%   {\var{streamers\/}
+%     \nobr{\returns{} \var{broadcast-streamer\/}}}
+% \index{broadcast streamer!making}%
+
+% \fnsyntax 
+% \fnalternate{\textbf{/\%}}%
+%   {\code{\&key} 
+%     \var{package
+%       \nobr{read-default-float-format\/}}
+%     \returns{} \var{broadcast-streamer\/}}
+
+% \fnpurpose Create a \glref{broadcast~streamer} that can be used to write
+% to multiple \glref{journal} and \glref{network~}\glref{streamers}.
+
+% \fnpackage \code{:gbbopen}
+
+% \fnmodule \code{:streaming}
+
+% \fnargs
+% \begin{args}{read-default-float-format}
+% \arg[streamers] A list of journal or network \glref{streamers}.
+% \arg[package] A \glref{package~designator} indicating the package to be used
+% when writing to and reading from the \glref{streamers} associated with
+% the \var{broadcast-streamer\/} (default is \nobr{\code{:common-lisp-user}})
+% \arg[read-default-float-format] One of the atomic type specifiers
+% \nobr{\code{short-float}}, \nobr{\code{single-float}},
+% \nobr{\code{double-float}}, or \nobr{\code{long-float}} to be used when
+% to and reading from the \glref{streamers} associated with
+% the \var{broadcast-streamer\/} (default is \nobr{\code{single-float}})
+% \arg[broadcast-streamer] A \glref{broadcast~streamer}
+% \end{args}
+
+% \begin{alsos}{omitted-slots-for-saving/sending}
+% \also[load-journal]
+% \also[omitted-slots-for-saving/sending]
+% \also[stream-instance]
+% \also[save-blackboard-repository]
+% \also[with-saving/sending-block]
+% \end{alsos}
+
+% \fnexample
+% %
+% Load the \code{:streaming} module followed by the GBBopen Tutorial Example
+% application (without running it). Then write a journal file recording what
+% occurred when taking a walk:
+% %
+% \W\supp
+% \begin{example}
+%   > :streaming
+%      \textrm{\ldots{}}
+%   > :tutorial-example :noautorun
+%      \textrm{\ldots{}}
+%   > (defparameter *streamer*
+%       (make-journal-streamer "tutorial" :package ':tutorial))
+%   *streamer*
+%   > *streamer*
+%   #<journal-streamer "/Users/cork/tutorial.bb">
+%   > (add-mirroring *streamer* 'standard-space-instance)
+%   nil
+%   > (add-mirroring *streamer* 'path)
+%   nil
+%   > (add-mirroring *streamer* 'location)
+%   nil
+%   > (take-a-walk)
+%   ;; Control shell 1 started
+%      \textrm{\ldots{}}
+%   ;; Explicit :stop issued by KS print-walk-ks
+%   ;; Control shell 1 exited: 41 cycles completed
+%   ;; Run time: 0.01 seconds
+%   ;; Elapsed time: 0 seconds
+%   :stop
+%   >
+% \end{example}
+
+% \end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{stream-add-instance-to-space-instance}%
   {\var{unit-instance \nobr{space-instance-or-path\/} streamer\/}
     \nobr{\returns{} \var{instance\/}}}
@@ -29325,8 +29412,8 @@ and then load a journal that was written previously:
 
 \fnsyntax 
 
-\fnpurpose Create a journal streamer to record changes made to the blackboard
-repository (all \glref{unit~instances} and \glref{space~instances}) to a file.
+\fnpurpose Create a \glref{journal~streamer} to record to a file changes made
+to \glref{unit~instances} (and \glref{space~instances}).
 
 \fnpackage \code{:gbbopen}
 
@@ -29734,12 +29821,14 @@ See if the a network-stream connection server
   {\var{streamer-node local-streamer-node\/} 
     \nobr{\code{\&rest} \var{initargs\/}}
     \nobr{\returns{} \var{network-streamer\/}}}
-\index{network streamer!opening a connection to}%
+\index{network streamer!opening a connection}%
+\index{network streamer!finding or opening}%
 
 \fnsyntax
 
-\fnpurpose Establish a connection to an external \glref{streamer~node} (from
-the specified local \glref{streamer~node}).
+\fnpurpose Return a connection to an external \glref{streamer~node} (from the
+specified local \glref{streamer~node}), establishing a new connection if one
+does not already exist.
 
 \fnpackage \code{:gbbopen}
 
