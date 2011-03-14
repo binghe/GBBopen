@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 10 11:53:20 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 14 14:58:22 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -253,15 +253,17 @@
 ;;;   Streamer entities
 
 (defun %do-with-streamer-stream (streamer body-form-fn)
-  (let ((streamer-for-writing streamer)) 
-    (when (closed-of streamer)
-      (error 'streamer-error :streamer streamer))
-    (when (typep streamer 'streamer)
-      (let ((broadcast-streamer (broadcast-streamer-of streamer)))
-        ;; If streamer is a constituent of a broadcast-streamer, use the
-        ;; streamer for writing/queuing but the broadcast-streamer for locking:
-        (when broadcast-streamer
-          (setf streamer broadcast-streamer))))
+  (when (closed-of streamer)
+    (printv streamer (streamers-of streamer))
+    (error 'streamer-error :streamer streamer))
+  (let ((streamer-for-writing streamer)
+        (broadcast-streamer 
+         (when (typep streamer 'streamer)
+           (broadcast-streamer-of streamer))))
+    ;; If streamer is a constituent of a broadcast-streamer, use the
+    ;; streamer for writing/queuing but the broadcast-streamer for locking:
+    (when broadcast-streamer
+      (setf streamer broadcast-streamer))
     (let* ((streamer-acons (assq streamer-for-writing *%%streamer-queues%%*))
            (streamer-queue (cdr streamer-acons)))
       (with-standard-io-syntax 
@@ -350,30 +352,57 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun end-queued-streaming (streamer)
+(defun %write-streamer-queue (streamer)
   (let* ((streamer-queue 
           (or (cdr (assq streamer *%%streamer-queues%%*))
               (no-streamer-queue-error streamer)))
-         (queue-stream (streamer-queue.stream streamer-queue))
-         (stream (stream-of streamer)))
+         (queue-stream (streamer-queue.stream streamer-queue)))
+    ;; End the current queuing block:
     (let ((string (get-output-stream-string queue-stream)))
-      ;; Leave evidence that this queue has ended:
-      (setf (streamer-queue.stream streamer-queue) ':ended)
-      (cond
-       ;; Empty queue:
-       ((zerop& (length string))
-        (when (streamer-queue.write-empty-queue-p streamer-queue)
-          (with-lock-held ((lock-of streamer))
-            (write-sequence (streamer-queue.tag-string streamer-queue) stream)
-            (princ "#G!(:EB) " stream)
-            (force-output stream))))
-       ;; Non-empty queue:
-       (t (with-lock-held ((lock-of streamer))
-            (write-sequence (streamer-queue.tag-string streamer-queue) stream)
-            (write-sequence string stream)
-            (princ "#G!(:EB) " stream)
-            (force-output stream)))))))
-      
+      (flet ((write-it (streamer)
+               (let ((stream (stream-of streamer)))
+                 (cond
+                  ;; Empty queue:
+                  ((zerop& (length string))
+                   (when (streamer-queue.write-empty-queue-p streamer-queue)
+                     (with-lock-held ((lock-of streamer))
+                       (write-sequence 
+                        (streamer-queue.tag-string streamer-queue) stream)
+                       (princ "#G!(:EB) " stream)
+                       (force-output stream))))
+                  ;; Non-empty queue:
+                  (t (with-lock-held ((lock-of streamer))
+                       (write-sequence 
+                        (streamer-queue.tag-string streamer-queue) stream)
+                       (write-sequence string stream)
+                       (princ "#G!(:EB) " stream)
+                       (force-output stream)))))))
+        (if (typep streamer 'broadcast-streamer)
+            ;; MAJOR QUICK&DIRTY HACK: write each constituent streamer
+            ;; separately, catching write errors and closing the constituent:
+            (dolist (constituent-streamer (streamers-of streamer))
+              (with-error-handling (write-it constituent-streamer)
+                (remove-from-broadcast-streamer constituent-streamer streamer)
+                (let ((*print-readably* nil))
+                  (princ (error-message) *error-output*)
+                  (terpri *error-output*)
+                  (let ((connection (stream-of constituent-streamer)))
+                    (when (and (streamp connection) (open-stream-p connection))
+                      (format *error-output* "~&;; Closing ~s due to write error...~%"
+                              connection)
+                      (force-output *error-output*)
+                      (close connection))))))
+            (write-it streamer))))
+    ;; Must return the streamer-queue:
+    streamer-queue))
+
+;;; ---------------------------------------------------------------------------
+
+(defun end-queued-streaming (streamer)
+  (let ((streamer-queue (%write-streamer-queue streamer)))
+    ;; Leave evidence that the streamer-queue has ended:
+    (setf (streamer-queue.stream streamer-queue) ':ended)))
+
 ;;; ---------------------------------------------------------------------------
 
 (defmacro with-queued-streaming ((streamer &optional tag write-empty-queue-p)
@@ -413,27 +442,8 @@
 (defun write-streamer-queue (streamer 
                              &key (tag nil tag-supplied-p)
                                   (write-empty-queue-p nil weqp-supplied-p))
-  (let* ((streamer-queue 
-          (or (cdr (assq streamer *%%streamer-queues%%*))
-              (no-streamer-queue-error streamer)))
-         (queue-stream (streamer-queue.stream streamer-queue))
-         (stream (stream-of streamer)))
-    ;; End the current queuing block:
-    (let ((string (get-output-stream-string queue-stream)))
-      (cond
-       ;; Empty queue:
-       ((zerop& (length string))
-        (when (streamer-queue.write-empty-queue-p streamer-queue)
-          (with-lock-held ((lock-of streamer))
-            (write-sequence (streamer-queue.tag-string streamer-queue) stream)
-            (princ "#G!(:EB) " stream)
-            (force-output stream))))
-       ;; Non-empty queue:
-       (t (with-lock-held ((lock-of streamer))
-            (write-sequence (streamer-queue.tag-string streamer-queue) stream)
-            (write-sequence string stream)
-            (princ "#G!(:EB) " stream)
-            (force-output stream)))))
+  (let* ((streamer-queue (%write-streamer-queue streamer))
+         (queue-stream (streamer-queue.stream streamer-queue)))
     ;; Clear the record of newly written class descriptions:
     (clrhash (streamer-queue.newly-recorded-class-descriptions-ht
               streamer-queue))
