@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Wed Mar  9 04:26:18 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Mar 14 11:41:12 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
@@ -5781,7 +5781,8 @@ load only the \nobr{\code{:module-manager-user}} module:
      \textrm{\ldots{}}
   ;;     Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/module-manager/module-manager-user.fasl
   ;;   Loading \var{<install-dir>\/}/modules.lisp
-  ;; Loading module definitions from \var{<homedir>\/}/gbbopen-modules/...
+  ;; No shared module definitions were found in \var{<install-dir>\/}/gbbopen-modules/.
+  ;; Loading personal module definitions from \var{<homedir>\/}/gbbopen-modules/...
   ;;     Loading \var{<homedir>\/}/tutorial/modules.lisp
   module-manager-user>}
 \end{smallexample}
@@ -5795,18 +5796,31 @@ personal GBBopen modules were loaded automatically.  (In this case, the
 %
 Now that we have defined our \code{:tutorial} module, we can use the
 \nobr{\textbf{compile-module}} REPL command, \code{:cm}, to compile (if
-needed) and load it:
+needed) and load it. Before doing so, however, let's explore what is happening
+when \code{:tutorial} is being compiled by instructing the Module Manager not
+to create new compiled-file directories automatically (its default behavior).
+Enter the following in the REPL:
+%
+\W\supp
+\begin{example}
+\textcolor{darkergray}{%
+  module-manager-user> \textcolor{black}{(setf *automatically-create-missing-directories* nil)}
+  nil
+  module-manager-user>>}
+\end{example}
+
+Now compile and load the \code{:tutorial} module:
 %
 \W\supp
 \begin{example}
 \textcolor{darkergray}{%
   module-manager-user> \textcolor{black}{:cm :tutorial}
-  ;;   Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/tools/portable-threads.fasl
+  ;;   Loading \var{<install-dir>\/}/\var{<platform-dir>\/}/tools/preamble.fasl
      \textrm{\ldots{}}
   ;;   Loading .../gbbopen/control-shells/agenda-shell-user.fasl
 
   Error: Directory \var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/ 
-         in module :tutorial doesn't exist.
+         in module :tutorial does not exist.
 
   Restart actions (select using :c n):
     0: Create this directory.
@@ -5815,17 +5829,22 @@ needed) and load it:
 \end{example}
 %
 The \code{:requires} in our \code{:tutorial} module definition causes the
-\nobr{\code{:agenda-shell-user}} module (and its required modules) to be
-loaded for us.  Then the Module Manager stops with a continuable error,
-telling us that the directory to hold the compiled application files does not
-exist.  The compiled files are put in a Common Lisp and platform-specific
-subdirectory, \nobr{\code{<\var{platform-dir>\/}}}, in our \code{tutorial}
-directory that mirrors the \code{source} directory.  This organization makes
-it easy to use the application with a number of Common Lisp implementations
-and on a file system shared with a number of different hosts and operating
-systems.
+\nobr{\code{:agenda-shell-user}} module (and before that, all its required
+modules) to be loaded for us. Then the Module Manager signals a continuable
+error, telling us that the directory to hold the compiled application files
+for \code{:tutorial} does not exist. Compiled files are put in a Common
+Lisp and platform-specific subdirectory, \nobr{\code{<\var{platform-dir>\/}}},
+in our \code{tutorial} directory that mirrors the \code{source} directory.
+This organization makes it easy to use the application with a number of Common
+Lisp implementations and on a file system shared with a number of different
+hosts and operating systems.
 
-We could have avoided this continuable error by providing the
+By default, the Module Manager would have created the missing
+\nobr{\var{<homedir>\/}/tutorial/\var{<platform-dir>\/}/} directory for us
+automatically (and continued compiling our \code{:tutorial} module), but we
+disabled automatic directory creation by setting
+\nobr{/textbf{*automatically-create-missing-directories*}} to \nil.
+We still could have avoided this continuable error by providing the
 \nobr{\code{:create-dirs}} option to the \code{:cm} command:
 %
 \W\supp
@@ -5950,30 +5969,31 @@ subdirectory automatically for us.  However, since we created
 \nobr{\code{\var{<platform-dir>\/}}} in Step 4, we did not need to specify the
 \nobr{\code{:create-dirs}} option again in this step.
 
-\subsection*{Step 7: Create missing subdirectories automatically}
+\subsection*{Step 7: Controlling automatic creation of missing subdirectories}
 
 \bfindex{*automatically-create-missing-directories*} 
 %
-If you prefer, you can specify that the Module Manager should always create
-missing \nobr{\code{\var{<platform-dir>\/}}} directories and subdirectories
-instead of signaling an continuable error if one is missing (and
-\nobr{\code{:create-dirs}} was not specified).  This behavior is controlled by
-the value of the symbol
-\nobr{\textbf{*automatically-create-missing-directories*}}, which is in the
-\nobr{\code{:common-lisp-user}} package and is set to \nil{} by default.  If
-you wish, add the following form to your \nobr{\code{shared-init.lisp}} file
-(in your ``homedir'' directory):
+If you prefer, you can specify that the Module Manager not create missing
+\nobr{\code{\var{<platform-dir>\/}}} directories and subdirectories
+automatically but, instead, signal an continuable error if a directory is
+missing (and the \nobr{\code{:create-dirs}} \textbf{compile-module} option was
+not specified).  As we have seen, this behavior is controlled by the value of
+the symbol \nobr{\textbf{*automatically-create-missing-directories*}}, which
+is in the \nobr{\code{:common-lisp-user}} package and is set to \code{t} by
+default.  If you would like to turn-off automatic directory creation by the
+Module Manager, add the following form to your \nobr{\code{shared-init.lisp}}
+file (in your ``homedir'' directory):
 %
 \W\supp
 \begin{example}
-  (defparameter *automatically-create-missing-directories* 't)
+  (defparameter *automatically-create-missing-directories* nil)
 \end{example}
 
-I actually prefer to have the Module Manager generate the continuable error if
-it has to create a \nobr{\code{\var{<platform-dir>\/}}} directory and I didn't
-specify \nobr{\code{:create-dirs}}, so I leave
-\nobr{\textbf{*automatically-create-missing-directories*}} set to the default
-\nil{} value.
+I prefer to have the Module Manager generate the continuable error if it needs
+to create a \nobr{\code{\var{<platform-dir>\/}}} directory and I didn't
+specify \nobr{\code{:create-dirs}} when compiling a new module, so I set
+\nobr{\textbf{*automatically-create-missing-directories*}} to \code{t} in my
+\nobr{\code{shared-init.lisp}} file.
 
 \subsection*{Step 8: Create and use an application-specific package}
 

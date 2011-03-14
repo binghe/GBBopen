@@ -26,18 +26,18 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>event-class-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id62">extended&nbsp;event-class&nbsp;specification</a> 
+<tr valign="top"><td valign="baseline" nowrap><i>event-class-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id64">extended&nbsp;event-class&nbsp;specification</a> 
 (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-class-or-instance-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An 
-<a href="ref-glossary.html#id68">extended&nbsp;unit-class&nbsp;or&nbsp;instance&nbsp;specification</a>
+<a href="ref-glossary.html#id70">extended&nbsp;unit-class&nbsp;or&nbsp;instance&nbsp;specification</a>
 (see below; default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>slot-names <span 
     style="font-family: serif; font-style: normal">or</span> slot-name <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A slot-name or list of slot-names
 (default is <code>t</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>paths <span 
-    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id220">space-instance&nbsp;path</a> regular expression
+    style="font-family: serif; font-style: normal">or</span> path <td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id222">space-instance&nbsp;path</a> regular expression
 (default is <code>(*)</code>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>permanent</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id84">generalized&nbsp;boolean</a> (default is <code>nil</code>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>permanent</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id86">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Detailed syntax</span><table class="tighttop"><tbody><tr>
@@ -97,12 +97,12 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-remove-event-function.html"><b>remove-event-function</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id3">Remove</a> all event functions associated with a
-<nobr><code>instance-created-event</code></nobr> on a <code>hyp</code> <a href="ref-glossary.html#id252">unit&nbsp;instance</a>:
+<nobr><code>instance-created-event</code></nobr> on a <code>hyp</code> <a href="ref-glossary.html#id254">unit&nbsp;instance</a>:
 <pre class="pretop">
   (remove-all-event-functions 'instance-created-event 'hyp)
 </pre>
 Remove all event functions associated with a
-<nobr><code>instance-created-event</code></nobr> on a <code>hyp</code> <a href="ref-glossary.html#id252">unit&nbsp;instance</a> or
+<nobr><code>instance-created-event</code></nobr> on a <code>hyp</code> <a href="ref-glossary.html#id254">unit&nbsp;instance</a> or
 its subclasses:
 <pre>
   (remove-all-event-functions 'instance-created-event '(hyp :plus-subclasses))

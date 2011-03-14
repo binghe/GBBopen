@@ -296,7 +296,8 @@ load only the <nobr><code>:module-manager-user</code></nobr> module:
     style="font-family: serif; font-style: normal">...</span>
   ;;     Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/module-manager/module-manager-user.fasl
   ;;   Loading <var>&lt;install-dir&gt;</var>/modules.lisp
-  ;; Loading module definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
+  ;; No shared module definitions were found in <var>&lt;install-dir&gt;</var>/gbbopen-modules/.
+  ;; Loading personal module definitions from <var>&lt;homedir&gt;</var>/gbbopen-modules/...
   ;;     Loading <var>&lt;homedir&gt;</var>/tutorial/modules.lisp
   module-manager-user&gt;</font>
 </pre></small>
@@ -307,16 +308,26 @@ personal GBBopen modules were loaded automatically.  (In this case, the
 </p>
 <p><a name="id7">Now</a> that we have defined our <code>:tutorial</code> module, we can use the
 <nobr><b>compile-module</b></nobr> REPL command, <code>:cm</code>, to compile (if
-needed) and load it:
+needed) and load it. Before doing so, however, let's explore what is happening
+when <code>:tutorial</code> is being compiled by instructing the Module Manager not
+to create new compiled-file directories automatically (its default behavior).
+Enter the following in the REPL:
+<pre class="pretop">
+<font color="#667f66">  module-manager-user&gt; <font color="#000000">(setf *automatically-create-missing-directories* nil)</font>
+  nil
+  module-manager-user&gt;&gt;</font>
+</pre>
+</p>
+<p>Now compile and load the <code>:tutorial</code> module:
 <pre class="pretop">
 <font color="#667f66">  module-manager-user&gt; <font color="#000000">:cm :tutorial</font>
-  ;;   Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/tools/portable-threads.fasl
+  ;;   Loading <var>&lt;install-dir&gt;</var>/<var>&lt;platform-dir&gt;</var>/tools/preamble.fasl
      <span 
     style="font-family: serif; font-style: normal">...</span>
   ;;   Loading .../gbbopen/control-shells/agenda-shell-user.fasl
 
   Error: Directory <var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/ 
-         in module :tutorial doesn't exist.
+         in module :tutorial does not exist.
 
   Restart actions (select using :c n):
     0: Create this directory.
@@ -324,17 +335,22 @@ needed) and load it:
   module-manager-user&gt;&gt;</font>
 </pre>
 The <code>:requires</code> in our <code>:tutorial</code> module definition causes the
-<nobr><code>:agenda-shell-user</code></nobr> module (and its required modules) to be
-loaded for us.  Then the Module Manager stops with a continuable error,
-telling us that the directory to hold the compiled application files does not
-exist.  The compiled files are put in a Common Lisp and platform-specific
-subdirectory, <nobr><code>&lt;<var>platform-dir&gt;</var></code></nobr>, in our <code>tutorial</code>
-directory that mirrors the <code>source</code> directory.  This organization makes
-it easy to use the application with a number of Common Lisp implementations
-and on a file system shared with a number of different hosts and operating
-systems.
+<nobr><code>:agenda-shell-user</code></nobr> module (and before that, all its required
+modules) to be loaded for us. Then the Module Manager signals a continuable
+error, telling us that the directory to hold the compiled application files
+for <code>:tutorial</code> does not exist. Compiled files are put in a Common
+Lisp and platform-specific subdirectory, <nobr><code>&lt;<var>platform-dir&gt;</var></code></nobr>,
+in our <code>tutorial</code> directory that mirrors the <code>source</code> directory.
+This organization makes it easy to use the application with a number of Common
+Lisp implementations and on a file system shared with a number of different
+hosts and operating systems.
 </p>
-<p>We could have avoided this continuable error by providing the
+<p>By default, the Module Manager would have created the missing
+<nobr><var>&lt;homedir&gt;</var>/tutorial/<var>&lt;platform-dir&gt;</var>/</nobr> directory for us
+automatically (and continued compiling our <code>:tutorial</code> module), but we
+disabled automatic directory creation by setting
+<nobr>/textbf*automatically-create-missing-directories*</nobr> to <code>nil</code>.
+We still could have avoided this continuable error by providing the
 <nobr><code>:create-dirs</code></nobr> option to the <code>:cm</code> command:
 <pre class="pretop">
 <font color="#667f66">  module-manager-user&gt; :cm :tutorial :create-dirs</font>
@@ -435,25 +451,26 @@ subdirectory automatically for us.  However, since we created
 <nobr><code><var>&lt;platform-dir&gt;</var></code></nobr> in Step 4, we did not need to specify the
 <nobr><code>:create-dirs</code></nobr> option again in this step.
 </p>
-<h2><a name="id11">Step 7: Create missing subdirectories automatically</a></h2>
-<p>If you prefer, you can specify that the Module Manager should always create
-missing <nobr><code><var>&lt;platform-dir&gt;</var></code></nobr> directories and subdirectories
-instead of signaling an continuable error if one is missing (and
-<nobr><code>:create-dirs</code></nobr> was not specified).  This behavior is controlled by
-the value of the symbol
-<nobr><b>*automatically-create-missing-directories*</b></nobr>, which is in the
-<nobr><code>:common-lisp-user</code></nobr> package and is set to <code>nil</code> by default.  If
-you wish, add the following form to your <nobr><code>shared-init.lisp</code></nobr> file
-(in your &#8220;homedir&#8221; directory):
+<h2><a name="id11">Step 7: Controlling automatic creation of missing subdirectories</a></h2>
+<p>If you prefer, you can specify that the Module Manager not create missing
+<nobr><code><var>&lt;platform-dir&gt;</var></code></nobr> directories and subdirectories
+automatically but, instead, signal an continuable error if a directory is
+missing (and the <nobr><code>:create-dirs</code></nobr> <b>compile-module</b> option was
+not specified).  As we have seen, this behavior is controlled by the value of
+the symbol <nobr><b>*automatically-create-missing-directories*</b></nobr>, which
+is in the <nobr><code>:common-lisp-user</code></nobr> package and is set to <code>t</code> by
+default.  If you would like to turn-off automatic directory creation by the
+Module Manager, add the following form to your <nobr><code>shared-init.lisp</code></nobr>
+file (in your &#8220;homedir&#8221; directory):
 <pre class="pretop">
-  (defparameter *automatically-create-missing-directories* 't)
+  (defparameter *automatically-create-missing-directories* nil)
 </pre>
 </p>
-<p>I actually prefer to have the Module Manager generate the continuable error if
-it has to create a <nobr><code><var>&lt;platform-dir&gt;</var></code></nobr> directory and I didn't
-specify <nobr><code>:create-dirs</code></nobr>, so I leave
-<nobr><b>*automatically-create-missing-directories*</b></nobr> set to the default
-<code>nil</code> value.
+<p>I prefer to have the Module Manager generate the continuable error if it needs
+to create a <nobr><code><var>&lt;platform-dir&gt;</var></code></nobr> directory and I didn't
+specify <nobr><code>:create-dirs</code></nobr> when compiling a new module, so I set
+<nobr><b>*automatically-create-missing-directories*</b></nobr> to <code>t</code> in my
+<nobr><code>shared-init.lisp</code></nobr> file.
 </p>
 <h2><a name="id12">Step 8: Create and use an application-specific package</a></h2><p>
 We have been developing our random-walk application in GBBopen's
