@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 10 03:02:18 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 14 18:34:11 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -171,24 +171,28 @@
          (force-output connection))
        ;; If connection is established, make and return the streamer:
        (when connection
-         (setf (streamer-of streamer-node)
-               (apply #'make-instance
-                      (streamer-class-of streamer-node)
-                      :streamer-node streamer-node
-                      :lock (make-lock 
-                             :name (concatenate 'simple-string 
-                                     (name-of streamer-node) 
-                                     " lock"))
-                      :package package
-                      :external-format external-format
-                      :read-default-float-format read-default-float-format 
-                      :stream connection
-                      :connection-thread (spawn-thread
-                                          "Network streamer connection endpoint"
-                                          #'start-streaming-connection-endpoint
-                                          streamer-node 
-                                          connection)
-                      initargs)))))))
+         (let ((streamer
+                (apply #'make-instance
+                       (streamer-class-of streamer-node)
+                       :streamer-node streamer-node
+                       :lock (make-lock 
+                              :name (concatenate 'simple-string 
+                                      (name-of streamer-node) 
+                                      " lock"))
+                       :package package
+                       :external-format external-format
+                       :read-default-float-format read-default-float-format 
+                       :stream connection
+                       initargs)))
+           (setf (streamer-of streamer-node) streamer)
+           (setf (connection-thread-of streamer)
+                 (spawn-thread
+                  "Network streamer connection endpoint"
+                  #'start-streaming-connection-endpoint
+                  streamer-node 
+                  connection))
+           ;; Return the streamer:
+           streamer))))))
           
 ;;; ---------------------------------------------------------------------------
 ;;;  Old name, remove soon:
