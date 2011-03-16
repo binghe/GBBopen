@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 14 14:58:22 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 16 16:21:48 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -359,8 +359,8 @@
          (queue-stream (streamer-queue.stream streamer-queue)))
     ;; End the current queuing block:
     (let ((string (get-output-stream-string queue-stream)))
-      (flet ((write-it (streamer)
-               (let ((stream (stream-of streamer)))
+      (flet ((write-it (streamer streamer-for-writing)
+               (let ((stream (stream-of streamer-for-writing)))
                  (cond
                   ;; Empty queue:
                   ((zerop& (length string))
@@ -381,7 +381,7 @@
             ;; MAJOR QUICK&DIRTY HACK: write each constituent streamer
             ;; separately, catching write errors and closing the constituent:
             (dolist (constituent-streamer (streamers-of streamer))
-              (with-error-handling (write-it constituent-streamer)
+              (with-error-handling (write-it streamer constituent-streamer)
                 (remove-from-broadcast-streamer constituent-streamer streamer)
                 (let ((*print-readably* nil))
                   (princ (error-message) *error-output*)
@@ -392,7 +392,7 @@
                               connection)
                       (force-output *error-output*)
                       (close connection))))))
-            (write-it streamer))))
+            (write-it streamer streamer))))
     ;; Must return the streamer-queue:
     streamer-queue))
 
