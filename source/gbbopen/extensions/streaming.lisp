@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 17 03:53:57 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 17 10:56:30 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -397,12 +397,23 @@
                        (write-sequence string stream)
                        (princ "#G!(:EB) " stream)
                        (force-output stream))
-                     ;; Merge the streamer-queue's recorded
+                     ;; If needed, merge the streamer-queue's recorded
                      ;; class-descriptions HT:
-                     (with-lock-held ((lock-of streamer-for-writing))
-                       (%merge-recorded-class-descriptions-hts
-                        (streamer-queue.recorded-class-descriptions-ht streamer-queue)
-                        (recorded-class-descriptions-ht-of streamer-for-writing))))))))
+                     (let ((queued-ht
+                            (streamer-queue.recorded-class-descriptions-ht
+                             streamer-queue))
+                           (streamer-ht
+                            (recorded-class-descriptions-ht-of streamer-for-writing)))
+                       ;; Only merge if the queued-ht has more elements than
+                       ;; the streamer (a heuristic that misses merging when
+                       ;; different new descriptions have been added to the
+                       ;; streamer than to the queued, but missed merging only
+                       ;; results in unnecessary class-description writing):
+                       (when (>& (hash-table-count queued-ht)
+                                 (hash-table-count streamer-ht))
+                         (with-lock-held ((lock-of streamer-for-writing))
+                           (%merge-recorded-class-descriptions-hts 
+                            queued-ht streamer-ht)))))))))
         (if (typep streamer 'broadcast-streamer)
             ;; MAJOR QUICK&DIRTY HACK: write each constituent streamer
             ;; separately, catching write errors and closing the constituent:
