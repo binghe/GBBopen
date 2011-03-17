@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 16 16:21:48 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 17 03:53:57 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -29,8 +29,7 @@
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(gbbopen-tools::*newly-recorded-class-descriptions-ht*
-            gbbopen-tools::*recorded-class-descriptions-ht*
+  (import '(gbbopen-tools::*recorded-class-descriptions-ht*
             gbbopen-tools::write-saving/sending-block-info)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -88,9 +87,7 @@
   tag
   write-empty-queue-p
   tag-string
-  ;; Record queued additions to *recorded-class-descriptions-ht*:
-  (newly-recorded-class-descriptions-ht
-   (make-keys-only-hash-table-if-supported :test 'eq)))
+  recorded-class-descriptions-ht)
 
 ;;; ===========================================================================
 ;;;   Streamers
@@ -270,43 +267,42 @@
         (setf *package* (package-of streamer))
         (setf *read-default-float-format* 
               (read-default-float-format-of streamer))
-        (let ((*recorded-class-descriptions-ht* 
-               (recorded-class-descriptions-ht-of streamer-for-writing)))
-          (flet ((do-it ()
-                   (if streamer-queue
-                       ;; queued streaming:
-                       (let ((*newly-recorded-class-descriptions-ht* 
-                              (streamer-queue.newly-recorded-class-descriptions-ht
-                               streamer-queue)))
-                         (funcall body-form-fn (streamer-queue.stream streamer-queue)))
-                       ;; regular streaming:
-                       (with-lock-held ((lock-of streamer))
-                         (let ((stream (stream-of streamer-for-writing)))
-                           (funcall body-form-fn stream)
-                           (force-output stream))))))
-            ;; Quick & dirty handling of stream errors -- timeout checks and
-            ;; notifying other endpoint needed!!
-            (with-error-handling ((do-it) :conditions 'stream-error)
-              (let ((*print-readably* nil))
-                (princ (error-message) *error-output*)
-                (terpri *error-output*)
-                (let ((connection (stream-of streamer-for-writing)))
-                  (when (and (streamp connection) (open-stream-p connection))
-                    (format *error-output* "~&;; Closing ~s due to error...~%"
-                            connection)
+        (flet ((do-it ()
+                 (if streamer-queue
+                     ;; queued streaming:
+                     (let ((*recorded-class-descriptions-ht* 
+                            (streamer-queue.recorded-class-descriptions-ht
+                             streamer-queue)))
+                       (funcall body-form-fn (streamer-queue.stream streamer-queue)))
+                     ;; regular streaming:
+                     (with-lock-held ((lock-of streamer))
+                       (let ((*recorded-class-descriptions-ht* 
+                              (recorded-class-descriptions-ht-of streamer-for-writing))
+                             (stream (stream-of streamer-for-writing)))
+                         (funcall body-form-fn stream) (force-output stream))))))
+          ;; Quick & dirty handling of stream errors -- timeout checks and
+          ;; notifying other endpoint needed!!
+          (with-error-handling ((do-it) :conditions 'stream-error)
+            (let ((*print-readably* nil))
+              (princ (error-message) *error-output*)
+              (terpri *error-output*)
+              (let ((connection (stream-of streamer-for-writing)))
+                (when (and (streamp connection) (open-stream-p connection))
+                  (format *error-output* "~&;; Closing ~s due to error...~%"
+                          connection)
+                  (force-output *error-output*)
+                  (setf (closed-of streamer-for-writing)
+                        ':closed-due-to-errors)
+                  (when streamer-queue
+                    (format *error-output* 
+                            "~&;; Terminating queued streamer ~s...~%"
+                            streamer-queue)
                     (force-output *error-output*)
-                    (setf (closed-of streamer-for-writing)
-                          ':closed-due-to-errors)
-                    (when streamer-queue
-                      (format *error-output* 
-                              "~&;; Terminating queued streamer ~s...~%"
-                              streamer-queue)
-                      (force-output *error-output*)
-                      (setf *%%streamer-queues%%*
-                            (delq streamer-acons *%%streamer-queues%%*)))
-                    (close connection)
-                    (error 'streamer-error 
-                           :streamer streamer-for-writing)))))))))))
+                    (setf *%%streamer-queues%%*
+                          (delq streamer-acons *%%streamer-queues%%*)))
+                  (close connection)
+                  (error 'streamer-error 
+                         :streamer streamer-for-writing))))))))))
     
 ;;; ---------------------------------------------------------------------------
 
@@ -321,17 +317,41 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun %clone-recorded-class-descriptions-ht (ht)
+  (let ((clone-ht (make-hash-table :test 'eq :size (hash-table-count ht))))
+    ;; transfer ht's entries:
+    (flet ((add-it (key value)
+             (setf (gethash key clone-ht) value)))
+      (declare (dynamic-extent #'add-it))
+      (maphash #'add-it ht))
+    ;; return the cloned ht:
+    clone-ht))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %merge-recorded-class-descriptions-hts (queued-stream-ht ht)
+  ;; insert the queued-stream ht's entries:
+  (flet ((add-it (key value)
+           (setf (gethash key ht) value)))
+    (declare (dynamic-extent #'add-it))
+    (maphash #'add-it queued-stream-ht)))
+
+;;; ---------------------------------------------------------------------------
+
 (defun begin-queued-streaming (streamer tag write-empty-queue-p)
   (with-lock-held ((lock-of streamer))
     (force-output (stream-of streamer))
     (let* ((queue-stream (make-string-output-stream))
+           (recorded-class-descriptions-ht
+            (%clone-recorded-class-descriptions-ht 
+             (recorded-class-descriptions-ht-of streamer)))
            (streamer-queue
             (make-streamer-queue
              :stream queue-stream
              :tag tag
-             :write-empty-queue-p write-empty-queue-p)))
-      (let ((*recorded-class-descriptions-ht* 
-             (recorded-class-descriptions-ht-of streamer)))
+             :write-empty-queue-p write-empty-queue-p
+             :recorded-class-descriptions-ht recorded-class-descriptions-ht)))
+      (let ((*recorded-class-descriptions-ht* recorded-class-descriptions-ht))
         (with-standard-io-syntax 
           (setf *package* (package-of streamer))
           (setf *read-default-float-format* 
@@ -376,7 +396,13 @@
                         (streamer-queue.tag-string streamer-queue) stream)
                        (write-sequence string stream)
                        (princ "#G!(:EB) " stream)
-                       (force-output stream)))))))
+                       (force-output stream))
+                     ;; Merge the streamer-queue's recorded
+                     ;; class-descriptions HT:
+                     (with-lock-held ((lock-of streamer-for-writing))
+                       (%merge-recorded-class-descriptions-hts
+                        (streamer-queue.recorded-class-descriptions-ht streamer-queue)
+                        (recorded-class-descriptions-ht-of streamer-for-writing))))))))
         (if (typep streamer 'broadcast-streamer)
             ;; MAJOR QUICK&DIRTY HACK: write each constituent streamer
             ;; separately, catching write errors and closing the constituent:
@@ -421,21 +447,10 @@
              (no-streamer-queue-error streamer))))
     ;; Substitute a new (empty) string stream:
     (setf (streamer-queue.stream streamer-queue) (make-string-output-stream))
-    ;; Remove queued but now unwritten class-descriptions from the recorded
-    ;; ones for this streamer (may result in redundant class-description
-    ;; writing when other threads are also queuing this streamer):
-    (let ((recorded-class-descriptions-ht 
-           (recorded-class-descriptions-ht-of streamer)))
-      (flet ((clear-it (key value)
-               (declare (ignore value))
-               (remhash key recorded-class-descriptions-ht )))
-        (declare (dynamic-extent #'clear-it))
-        (maphash #'clear-it
-                 (streamer-queue.newly-recorded-class-descriptions-ht
-                  streamer-queue))))
-    ;; And clear the new newly-recorded class-descriptions hash table:
-    (clrhash (streamer-queue.newly-recorded-class-descriptions-ht
-              streamer-queue))))
+    ;; And reset the recorded class-descriptions hash table for this queue:
+    (setf (streamer-queue.recorded-class-descriptions-ht streamer-queue)
+          (%clone-recorded-class-descriptions-ht
+           (recorded-class-descriptions-ht-of streamer)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -443,10 +458,13 @@
                              &key (tag nil tag-supplied-p)
                                   (write-empty-queue-p nil weqp-supplied-p))
   (let* ((streamer-queue (%write-streamer-queue streamer))
-         (queue-stream (streamer-queue.stream streamer-queue)))
-    ;; Clear the record of newly written class descriptions:
-    (clrhash (streamer-queue.newly-recorded-class-descriptions-ht
-              streamer-queue))
+         (queue-stream (streamer-queue.stream streamer-queue))
+         (recorded-class-descriptions-ht
+          (%clone-recorded-class-descriptions-ht 
+           (recorded-class-descriptions-ht-of streamer))))
+    ;; Reset the recorded class-descriptions hash table for this queue:
+    (setf (streamer-queue.recorded-class-descriptions-ht streamer-queue)
+          recorded-class-descriptions-ht)
     ;; Setup tag & write-empty-queue-p values, using the previous tag and
     ;; write-empty-queue-p values if they weren't supplied:
     (if tag-supplied-p
@@ -458,8 +476,7 @@
         (setf write-empty-queue-p 
               (streamer-queue.write-empty-queue-p streamer-queue)))
     ;; Begin a new queuing block:    
-    (let ((*recorded-class-descriptions-ht* 
-           (recorded-class-descriptions-ht-of streamer)))
+    (let ((*recorded-class-descriptions-ht* recorded-class-descriptions-ht))
       (with-standard-io-syntax 
         (setf *package* (package-of streamer))
         (setf *read-default-float-format* 
