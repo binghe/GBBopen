@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 04:13:38 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 09:19:45 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -37,7 +37,7 @@
   (export '(*break-on-receive-errors*   ; not yet documented
             *default-network-stream-server-port* ; not yet documented
             *remove-mirroring-when-streamer-closes* ; not yet documented
-            close-network-streamer      ; depreciated, use CLOSE-STREAMER
+            close-network-streamer      ; deprecated, use CLOSE-STREAMER
             define-streamer-node
             ensure-streamer-node        ; not yet documented
             find-or-make-network-streamer ; old name, remove soon

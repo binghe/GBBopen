@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 04:34:59 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 10:08:25 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -34,6 +34,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(*error-on-unresolved-streamed-instance-reference* ; not yet documented
+            *journal-load-percentage-hook-functions* ; not yet documented
+            *journal-load-percentage-reads-per-update* ; not yet documented
             add-mirroring
             add-to-broadcast-streamer   ; not yet documented
             begin-queued-streaming      ; not yet documented
@@ -1036,6 +1038,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defvar *journal-load-percentage-reads-per-update* 1000)
+(defvar *journal-load-percentage-hook-functions* nil)
+
+;;; ---------------------------------------------------------------------------
+
 (defun load-journal (pathname
                      &key (class-name-translations nil)
                           (coalesce-strings nil)
@@ -1048,18 +1055,27 @@
   (with-open-file (stream (make-jnl-pathname pathname)
                    :direction ':input
                    :external-format external-format)
-    (let ((*%%events-enabled%%* (not disable-events)))
+    (let ((*%%events-enabled%%* (not disable-events))
+          (journal-length/100 (round (file-length stream) 100)))
       (with-reading-saved/sent-objects-block 
           (stream :class-name-translations class-name-translations
                   :coalesce-strings coalesce-strings
                   :estimated-peak-forward-references 
-                  estimated-peak-forward-references
+                    estimated-peak-forward-references
                   :readtable readtable
                   :read-eval read-eval)
         (with-blackboard-repository-locked ()
           ;; Read everything:
-          (let ((eof-marker '#:eof))
-            (until (eq eof-marker (read stream nil eof-marker)))))
+          (let ((eof-marker '#:eof)
+                (counter *journal-load-percentage-reads-per-update*))
+            (until (eq eof-marker (read stream nil eof-marker))
+              (when *journal-load-percentage-hook-functions*
+                (unless (plusp& (decf& counter))
+                  (setf counter *journal-load-percentage-reads-per-update*)
+                  (let ((journal-load-percentage 
+                         (round (file-position stream) journal-length/100)))
+                    (dolist (fn *journal-load-percentage-hook-functions*)
+                      (funcall fn stream journal-load-percentage))))))))
         ;; Return the pathname, saved/sent-time, and saved/sent-value:
         (values (pathname stream)
                 *block-saved/sent-time* 
