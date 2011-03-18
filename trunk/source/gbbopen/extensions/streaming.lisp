@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 03:30:15 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 04:34:59 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -40,6 +40,7 @@
             broadcast-streamer          ; class-name (not yet documented)
             beginning-queued-read
             clear-streamer-queue
+            close-streamer              ; not yet documented
             describe-mirroring          ; not yet documented
             end-queued-streaming        ; not yet documented
             ending-queued-read
@@ -105,16 +106,15 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun open-streamer-p (streamer)
-  (let ((stream (stream-of streamer)))
-    (and (streamp stream) (open-stream-p stream))))
+(defgeneric close-streamer (streamer))
 
 ;;; ---------------------------------------------------------------------------
 
 (define-class streamer (basic-streamer)
   ((broadcast-streamer :initform nil)))
 
-;;; ---------------------------------------------------------------------------
+;;; ===========================================================================
+;;;   Journal streamer
 
 (define-class journal-streamer (streamer)
   ())
@@ -136,8 +136,28 @@
      (format stream "Operation on closed streamer ~s"
              (streamer-error-streamer condition)))))
 
+;;; ---------------------------------------------------------------------------
+
+(defun open-streamer-p (streamer)
+  (let ((stream (stream-of streamer)))
+    (and (streamp stream) (open-stream-p stream))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod close-streamer ((streamer journal-streamer))
+  (remove-mirroring streamer)
+  ;; Remove from broadcast-streamer:
+  (let ((broadcast-streamer (broadcast-streamer-of streamer)))
+    (when broadcast-streamer
+      (remove-from-broadcast-streamer 
+       streamer broadcast-streamer)))
+  (setf (closed-of streamer) 't)
+  ;; Now close the file:
+  (let ((stream (stream-of streamer)))
+    (close stream)))
+
 ;;; ===========================================================================
-;;;   Broadcast streamers
+;;;   Broadcast streamer
 
 (define-class broadcast-streamer (basic-streamer)
   ((streamers :initform nil)))
@@ -220,6 +240,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun add-to-broadcast-streamer (streamer broadcast-streamer)
+  (when (closed-of broadcast-streamer)
+    (error 'streamer-error :streamer broadcast-streamer))
   (cond 
    ((broadcast-streamer-of streamer)
     (error "Streamer ~s is a member of broadcast streamer ~s"
@@ -237,6 +259,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun remove-from-broadcast-streamer (streamer broadcast-streamer)
+  (when (closed-of broadcast-streamer)
+    (error 'streamer-error :streamer broadcast-streamer))
   (with-lock-held ((lock-of broadcast-streamer))
     (let ((streamers (streamers-of broadcast-streamer)))
       (when (memq streamer streamers)
@@ -247,6 +271,20 @@
         ;; Return streamer on success:
         streamer))))
 
+;;; ---------------------------------------------------------------------------
+
+(defmethod close-streamer ((streamer broadcast-streamer))
+  (remove-mirroring streamer)
+  (with-lock-held ((lock-of streamer))
+    (setf (closed-of streamer) 't)
+    (setf (stream-of streamer) ':closed)
+    ;; Disconnect all constituents:
+    (dolist (constituent-streamer (streamers-of streamer))
+      (setf (broadcast-streamer-of constituent-streamer) nil))
+    (setf (streamers-of streamer) nil))
+  ;; Return success:
+  't)
+
 ;;; ===========================================================================
 ;;;   Streamer entities
 
@@ -256,7 +294,6 @@
 
 (defun %do-with-streamer-stream (streamer body-form-fn)
   (when (closed-of streamer)
-    (printv streamer (streamers-of streamer))
     (error 'streamer-error :streamer streamer))
   (let ((streamer-for-writing streamer)
         (broadcast-streamer 

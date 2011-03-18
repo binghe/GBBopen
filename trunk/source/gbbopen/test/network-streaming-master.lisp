@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  9 17:39:41 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 04:20:54 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -74,6 +74,9 @@
   (clear-streamer-queue *broadcast-streamer*)
   (stream-instances-of-class 'path *broadcast-streamer*)
   (stream-instances-of-class 'location *broadcast-streamer*))
+
+;; Close the broadcast streamer:
+(close-streamer *broadcast-streamer*)
 
 ;; Test empty queue writing:
 (with-queued-streaming (*streamer* ':empty-queue-that-should-not-be-written)
