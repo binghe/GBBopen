@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 17 10:56:30 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 03:30:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -33,7 +33,8 @@
             gbbopen-tools::write-saving/sending-block-info)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(add-mirroring
+  (export '(*error-on-unresolved-streamed-instance-reference* ; not yet documented
+            add-mirroring
             add-to-broadcast-streamer   ; not yet documented
             begin-queued-streaming      ; not yet documented
             broadcast-streamer          ; class-name (not yet documented)
@@ -248,6 +249,10 @@
 
 ;;; ===========================================================================
 ;;;   Streamer entities
+
+(defvar *error-on-unresolved-streamed-instance-reference* 't)
+
+;;; ---------------------------------------------------------------------------
 
 (defun %do-with-streamer-stream (streamer body-form-fn)
   (when (closed-of streamer)
@@ -506,8 +511,10 @@
   (destructuring-bind (class-name instance-name)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
-    (let ((instance (find-instance-by-name instance-name class-name 't)))
-      (delete-instance instance))))
+    (let ((instance (find-instance-by-name 
+                     instance-name class-name 
+                     *error-on-unresolved-streamed-instance-reference*)))
+      (when instance (delete-instance instance)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance slot-update reader
@@ -516,18 +523,21 @@
   (destructuring-bind (class-name instance-name slot-name new-value)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
-    (let ((instance (find-instance-by-name instance-name class-name 't)))
-      ;; TODO: CHECK FOR CHANGE TO A LINK SLOT OR MISSING SLOT...
-      (let ((source-slot 
-             (cdr (assq slot-name
-                        (standard-unit-class.effective-dv-source-slots
-                         (class-of instance))))))
-        (if source-slot
-            ;; TODO: Optimize this!
-            (with-changing-dimension-values (instance)  
-              (setf (slot-value instance slot-name) new-value))
-            (setf (slot-value instance slot-name) new-value))))))
-        
+    (let ((instance (find-instance-by-name 
+                     instance-name class-name
+                     *error-on-unresolved-streamed-instance-reference*)))
+      (when instance
+        ;; TODO: CHECK FOR CHANGE TO A LINK SLOT OR MISSING SLOT...
+        (let ((source-slot 
+               (cdr (assq slot-name
+                          (standard-unit-class.effective-dv-source-slots
+                           (class-of instance))))))
+          (if source-slot
+              ;; TODO: Optimize this!
+              (with-changing-dimension-values (instance)  
+                (setf (slot-value instance slot-name) new-value))
+              (setf (slot-value instance slot-name) new-value)))))))
+  
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance link reader
 
@@ -535,18 +545,21 @@
   (destructuring-bind (class-name instance-name slot-name other-instances)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
-    (let ((instance (find-instance-by-name instance-name class-name 't)))
-      ;; TODO: CHECK FOR CHANGE TO A NON-LINK SLOT OR MISSING SLOT...
-      (let ((source-slot 
-             (cdr (assq slot-name
-                        (standard-unit-class.effective-dv-source-slots
-                         (class-of instance))))))
-        (if source-slot
-            ;; TODO: Optimize this!
-            (with-changing-dimension-values (instance)  
-              (linkf (slot-value instance slot-name) other-instances))
-            (linkf (slot-value instance slot-name) other-instances))))))
-
+    (let ((instance (find-instance-by-name
+                     instance-name class-name
+                     *error-on-unresolved-streamed-instance-reference*)))
+      (when instance
+        ;; TODO: CHECK FOR CHANGE TO A NON-LINK SLOT OR MISSING SLOT...
+        (let ((source-slot 
+               (cdr (assq slot-name
+                          (standard-unit-class.effective-dv-source-slots
+                           (class-of instance))))))
+          (if source-slot
+              ;; TODO: Optimize this!
+              (with-changing-dimension-values (instance)  
+                (linkf (slot-value instance slot-name) other-instances))
+              (linkf (slot-value instance slot-name) other-instances)))))))
+  
 ;;; ---------------------------------------------------------------------------
 ;;;  Unit-instance unlink reader
 
@@ -554,18 +567,21 @@
   (destructuring-bind (class-name instance-name slot-name other-instances)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
-    (let ((instance (find-instance-by-name instance-name class-name 't)))
-      ;; TODO: CHECK FOR CHANGE TO A NON-LINK SLOT OR MISSING SLOT...
-      (let ((source-slot 
-             (cdr (assq slot-name
-                        (standard-unit-class.effective-dv-source-slots
-                         (class-of instance))))))
-        (if source-slot
-            ;; TODO: Optimize this!
-            (with-changing-dimension-values (instance)  
-              (unlinkf (slot-value instance slot-name) other-instances))
-            (unlinkf (slot-value instance slot-name) other-instances))))))
-
+    (let ((instance (find-instance-by-name 
+                     instance-name class-name 
+                     *error-on-unresolved-streamed-instance-reference*)))
+      (when instance
+        ;; TODO: CHECK FOR CHANGE TO A NON-LINK SLOT OR MISSING SLOT...
+        (let ((source-slot 
+               (cdr (assq slot-name
+                          (standard-unit-class.effective-dv-source-slots
+                           (class-of instance))))))
+          (if source-slot
+              ;; TODO: Optimize this!
+              (with-changing-dimension-values (instance)  
+                (unlinkf (slot-value instance slot-name) other-instances))
+              (unlinkf (slot-value instance slot-name) other-instances)))))))
+  
 ;;; ---------------------------------------------------------------------------
 ;;;  Add instance to space-instance reader
 
@@ -576,10 +592,14 @@
     (setf class-name (possibly-translate-class-name class-name))
     (setf space-instance-class-name
           (possibly-translate-class-name space-instance-class-name))
-    (let ((instance (find-instance-by-name instance-name class-name 't))
+    (let ((instance (find-instance-by-name
+                     instance-name class-name
+                     *error-on-unresolved-streamed-instance-reference*))
           (space-instance (find-instance-by-name 
-                           space-instance-name space-instance-class-name 't)))
-      (add-instance-to-space-instance instance space-instance))))
+                           space-instance-name space-instance-class-name 
+                           *error-on-unresolved-streamed-instance-reference*)))
+      (when (and instance space-instance)
+        (add-instance-to-space-instance instance space-instance)))))
         
 ;;; ---------------------------------------------------------------------------
 ;;;  Remove instance from space-instance reader
@@ -591,10 +611,14 @@
     (setf class-name (possibly-translate-class-name class-name))
     (setf space-instance-class-name
           (possibly-translate-class-name space-instance-class-name))
-    (let ((instance (find-instance-by-name instance-name class-name 't))
+    (let ((instance (find-instance-by-name 
+                     instance-name class-name 
+                     *error-on-unresolved-streamed-instance-reference*))
           (space-instance (find-instance-by-name 
-                           space-instance-name space-instance-class-name 't)))
-      (remove-instance-from-space-instance instance space-instance))))
+                           space-instance-name space-instance-class-name
+                           *error-on-unresolved-streamed-instance-reference*)))
+      (when (and instance space-instance)
+        (remove-instance-from-space-instance instance space-instance)))))
         
 ;;; ---------------------------------------------------------------------------
 ;;;  Command form reader
