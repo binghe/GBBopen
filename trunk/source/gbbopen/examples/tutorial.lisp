@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 12:17:00 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 10:30:29 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -253,7 +253,14 @@
 (defun load-tutorial-repository (&optional (pathname "tutorial"))
   (multiple-value-bind (loaded-pathname saved-time saved-value)
       (with-events-disabled ()
-        (load-blackboard-repository pathname))
+        (flet ((show-progress (stream percent-loaded)
+                 (declare (ignore stream))
+                 (format t "~&;; ~3d% loaded~%" percent-loaded)))
+          (declare (dynamic-extent #'show-progress))
+          (let ((*repository-load-percentage-hook-functions*
+                 (list #'show-progress))
+                (*repository-load-percentage-reads-per-update* 20))
+            (load-blackboard-repository pathname))))
     (setf *the-random-walk* saved-value)
     (values loaded-pathname saved-time)))
 

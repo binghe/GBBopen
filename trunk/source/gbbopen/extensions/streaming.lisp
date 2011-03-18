@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 10:08:25 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 10:22:43 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -1067,15 +1067,16 @@
         (with-blackboard-repository-locked ()
           ;; Read everything:
           (let ((eof-marker '#:eof)
-                (counter *journal-load-percentage-reads-per-update*))
+                (counter 0))
             (until (eq eof-marker (read stream nil eof-marker))
+              ;; Load percentage hooks:
               (when *journal-load-percentage-hook-functions*
                 (unless (plusp& (decf& counter))
                   (setf counter *journal-load-percentage-reads-per-update*)
-                  (let ((journal-load-percentage 
+                  (let ((load-percentage 
                          (round (file-position stream) journal-length/100)))
                     (dolist (fn *journal-load-percentage-hook-functions*)
-                      (funcall fn stream journal-load-percentage))))))))
+                      (funcall fn stream load-percentage))))))))
         ;; Return the pathname, saved/sent-time, and saved/sent-value:
         (values (pathname stream)
                 *block-saved/sent-time* 
