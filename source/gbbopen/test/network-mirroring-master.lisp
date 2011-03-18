@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 10 02:33:31 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 04:36:37 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -140,7 +140,8 @@
 (stream-command-form '(:disable-event-printing t) *broadcast-streamer*)
 (time (create-a-bunch 1000))
 #+BIGGER-TEST
-(time (create-a-bunch 5000))
+(with-queued-streaming (*broadcast-streamer* ':bunch)
+  (time (create-a-bunch 5000)))
 #+NON-REMOVAL-TEST
 (progn
   (setf *remove-mirroring-when-streamer-closes* nil)
@@ -159,6 +160,9 @@
 
 ;; Send a silly command:
 (stream-command-form '(:print "All done!") *broadcast-streamer*)
+
+;; Close the broadcast streamer:
+(close-streamer *broadcast-streamer*)
 
 ;;; ===========================================================================
 ;;;				  End of File

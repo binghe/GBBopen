@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  3 14:42:03 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 04:15:29 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -128,6 +128,9 @@
 
 ;; Journal a silly command:
 (stream-command-form '(:print "All done!") *streamer*)
+
+;; Close the journal:
+(close-streamer *streamer*)
 
 ;;; ===========================================================================
 ;;;				  End of File

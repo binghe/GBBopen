@@ -25,6 +25,10 @@ Important changes since GBBopen 1.5:
   * Changes to GBBopen initiate & startup
      - New FUNCALL-IN-PACKAGE function
 
+  * Changes to Module Manager
+     - Default value of *AUTOMATICALLY-CREATE-MISSING-DIRECTORIES* changed 
+       from NIL to T
+
   * Changes to GBBopen Tools
      - New VERY-BRIEF-DATE function
      - New :include-year keyword argument to BRIEF-DATE
@@ -45,6 +49,9 @@ Important changes since GBBopen 1.5:
      - New CHECK-INSTANCE-LOCATORS function
      - New WITH-BLACKBOARD-REPOSITORY-LOCKED macro
      - Documented *FIND-VERBOSE*, *USE-MARKING*, CHECK-FOR-DELETED-INSTANCE
+
+  * Changes to GBBopen Extensions
+     - Experimental journaling and network-streaming
 
   * Changes to Agenda Shell
      - New CONTROL-SHELL-HIBERNATING/AWAKENED-EVENT abstrace control-shell
