@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 10:05:16 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 10:29:08 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -54,9 +54,9 @@
 ;; received goodies:
 (setf *warn-about-unusual-requests* nil)
 
-(defun journal-loading-completion-printer (stream percentage)
+(defun journal-loading-completion-printer (stream percent-loaded)
   (declare (ignore stream))
-  (format t "~&;; ~3d% complete~%" percentage))
+  (format t "~&;; ~3d% loaded~%" percent-loaded))
 
 (pushnew 'journal-loading-completion-printer 
          *journal-load-percentage-hook-functions*)

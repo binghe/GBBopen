@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/save-restore.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar  1 16:04:56 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 10:23:31 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -21,6 +21,7 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  01-19-11 File split out from epilogue.lisp.  (Corkill)
+;;;  03-18-11 Add *REPOSITORY-LOAD-PERCENTAGE-HOOK-FUNCTIONS*.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -30,7 +31,9 @@
   (import '(gbbopen-tools::*recorded-class-descriptions-ht*)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(confirm-if-blackboard-repository-not-empty-p
+  (export '(*repository-load-percentage-hook-functions* ; not yet documented
+            *repository-load-percentage-reads-per-update* ; not yet documented
+            confirm-if-blackboard-repository-not-empty-p
             delete-blackboard-repository
             empty-blackboard-repository-p
             load-blackboard-repository
@@ -210,6 +213,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defvar *repository-load-percentage-reads-per-update* 1000)
+(defvar *repository-load-percentage-hook-functions* nil)
+
+;;; ---------------------------------------------------------------------------
+
 (defun load-blackboard-repository
     (pathname 
      &rest reset-gbbopen-args
@@ -240,7 +248,8 @@
                                   :external-format
                                   :readtable
                                   :read-eval)))
-      (let ((*%%events-enabled%%* (not disable-events)))
+      (let ((*%%events-enabled%%* (not disable-events))
+            (repository-file-length/100 (round (file-length stream) 100)))
         (with-reading-saved/sent-objects-block 
             (stream :class-name-translations class-name-translations
                     :coalesce-strings coalesce-strings
@@ -285,11 +294,21 @@
                 (*%%allow-setf-on-link%%* 't))
             (setf *top-level-space-instances* root-children)
             ;; Now read everything else:
-            (let ((eof-marker '#:eof))
-              (until (eq eof-marker (read stream nil eof-marker))))
-            ;; Process all unit instances, in case any link-slot arity or sorting
-            ;; has changed (FUTURE ENHANCEMENT: It would be nice to skip this
-            ;; unless such has truly happened):
+            (let ((eof-marker '#:eof)
+                  (counter 0))
+              (until (eq eof-marker (read stream nil eof-marker))
+                ;; Load percentage hooks:
+                (when *repository-load-percentage-hook-functions*
+                  (unless (plusp& (decf& counter))
+                    (setf counter *repository-load-percentage-reads-per-update*)
+                    (let ((load-percentage 
+                           (round (file-position stream)
+                                  repository-file-length/100)))
+                      (dolist (fn *repository-load-percentage-hook-functions*)
+                        (funcall fn stream load-percentage)))))))
+            ;; Process all unit instances, in case any link-slot arity or
+            ;; sorting has changed (FUTURE ENHANCEMENT: It would be nice to
+            ;; skip this unless such has truly happened):
             (map-instances-of-class #'reconcile-direct-link-values 't))
           ;; Return the pathname, saved/sent-time, and saved/sent-value:
           (values (pathname stream)
