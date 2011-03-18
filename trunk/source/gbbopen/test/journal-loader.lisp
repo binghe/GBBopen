@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  3 14:42:56 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 18 10:05:16 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -53,6 +53,13 @@
 ;; Don't warn that the Agenda Shell isn't running to process trigger events on
 ;; received goodies:
 (setf *warn-about-unusual-requests* nil)
+
+(defun journal-loading-completion-printer (stream percentage)
+  (declare (ignore stream))
+  (format t "~&;; ~3d% complete~%" percentage))
+
+(pushnew 'journal-loading-completion-printer 
+         *journal-load-percentage-hook-functions*)
 
 ;; Load the journal:
 (load-journal "tutorial")
