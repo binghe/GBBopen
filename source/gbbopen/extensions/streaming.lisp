@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 21 14:50:10 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 21 15:02:17 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -65,6 +65,7 @@
             stream-instances-on-space-instances
             stream-link
             stream-nonlink-slot-update
+            stream-of                   ; not yet documented
             stream-remove-from-space    ; old name, remove soon
             stream-remove-instance-from-space-instance
             stream-slot-update          ; old name, remove soon

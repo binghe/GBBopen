@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave2.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 21 14:49:06 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 21 15:05:37 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -68,7 +68,7 @@
 
 ;; Silly command-form method:
 (defmethod handle-streamed-command-form (streamer (command (eql ':print)) &rest args)
-  (format t "~&;; Print: ~s~{ ~s~}~%" streamer args))
+  (format t "~&;; Print: ~s~{ ~s~}~%" (streamer-node-of streamer) args))
 
 ;; Slightly more useful command-form method:
 (defmethod handle-streamed-command-form (streamer (command (eql ':pa)) &rest args)
