@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 04:20:54 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 21 14:47:45 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -51,8 +51,9 @@
 (defparameter *streamer* (open-network-streamer "slave" "master"))
 
 ;; Slightly useful command-form method:
-(defmethod handle-streamed-command-form ((command (eql ':pa)) &rest args)
-  (declare (ignore args))
+(defmethod handle-streamed-command-form (streamer 
+                                         (command (eql ':pa)) &rest args)
+  (declare (ignoreable streamer) (ignore args))
   (format t "~&;; Package: ~s ~%" *package*))
 
 ;; Make a (trivial) broadcast streamer:

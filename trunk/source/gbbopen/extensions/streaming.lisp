@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 10:22:43 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 21 14:50:10 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -75,6 +75,11 @@
 	    with-mirroring-enabled
             with-queued-streaming
             write-streamer-queue)))     ; not yet documented
+
+;;; ---------------------------------------------------------------------------
+
+(defvar *%%reading-streamer%%* nil) ;; Bound to the reading network streamer
+                                    ;; when reading from a connection
 
 ;;; ===========================================================================
 ;;;   Streamer queues
@@ -666,20 +671,22 @@
   (destructuring-bind (form)
       (read stream t nil 't)
     (if (consp form)
-        (apply #'handle-streamed-command-form form)
-        (handle-streamed-command-atom form))))
+        (apply #'handle-streamed-command-form *%%reading-streamer%%* form)
+        (handle-streamed-command-atom *%%reading-streamer%%* form))))
         
 ;;; ---------------------------------------------------------------------------
 ;;;  Command form methods
 
-(defgeneric handle-streamed-command-form (command &rest args))
-(defgeneric handle-streamed-command-atom (command))
+(defgeneric handle-streamed-command-form (streamer command &rest args))
+(defgeneric handle-streamed-command-atom (streamer command))
 
 ;; Default error methods:
-(defmethod handle-streamed-command-form (command &rest args)
+(defmethod handle-streamed-command-form (streamer command &rest args)
+  (declare (ignorable streamer))
   (error "Unhandled streamed command: ~s" (cons command args)))
 
-(defmethod handle-streamed-command-atom (command)
+(defmethod handle-streamed-command-atom (streamer command)
+  (declare (ignorable streamer))
   (error "Unhandled streamed command: ~s" command))
          
 ;;; ===========================================================================

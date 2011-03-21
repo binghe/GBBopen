@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 09:19:45 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 21 14:38:09 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -262,7 +262,11 @@
     (let ((network-streamer (streamer-of streamer-node)))
       (cond 
        (network-streamer
-        (let (exit-status)
+        (let (exit-status
+              ;; Bind the reading network streamer (for use by
+              ;; HANDLE-STREAMED-COMMAND-FORM and
+              ;; HANDLE-STREAMED-COMMAND-ATOM):
+              (*%%reading-streamer%%* network-streamer))
           (unwind-protect 
               (catch 'close
                 (setf exit-status
