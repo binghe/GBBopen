@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 26 06:55:15 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 21 11:43:14 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -1013,6 +1013,9 @@
 (defmethod delete-instance ((instance standard-unit-instance))
   (declare (inline class-of))
   (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
+    ;; Allow deletion of incomplete unit instances:
+    (when (eq space-instances ':incomplete)
+      (setf (standard-unit-instance.%%space-instances%% instance) nil))
     (let ((unit-class (class-of instance)))
       (cond 
        ;; Really want speed over a safety net? Really?
@@ -1049,20 +1052,28 @@
 (defmethod delete-instance :around ((instance standard-unit-instance))
   ;;; Deletion-event signaling is done in this :around method to surround 
   ;;; activities performed by primary and :before/:after methods
-  (with-blackboard-repository-locked ()
-    ;; signal the delete-instance event:
-    (signal-event-using-class
-     (load-time-value (find-class 'delete-instance-event))
-     :instance instance)
-    ;; delete the instance:
-    (call-next-method)
-    ;; signal the instance-deleted event:
-    (signal-event-using-class
-     (load-time-value (find-class 'instance-deleted-event))
-     :instance instance))
+  (unless (instance-deleted-p instance) ; deleting a deleted instance is a noop
+    (with-blackboard-repository-locked ()
+      ;; signal the delete-instance event:
+      (signal-event-using-class
+       (load-time-value (find-class 'delete-instance-event))
+       :instance instance)
+      ;; delete the instance:
+      (call-next-method)
+      ;; signal the instance-deleted event:
+      (signal-event-using-class
+       (load-time-value (find-class 'instance-deleted-event))
+       :instance instance)))
   ;; Return the instance:
   instance)
 
+;;; ---------------------------------------------------------------------------
+
+(defmethod delete-instance :around ((instance deleted-unit-instance)) 
+  ;; Deleting a deleted instance is a noop, so just return the deleted
+  ;; instance:
+  instance)
+ 
 ;;; ---------------------------------------------------------------------------
 ;;;   Extended-unit-type-p 
 
