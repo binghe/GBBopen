@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Mar 14 03:30:57 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Mar 21 12:44:58 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -26469,9 +26469,8 @@ Send some \code{hyp} \glref{unit~instances} to another agent:
 
 \fnsyntax 
 
-\fnpurpose Load the blackboard repository (all \glref{unit~instances} and
-\glref{space~instances}) that has been saved to a file previously by
-\nobr{\textbf{\entlink{save-blackboard-repository}}}.
+\fnpurpose Initializes the slots of \var{instance\/} when reading saved (or
+sent) values.
 
 \fnmethods
 \fnalternate{initialize-saved/sent-instance}%
@@ -26504,6 +26503,12 @@ were saved/sent, but which are no longer present in the class definition of
 \end{args}
 
 \fnreturns The \var{instance}.
+
+\fndescription 
+%
+\textbf{Initialize-saved/sent-instance} is called when loading a blackboard
+repository or \glref{journal} or when reading a \glref{network-streamer}
+connection; it should not be called directly.
 
 \begin{alsos}{with-reading-saved/sent-objects-block}
 \also[load-blackboard-repository]
@@ -28168,7 +28173,7 @@ block is read; it should not be called directly.
 % 
 Write a method that prints the time a queued-streamer block was started
 (recorded as the block's \var{tag\/}) when the block is read from a
-\glref{journal} file or \glref{network~streamer} connection:
+\glref{journal} file or \glref{network-streamer} connection:
 %
 \W\supp
 \begin{example}
