@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 21 14:38:09 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 21 15:04:40 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -52,7 +52,8 @@
             open-network-streamer
             port-of                     ; not yet documented
             start-network-stream-server
-            streamer-node)))            ; class-name (not yet documented)
+            streamer-node               ; class-name (not yet documented)
+            streamer-node-of)))         ; not yet documented
 
 ;;; ---------------------------------------------------------------------------
 
