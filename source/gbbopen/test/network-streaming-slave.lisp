@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar  3 14:37:04 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 21 14:48:14 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -67,18 +67,19 @@
   (format t "~&;; Ending ~a receive.~%" tag))
 
 ;; Silly command-form method:
-(defmethod handle-streamed-command-form ((command (eql ':print)) &rest args)
-  (format t "~&;; Print:~{ ~s~}~%" args))
+(defmethod handle-streamed-command-form (streamer (command (eql ':print)) &rest args)
+  (format t "~&;; Print: ~s~{ ~s~}~%" streamer args))
 
 ;; Slightly more useful command-form method:
-(defmethod handle-streamed-command-form ((command (eql ':pa)) &rest args)
-  (declare (ignore args))
+(defmethod handle-streamed-command-form (streamer (command (eql ':pa)) &rest args)
+  (declare (ignorable streamer) (ignore args))
   (format t "~&;; Package: ~s ~%" *package*))
 
 ;; A more useful command-form method:
-(defmethod handle-streamed-command-form ((command (eql ':disable-event-printing))
+(defmethod handle-streamed-command-form (streamer 
+                                         (command (eql ':disable-event-printing))
                                          &rest args)
-  (declare (dynamic-extent args))
+  (declare (ignorable streamer) (dynamic-extent args))
   (apply #'disable-event-printing args))
 
 ;; Silly connection-exiting method:

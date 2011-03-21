@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 10:29:08 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 21 14:49:19 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -47,7 +47,9 @@
   (format t "~&;; Ending ~a receive.~%" tag))
 
 ;; Silly command form method:
-(defmethod handle-streamed-command-form ((command (eql ':print)) &rest args)
+(defmethod handle-streamed-command-form (streamer 
+                                         (command (eql ':print)) &rest args)
+  (declare (ignorable streamer))
   (format t "~&;; Print:~{ ~s~}~%" args))
 
 ;; Don't warn that the Agenda Shell isn't running to process trigger events on
