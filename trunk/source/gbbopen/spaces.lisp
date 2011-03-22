@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 24 18:10:11 2011 *-*
+;;;; *-* Last-Edit: Tue Mar 22 12:16:20 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -890,6 +890,9 @@
               'add-instance-to-space-instance
               instance 
               space-instance)))
+     ;; no-op if instance is incomplete:
+     ((incomplete-instance-p instance))
+     ;; Otherwise, do the add:
      (t
       ;; Is `instance' allowed on `space-instance'?
       (let ((allowed-unit-class-names (allowed-unit-classes-of space-instance)))
