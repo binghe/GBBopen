@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 21 11:43:14 2011 *-*
+;;;; *-* Last-Edit: Tue Mar 22 12:31:22 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -171,15 +171,13 @@
 ;;;   Incomplete (Forward Referenced) Unit Instances
 
 (defun incomplete-instance-p (instance)
-  (and (slot-boundp instance '%%space-instances%%)
-       (eq (standard-unit-instance.%%space-instances%% instance) 
-           ':incomplete)))
+  (and (slot-boundp instance '%%marks%%)
+       (incomplete-instance-mark-set-p instance)))
 
 (defcm incomplete-instance-p (instance)
   (with-once-only-bindings (instance)
-    `(and (slot-boundp ,instance '%%space-instances%%)
-          (eq (standard-unit-instance.%%space-instances%% ,instance) 
-              ':incomplete))))
+    `(and (slot-boundp ,instance '%%marks%%)
+          (incomplete-instance-mark-set-p ,instance))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -219,7 +217,7 @@
     ((instance-name :accessor instance-name-of)
      (%%marks%% :initform 0 :type fixnum)
      ;; %%space-instances%% slot also indicates deleted unit instances (via
-     ;; :deleted value) and forward references (via :incomplete value):
+     ;; :deleted value):
      (%%space-instances%% :initarg :space-instances :initform nil))
     (:abstract t)
     (:generate-accessors-format :prefix)
@@ -269,6 +267,99 @@
         ;; Handle a single (non-listed) space-instance path:
         (add-it space-instance-paths)
         (mapc #'add-it space-instance-paths))))
+
+;;; ===========================================================================
+;;;  Marks 
+;;;   0 - MBR (used by mark-based-retrieval) 
+;;;   1 - Incomplete unit instance
+
+;;; ---------------------------------------------------------------------------
+;;;  MBR Mark (used by mark-based-retrieval)
+
+(with-full-optimization ()
+  (defun set-mbr-instance-mark (instance)
+    (let ((marks (standard-unit-instance.%%marks%% instance)))
+      (declare (fixnum marks))
+      (setf (standard-unit-instance.%%marks%% instance)
+            (logior marks #.(ash 1 0)))))
+  
+  (defcm set-mbr-instance-mark (instance)
+    (with-once-only-bindings (instance)
+      `(let ((.marks. (standard-unit-instance.%%marks%% ,instance)))
+         (declare (fixnum .marks.))
+         (setf (standard-unit-instance.%%marks%% ,instance)
+               (logior .marks. #.(ash 1 0))))))
+  
+  (defun clear-mbr-instance-mark (instance)
+    (let ((marks (standard-unit-instance.%%marks%% instance)))
+      (declare (fixnum marks))
+      (setf (standard-unit-instance.%%marks%% instance)
+            (logandc2 marks #.(ash 1 0)))))
+  
+  (defcm clear-mbr-instance-mark (instance)
+    (with-once-only-bindings (instance)
+      `(let ((.marks. (standard-unit-instance.%%marks%% ,instance)))
+         (declare (fixnum .marks.))
+         (setf (standard-unit-instance.%%marks%% ,instance)
+               (logandc2 .marks. #.(ash 1 0))))))
+  
+  (defun mbr-instance-mark-set-p (instance)
+    ;; The obvious fixnum logbitp form `(logbitp (& ,index) (& ,flag)) is not
+    ;; optimized in some CLs, so we do it ourself as follows:
+    (plusp& (logand
+             (& (standard-unit-instance.%%marks%% instance))
+             #.(ash 1 0))))
+  
+  (defcm mbr-instance-mark-set-p (instance)
+    `(plusp& (logand
+              (& (standard-unit-instance.%%marks%% ,instance))
+              #.(ash 1 0)))))
+
+;;; ---------------------------------------------------------------------------
+;;;  Incomplete unit-instance mark
+
+(with-full-optimization ()
+  (defun set-incomplete-instance-mark
+      (instance 
+       &optional (marks (standard-unit-instance.%%marks%% instance)))
+    (declare (fixnum marks))
+    (setf (standard-unit-instance.%%marks%% instance)
+          (logior marks #.(ash 1 1))))
+  
+  (defcm set-incomplete-instance-mark (instance &optional marks)
+    (if marks
+        `(setf (standard-unit-instance.%%marks%% ,instance)
+               (logandc2 ,marks #.(ash 1 1)))
+        (with-once-only-bindings (instance)
+          `(let ((.marks. (standard-unit-instance.%%marks%% ,instance)))
+             (declare (fixnum .marks.))
+             (setf (standard-unit-instance.%%marks%% ,instance)
+                   (logandc2 .marks. #.(ash 1 1)))))))
+  
+  (defun clear-incomplete-instance-mark (instance)
+    (let ((marks (standard-unit-instance.%%marks%% instance)))
+      (declare (fixnum marks))
+      (setf (standard-unit-instance.%%marks%% instance)
+            (logandc2 marks #.(ash 1 1)))))
+  
+  (defcm clear-incomplete-instance-mark (instance)
+    (with-once-only-bindings (instance)
+      `(let ((.marks. (standard-unit-instance.%%marks%% ,instance)))
+         (declare (fixnum .marks.))
+         (setf (standard-unit-instance.%%marks%% ,instance)
+               (logandc2 .marks. #.(ash 1 1))))))
+  
+  (defun incomplete-instance-mark-set-p (instance)
+    ;; The obvious fixnum logbitp form `(logbitp (& ,index) (& ,flag)) is not
+    ;; optimized in some CLs, so we do it ourself as follows:
+    (plusp& (logand
+             (& (standard-unit-instance.%%marks%% instance))
+             #.(ash 1 1))))
+    
+  (defcm incomplete-instance-mark-set-p (instance)
+    `(plusp& (logand
+              (& (standard-unit-instance.%%marks%% ,instance))
+              #.(ash 1 1)))))
 
 ;;; ===========================================================================
 ;;;   Default LINK-INSTANCE-OF reader/writer
@@ -430,13 +521,14 @@
 (defmethod initialize-saved/sent-instance ((instance standard-unit-instance)
                                            slots slot-values missing-slot-names)
   (declare (ignore slots slot-values missing-slot-names))
-  ;; Allow setf setting of link-slot pointers. Note: additional fixing of
-  ;; direct link-slot values is done at the end of load-blackboard-repository
-  ;; to update values to reflect changed link-slot options (arity & sorting);
-  ;; the same is not done automatically for sent instances.
+  ;; Allow setf setting of link-slot pointers. 
   (let ((*%%allow-setf-on-link%%* 't))
     (call-next-method))
-  ;; Add it to space instances:
+  ;; remove incompleteness mark (whether or not it was set before); the
+  ;; instance must be marked complete before it is added to its space
+  ;; instances:
+  (clear-incomplete-instance-mark instance)
+  ;; Add the instance to space instances:
   (with-blackboard-repository-locked ()
     (let ((space-instance-paths
            (standard-unit-instance.%%space-instances%% instance)))
@@ -444,6 +536,10 @@
         (setf (standard-unit-instance.%%space-instances%% instance) nil)
         (add-instance-to-space-instance-paths
          instance space-instance-paths))))
+  ;; Note: additional fixing of direct link-slot values is done at the end of
+  ;; load-blackboard-repository to update values to reflect changed link-slot
+  ;; options (arity & sorting); the same is not done automatically for sent
+  ;; instances.
   (unless *%%loading-complete-repository%%*    
     (let ((*%%allow-setf-on-link%%* 't))
       (reconcile-direct-link-values instance))
@@ -547,7 +643,8 @@
      (let* ((class (find-class class-name 't))
             (instance (allocate-instance class)))
        (setf (instance-name-of instance) instance-name)
-       (setf (standard-unit-instance.%%space-instances%% instance) ':incomplete)
+       (set-incomplete-instance-mark instance 0)
+       ;; Initialize all link slots to nil:
        (dolist (slot (class-slots class))
          (when (typep slot 'effective-link-definition)
            (let ((*%%allow-setf-on-link%%* 't))
@@ -575,13 +672,11 @@
 (defun space-instances-of (instance)
   ;;; Returns the space-instances on which `instance' resides.  The result is
   ;;; *not* copied, so the user must not modify!
-  (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
-    (case space-instances
-      (:deleted 
-       (operation-on-deleted-instance instance 'space-instances-of))
-      (:incomplete 
-       (operation-on-incomplete-instance instance 'space-instances-of))
-      (otherwise space-instances))))
+  (unless (incomplete-instance-p instance)
+    (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
+      (if (eq space-instances ':deleted)
+          (operation-on-deleted-instance instance 'space-instances-of)
+          space-instances))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1012,39 +1107,36 @@
 
 (defmethod delete-instance ((instance standard-unit-instance))
   (declare (inline class-of))
-  (let ((space-instances (standard-unit-instance.%%space-instances%% instance)))
-    ;; Allow deletion of incomplete unit instances:
-    (when (eq space-instances ':incomplete)
-      (setf (standard-unit-instance.%%space-instances%% instance) nil))
-    (let ((unit-class (class-of instance)))
-      (cond 
-       ;; Really want speed over a safety net? Really?
-       (*skip-deleted-unit-instance-class-change*
-        ;; remove from instance-hash-table:
-        (remove-instance-from-instance-hash-table 
-         unit-class (instance-name-of instance))
-        ;; remove from all space instances:
-        (when (consp space-instances)
-          (dolist (space-instance space-instances)
-            (remove-instance-from-space-instance instance space-instance)))
-        ;; unlink all link slots:
-        (delete-all-incoming-link-pointers instance)
-        ;; Mark the (unchanged class) instance as deleted:
-        (setf (standard-unit-instance.%%space-instances%% instance) ':deleted))
-       ;; Although the class change is a bit expensive, the extra safety in
-       ;; detecting stale references to deleted unit-instances is worth it...
-       (t (let ((deleted-instance-class (deleted-instance-class instance)))
-            (change-class instance deleted-instance-class 
-                          :original-class unit-class)
-            (when 
-                ;; NOTE: CMUCL (at least up through 19f) gets the following
-                ;; TYPEP check on a changed-class instance wrong. We work
-                ;; around that by not inlining TYPEP:
-                (locally #+cmu (declare (notinline typep))
-                         (typep instance 'standard-unit-instance))
-              (error "The deleted-instance-class ~s is a subclass of ~s"
-                     (class-name deleted-instance-class)
-                     'standard-unit-instance)))))))
+  (let ((space-instances (standard-unit-instance.%%space-instances%% instance))
+        (unit-class (class-of instance)))
+    (cond 
+     ;; Really want speed over a safety net? Really?
+     (*skip-deleted-unit-instance-class-change*
+      ;; remove from instance-hash-table:
+      (remove-instance-from-instance-hash-table 
+       unit-class (instance-name-of instance))
+      ;; remove from all space instances:
+      (when (consp space-instances)
+        (dolist (space-instance space-instances)
+          (remove-instance-from-space-instance instance space-instance)))
+      ;; unlink all link slots:
+      (delete-all-incoming-link-pointers instance)
+      ;; Mark the (unchanged class) instance as deleted:
+      (setf (standard-unit-instance.%%space-instances%% instance) ':deleted))
+     ;; Although the class change is a bit expensive, the extra safety in
+     ;; detecting stale references to deleted unit-instances is worth it...
+     (t (let ((deleted-instance-class (deleted-instance-class instance)))
+          (change-class instance deleted-instance-class 
+                        :original-class unit-class)
+          (when 
+              ;; NOTE: CMUCL (at least up through 19f) gets the following
+              ;; TYPEP check on a changed-class instance wrong. We work
+              ;; around that by not inlining TYPEP:
+              (locally #+cmu (declare (notinline typep))
+                       (typep instance 'standard-unit-instance))
+            (error "The deleted-instance-class ~s is a subclass of ~s"
+                   (class-name deleted-instance-class)
+                   'standard-unit-instance))))))
   instance)
 
 ;;; ---------------------------------------------------------------------------
@@ -1245,30 +1337,6 @@
         (declare (dynamic-extent #'fn))
         (map-extended-unit-classes #'fn unit-class-name)))
     instances))
-
-;;; ===========================================================================
-;;;  Instance Marks (used by mark-based-retrieval)
-;;;
-;;;  For now, we just have one mark bit, so we don't use bit operations
-;;;  (but this can be easly changed to accomodate other marks when needed).
-
-(defun set-mbr-instance-mark (instance)
-  (setf (standard-unit-instance.%%marks%% instance) 1))
-
-(defcm set-mbr-instance-mark (instance)
-  `(setf (standard-unit-instance.%%marks%% ,instance) 1))
-
-(defun clear-mbr-instance-mark (instance)
-  (setf (standard-unit-instance.%%marks%% instance) 0))
-
-(defcm clear-mbr-instance-mark (instance)
-  `(setf (standard-unit-instance.%%marks%% ,instance) 0))
-
-(defun mbr-instance-mark-set-p (instance)
-  (=& (standard-unit-instance.%%marks%% instance) 1))
-
-(defcm mbr-instance-mark-set-p (instance)
-  `(=& (standard-unit-instance.%%marks%% ,instance) 1))
 
 ;;; ===========================================================================
 ;;;   Change-class support
@@ -1615,21 +1683,24 @@
   ;;; `dimensions-being-changed' on the %%space-instances%% of `instance'
   (declare (inline class-of))
   (let ((unit-class (class-of instance)))
-    ;; Did the instance actually move?
-    (unless 
-        (if (eq 't dimensions-being-changed)
-            (flet ((fn (old-dimension-value)
-                     (equal (cdr old-dimension-value)
-                            (instance-dimension-value 
-                             instance (car old-dimension-value)))))
-              (declare (dynamic-extent #'fn))
-              (every #'fn old-dimension-values))
-            (flet ((fn (dimension-name)
-                     (equal (cdr (assq dimension-name old-dimension-values))
-                            (instance-dimension-value
-                             instance dimension-name))))
-              (declare (dynamic-extent #'fn))
-              (every #'fn dimensions-being-changed)))
+    (unless (and
+              ;; Is the instance complete?
+              (not (incomplete-instance-p instance))
+              ;; Did the instance actually move?
+              (if (eq 't dimensions-being-changed)
+                  (flet ((fn (old-dimension-value)
+                           (equal (cdr old-dimension-value)
+                                  (instance-dimension-value 
+                                   instance (car old-dimension-value)))))
+                    (declare (dynamic-extent #'fn))
+                    (every #'fn old-dimension-values))
+                  (flet ((fn (dimension-name)
+                           (equal (cdr (assq dimension-name 
+                                             old-dimension-values))
+                                  (instance-dimension-value
+                                   instance dimension-name))))
+                    (declare (dynamic-extent #'fn))
+                    (every #'fn dimensions-being-changed))))
       (dolist (space-instance 
                   (standard-unit-instance.%%space-instances%% instance))
         #+OLD-CLASS-NAMES
