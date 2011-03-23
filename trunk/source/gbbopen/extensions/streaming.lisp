@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 21 15:02:17 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 23 16:17:53 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -429,19 +429,19 @@
          (queue-stream (streamer-queue.stream streamer-queue)))
     ;; End the current queuing block:
     (let ((string (get-output-stream-string queue-stream)))
-      (flet ((write-it (streamer streamer-for-writing)
+      (flet ((write-it (streamer-for-locking streamer-for-writing)
                (let ((stream (stream-of streamer-for-writing)))
                  (cond
                   ;; Empty queue:
                   ((zerop& (length string))
                    (when (streamer-queue.write-empty-queue-p streamer-queue)
-                     (with-lock-held ((lock-of streamer))
+                     (with-lock-held ((lock-of streamer-for-locking))
                        (write-sequence 
                         (streamer-queue.tag-string streamer-queue) stream)
                        (princ "#G!(:EB) " stream)
                        (force-output stream))))
                   ;; Non-empty queue:
-                  (t (with-lock-held ((lock-of streamer))
+                  (t (with-lock-held ((lock-of streamer-for-locking))
                        (write-sequence 
                         (streamer-queue.tag-string streamer-queue) stream)
                        (write-sequence string stream)
@@ -475,11 +475,16 @@
                   (terpri *error-output*)
                   (let ((connection (stream-of constituent-streamer)))
                     (when (and (streamp connection) (open-stream-p connection))
-                      (format *error-output* "~&;; Closing ~s due to write error...~%"
+                      (format *error-output* 
+                              "~&;; Closing ~s due to write error...~%"
                               connection)
                       (force-output *error-output*)
                       (close connection))))))
-            (write-it streamer streamer))))
+            (write-it 
+             ;; If the streamer is a constituent of a broadcast-streamer
+             ;; use the broadcast-streamer's lock:
+             (or (broadcast-streamer-of streamer) streamer) 
+             streamer))))
     ;; Must return the streamer-queue:
     streamer-queue))
 
