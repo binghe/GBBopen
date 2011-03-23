@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 23 12:08:13 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 23 18:13:55 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -329,12 +329,12 @@
   (defcm set-incomplete-instance-mark (instance &optional marks)
     (if marks
         `(setf (standard-unit-instance.%%marks%% ,instance)
-               (logandc2 ,marks #.(ash 1 1)))
+               (logior ,marks #.(ash 1 1)))
         (with-once-only-bindings (instance)
           `(let ((.marks. (standard-unit-instance.%%marks%% ,instance)))
              (declare (fixnum .marks.))
              (setf (standard-unit-instance.%%marks%% ,instance)
-                   (logandc2 .marks. #.(ash 1 1)))))))
+                   (logior .marks. #.(ash 1 1)))))))
   
   (defun clear-incomplete-instance-mark (instance)
     (let ((marks (standard-unit-instance.%%marks%% instance)))
