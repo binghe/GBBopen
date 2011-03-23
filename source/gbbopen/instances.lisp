@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 22 12:31:22 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 23 12:08:13 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -643,6 +643,7 @@
      (let* ((class (find-class class-name 't))
             (instance (allocate-instance class)))
        (setf (instance-name-of instance) instance-name)
+       (setf (standard-unit-instance.%%space-instances%% instance) nil)
        (set-incomplete-instance-mark instance 0)
        ;; Initialize all link slots to nil:
        (dolist (slot (class-slots class))
