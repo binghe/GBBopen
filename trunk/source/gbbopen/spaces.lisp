@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 22 12:16:20 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 24 09:15:59 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -999,7 +999,10 @@
       (cond
        ;; no-op if instance is not present on the space-instance:
        ((not instance-found)
-        (when *warn-about-unusual-requests* 
+        (when (and *warn-about-unusual-requests* 
+                   ;; Muffle temporarily, until the space-instance semantics
+                   ;; for incomplete instances is handled consistently:
+                   (not (incomplete-instance-p instance)))
           (warn "In ~s: ~s is not on space instance ~s."
                 'remove-instance-from-space-instance
                 instance 
