@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 21 15:04:40 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 24 03:48:51 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -66,32 +66,43 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(define-class streamer-node (standard-gbbopen-instance)
+(define-class basic-streamer-node (standard-gbbopen-instance)
   (name
-   (host :initform "localhost")
-   (port :initform *default-network-stream-server-port*)
-   (documentation :initform nil)
-   (passphrase :type (or simple-string null) :initform nil)
    (package :initform (ensure-package ':common-lisp-user))
    (external-format :initform ':default)
    (read-default-float-format :initform *read-default-float-format*)
    (streamer-class :initform 'network-streamer)
-   (authorized-nodes :initform ':all)
-   (streamer :initform nil)
-   (server-thread :initform nil)))
+   (streamer :initform nil)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod print-instance-slots ((streamer-node streamer-node) stream)
+(defmethod print-instance-slots ((streamer-node basic-streamer-node) stream)
   (call-next-method)
   (when (slot-boundp streamer-node 'name)
     (format stream " ~s" (name-of streamer-node))))
 
 ;;; ---------------------------------------------------------------------------
+;;;   Accepted streamer node (for requests from undefined streamer nodes)
 
-(defun ensure-streamer-node (name &rest initargs)
+(define-class accepted-streamer-node (basic-streamer-node)
+  ())
+
+;;; ---------------------------------------------------------------------------
+;;;   Defined streamer node
+
+(define-class streamer-node (basic-streamer-node)
+  ((host :initform "localhost")
+   (port :initform *default-network-stream-server-port*)
+   (documentation :initform nil)
+   (passphrase :type (or simple-string null) :initform nil)
+   (authorized-nodes :initform ':all)
+   (server-thread :initform nil)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun ensure-streamer-node (streamer-node-class name &rest initargs)
   (let ((streamer-node
-         (apply #'make-instance 'streamer-node :name name initargs)))
+         (apply #'make-instance streamer-node-class :name name initargs)))
     (setf (gethash name *streamer-nodes-ht*) streamer-node)
     ;; Return the streamer-node:
     streamer-node))
@@ -99,7 +110,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmacro define-streamer-node (name &rest initargs)
-  `(ensure-streamer-node ',name ,@initargs)) 
+  `(ensure-streamer-node 'streamer-node ',name ,@initargs))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -282,6 +293,7 @@
                 (remove-from-broadcast-streamer 
                  streamer broadcast-streamer)))
             (setf (streamer-of streamer-node) nil)
+            (remhash connection *streamer-nodes-ht*)
             (setf (stream-of network-streamer) ':closed)
             (handle-stream-connection-exiting network-streamer exit-status))))
        (t (error "Missing network-streamer at ~s" streamer-node)))
@@ -301,40 +313,54 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun create-connecting-streamer-node (connecting-node-name connection)
+  (multiple-value-bind (host port)
+      (remote-hostname-and-port connection)
+    (format t "~&;; Accepting connection from ~s (~a/~s)...~%"
+            connecting-node-name host port)
+    ;; Create and return the streamer node for the connecting streamer, using
+    ;; the connection as its name:
+    (ensure-streamer-node 'accepted-streamer-node connection)))
+
+;;; ---------------------------------------------------------------------------
+
 (defun network-streaming-client-connection-3 (connection
-                                              connecting-streamer-node-name)
+                                              connecting-streamer-node-name
+                                              any-node?)
   (let ((streamer-node
-         (find-streamer-node connecting-streamer-node-name)))
+         (or (find-streamer-node connecting-streamer-node-name)
+             (when any-node?
+               (create-connecting-streamer-node
+                connecting-streamer-node-name connection)))))
     (cond
      (streamer-node
       (let ((streamer (streamer-of streamer-node))
             (package (ensure-package (package-of streamer-node)))
             (read-default-float-format
              (read-default-float-format-of streamer-node)))
-        (when streamer
-          (error "Unexpected connection request from ~s: already connected"
-                 connecting-streamer-node-name))
-        ;; Create the streamer:
-        (setf (streamer-of streamer-node)
-              (apply 
-               #'make-instance
-               (streamer-class-of streamer-node)
-               :streamer-node streamer-node
-               :lock (make-lock :name (concatenate 'simple-string 
-                                        (name-of streamer-node) 
-                                        " lock"))
-               :package package
-               :external-format (external-format-of streamer-node)
-               :read-default-float-format read-default-float-format
-               :stream connection
-               :connection-thread (current-thread)
-               nil))
-        ;; Transmit the particulars used in writing to the connection:
-        (let ((*package* package)
-              (*read-default-float-format* read-default-float-format))
-          (write-saving/sending-block-info connection)
-          (force-output connection))
-        (start-streaming-connection-endpoint streamer-node connection)))
+        (cond 
+         (streamer
+          (warn "Unexpected connection request from ~s: already connected"
+                connecting-streamer-node-name))
+         ;; Create the streamer:
+         (t (setf (streamer-of streamer-node)
+                  (apply 
+                   #'make-instance
+                   (streamer-class-of streamer-node)
+                   :streamer-node streamer-node
+                   :lock (make-lock :name "Streamer lock")
+                   :package package
+                   :external-format (external-format-of streamer-node)
+                   :read-default-float-format read-default-float-format
+                   :stream connection
+                   :connection-thread (current-thread)
+                   nil))
+            ;; Transmit the particulars used in writing to the connection:
+            (let ((*package* package)
+                  (*read-default-float-format* read-default-float-format))
+              (write-saving/sending-block-info connection)
+              (force-output connection))
+            (start-streaming-connection-endpoint streamer-node connection)))))
      (t (warn "Connection request from unknown streamer node ~s"
               connecting-streamer-node-name)))))
 
@@ -345,18 +371,20 @@
   (destructuring-bind (client version passphrase 
                        connecting-streamer-node-name)
       authentication-form
-    (cond 
-     ((and (eq client ':gbbopen)
-           (eql version 1)
-           (let ((authorized-nodes
-                  (authorized-nodes-of local-streamer-node)))
+    (let ((authorized-nodes (authorized-nodes-of local-streamer-node))
+          (any-node? nil))
+      (cond 
+       ((and (eq client ':gbbopen)
+             (eql version 1)
              (or (eq authorized-nodes ':all)
+                 (when (eq authorized-nodes ':any)
+                   (setf any-node? 't))
                  (member connecting-streamer-node-name authorized-nodes
-                         :test #'equalp)))
-           (validate-passphrase passphrase local-streamer-node))
-      (network-streaming-client-connection-3
-       connection connecting-streamer-node-name))
-      (t (warn "Authorization failure: ~s" authentication-form)))))
+                         :test #'equalp))
+             (validate-passphrase passphrase local-streamer-node))
+        (network-streaming-client-connection-3
+         connection connecting-streamer-node-name any-node?))
+       (t (warn "Authorization failure: ~s" authentication-form))))))
 
 ;;; ---------------------------------------------------------------------------
 

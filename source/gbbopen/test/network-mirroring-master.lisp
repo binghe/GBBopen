@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 04:36:37 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 24 03:03:16 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -41,7 +41,7 @@
     :passphrase "Open, says me!"
     :package ':tutorial)
 
-;; The a 2nd slave host:
+;; A 2nd slave host:
 (define-streamer-node "slave2"
     :host "127.0.0.1"
     :port (1- (port-of (find-streamer-node "slave")))
