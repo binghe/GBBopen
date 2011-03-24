@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 24 03:48:51 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 24 04:12:25 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -68,7 +68,7 @@
 
 (define-class basic-streamer-node (standard-gbbopen-instance)
   (name
-   (package :initform (ensure-package ':common-lisp-user))
+   (package :initform (ensure-package ':common-lisp))
    (external-format :initform ':default)
    (read-default-float-format :initform *read-default-float-format*)
    (streamer-class :initform 'network-streamer)

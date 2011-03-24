@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 17 03:20:33 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 24 04:17:18 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -82,7 +82,7 @@
 (defvar *recorded-class-descriptions-ht*)
 
 (defmacro with-saving/sending-block ((stream 
-                                      &key (package '':cl-user)
+                                      &key (package '':common-lisp)
                                            (read-default-float-format 
                                             ''single-float)
                                            (value nil))

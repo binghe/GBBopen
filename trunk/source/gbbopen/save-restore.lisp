@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/save-restore.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 10:23:31 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 24 04:18:19 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -142,7 +142,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun save-blackboard-repository (pathname
-                                   &key (package ':cl-user)
+                                   &key (package ':common-lisp)
                                         (read-default-float-format
                                          'single-float)
                                         (external-format ':default)
