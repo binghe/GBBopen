@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 25 04:11:42 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 25 10:53:08 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -56,8 +56,8 @@
 (define-class link-ptr-with-value (standard-link-pointer)
   ((value :initform nil)))
 
-;; Silly queued-streaming-block-reader method:
-(defmethod queued-streaming-block-reader :around ((tag t) string-stream)
+;; Silly read-queued-streaming-block method:
+(defmethod read-queued-streaming-block :around ((tag t) string-stream)
   (declare (ignorable string-stream))
   (format t "~&;; Beginning queued ~a reading...~%" tag)
   (call-next-method)

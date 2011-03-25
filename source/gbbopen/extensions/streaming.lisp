@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 25 04:02:02 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 25 10:51:20 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -53,7 +53,7 @@
             make-broadcast-streamer
             make-journal-streamer
             open-streamer-p             ; not yet documented
-            queued-streaming-block-reader
+            read-queued-streaming-block
             remove-from-broadcast-streamer ; not yet documented
             remove-mirroring
             stream-command-form         ; not yet documented
@@ -699,9 +699,9 @@
 ;;; ===========================================================================
 ;;;  Queued block methods
 
-(defgeneric queued-streaming-block-reader (tag string-stream))
+(defgeneric read-queued-streaming-block (tag string-stream))
 
-(defmethod queued-streaming-block-reader (tag string-stream)
+(defmethod read-queued-streaming-block (tag string-stream)
   (beginning-queued-read tag)           ; Remove soon!
   (unwind-protect
       ;; Read the queue-block:
@@ -724,7 +724,7 @@
          (length (read stream 't nil 't))
          (block-string (make-string length)))
     (read-sequence block-string stream)
-    (queued-streaming-block-reader tag (make-string-input-stream block-string)))
+    (read-queued-streaming-block tag (make-string-input-stream block-string)))
   ;; Skip the closing parenthesis:
   (read-char stream 't nil 't))
 
