@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 23 16:17:53 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 25 04:02:02 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -38,14 +38,14 @@
             *journal-load-percentage-reads-per-update* ; not yet documented
             add-mirroring
             add-to-broadcast-streamer   ; not yet documented
-            begin-queued-streaming      ; not yet documented
+            begin-queued-streaming      ; not documented
             broadcast-streamer          ; class-name (not yet documented)
-            beginning-queued-read
+            beginning-queued-read       ; remove soon!
             clear-streamer-queue
             close-streamer              ; not yet documented
             describe-mirroring          ; not yet documented
-            end-queued-streaming        ; not yet documented
-            ending-queued-read
+            end-queued-streaming        ; not documented
+            ending-queued-read          ; remove soon!
             handle-streamed-command-atom ; not yet documented
             handle-streamed-command-form ; not yet documented
             journal-streamer            ; class-name (not yet documented)
@@ -53,6 +53,7 @@
             make-broadcast-streamer
             make-journal-streamer
             open-streamer-p             ; not yet documented
+            queued-streaming-block-reader
             remove-from-broadcast-streamer ; not yet documented
             remove-mirroring
             stream-command-form         ; not yet documented
@@ -86,7 +87,7 @@
 ;;;   Streamer queues
 
 (defvar *%%streamer-queues%%* nil)      ; records thread-local streamer queues
-(defvar *queued-read-tag*)
+(defvar *queued-read-tag*)              ; remove soon (with the #G! reader)
 
 ;;; ---------------------------------------------------------------------------
 
@@ -406,9 +407,7 @@
           (setf *package* (package-of streamer))
           (setf *read-default-float-format* 
                 (read-default-float-format-of streamer))
-          (princ "#G!(:BB " queue-stream)
-          (print-object-for-saving/sending tag queue-stream)
-          (princ ") " queue-stream)))
+          (print-object-for-saving/sending tag queue-stream)))
       ;; Push the new streamer-queue for this streamer:
       (push-acons streamer streamer-queue *%%streamer-queues%%*)
       ;; Stash the tag-string:
@@ -423,47 +422,51 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun %write-streamer-queue (streamer)
-  (let* ((streamer-queue 
-          (or (cdr (assq streamer *%%streamer-queues%%*))
-              (no-streamer-queue-error streamer)))
+  (let* ((streamer-queue (or (cdr (assq streamer *%%streamer-queues%%*))
+                             (no-streamer-queue-error streamer)))
          (queue-stream (streamer-queue.stream streamer-queue)))
     ;; End the current queuing block:
     (let ((string (get-output-stream-string queue-stream)))
-      (flet ((write-it (streamer-for-locking streamer-for-writing)
-               (let ((stream (stream-of streamer-for-writing)))
-                 (cond
-                  ;; Empty queue:
-                  ((zerop& (length string))
-                   (when (streamer-queue.write-empty-queue-p streamer-queue)
-                     (with-lock-held ((lock-of streamer-for-locking))
-                       (write-sequence 
-                        (streamer-queue.tag-string streamer-queue) stream)
-                       (princ "#G!(:EB) " stream)
-                       (force-output stream))))
-                  ;; Non-empty queue:
-                  (t (with-lock-held ((lock-of streamer-for-locking))
-                       (write-sequence 
-                        (streamer-queue.tag-string streamer-queue) stream)
-                       (write-sequence string stream)
-                       (princ "#G!(:EB) " stream)
-                       (force-output stream))
-                     ;; If needed, merge the streamer-queue's recorded
-                     ;; class-descriptions HT:
-                     (let ((queued-ht
-                            (streamer-queue.recorded-class-descriptions-ht
-                             streamer-queue))
-                           (streamer-ht
-                            (recorded-class-descriptions-ht-of streamer-for-writing)))
-                       ;; Only merge if the queued-ht has more elements than
-                       ;; the streamer (a heuristic that misses merging when
-                       ;; different new descriptions have been added to the
-                       ;; streamer than to the queued, but missed merging only
-                       ;; results in unnecessary class-description writing):
-                       (when (>& (hash-table-count queued-ht)
-                                 (hash-table-count streamer-ht))
-                         (with-lock-held ((lock-of streamer-for-writing))
-                           (%merge-recorded-class-descriptions-hts 
-                            queued-ht streamer-ht)))))))))
+      (flet
+          ((write-it (streamer-for-locking streamer-for-writing)
+             (let ((stream (stream-of streamer-for-writing)))
+               (cond
+                ;; Empty queue:
+                ((zerop& (length string))
+                 (when (streamer-queue.write-empty-queue-p streamer-queue)
+                   (with-lock-held ((lock-of streamer-for-locking))
+                     (princ "#GQ(" stream)
+                     (write-sequence 
+                      (streamer-queue.tag-string streamer-queue) stream)
+                     (format stream " 0)")
+                     (force-output stream))))
+                ;; Non-empty queue:
+                (t (with-lock-held ((lock-of streamer-for-locking))
+                     (princ "#GQ(" stream)
+                     (write-sequence 
+                      (streamer-queue.tag-string streamer-queue) stream)
+                     (format stream " ~s " (length string))
+                     (write-sequence string stream)
+                     (princ ")" stream)
+                     (force-output stream))
+                   ;; If needed, merge the streamer-queue's recorded
+                   ;; class-descriptions HT:
+                   (let ((queued-ht
+                          (streamer-queue.recorded-class-descriptions-ht
+                           streamer-queue))
+                         (streamer-ht
+                          (recorded-class-descriptions-ht-of 
+                           streamer-for-writing)))
+                     ;; Only merge if the queued-ht has more elements than the
+                     ;; streamer (a heuristic that misses merging when
+                     ;; different new descriptions have been added to the
+                     ;; streamer than to the queued, but missed merging only
+                     ;; results in unnecessary class-description writing):
+                     (when (>& (hash-table-count queued-ht)
+                               (hash-table-count streamer-ht))
+                       (with-lock-held ((lock-of streamer-for-writing))
+                         (%merge-recorded-class-descriptions-hts 
+                          queued-ht streamer-ht)))))))))
         (if (typep streamer 'broadcast-streamer)
             ;; MAJOR QUICK&DIRTY HACK: write each constituent streamer
             ;; separately, catching write errors and closing the constituent:
@@ -547,12 +550,10 @@
         (setf *package* (package-of streamer))
         (setf *read-default-float-format* 
               (read-default-float-format-of streamer))
-        (princ "#G!(:BB " queue-stream)
-        (print-object-for-saving/sending tag queue-stream)
-        (princ ") " queue-stream)))
-      ;; Stash the tag-string:
-      (setf (streamer-queue.tag-string streamer-queue)
-            (get-output-stream-string queue-stream))))
+        (print-object-for-saving/sending tag queue-stream)))
+    ;; Stash the tag-string:
+    (setf (streamer-queue.tag-string streamer-queue)
+          (get-output-stream-string queue-stream))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Delete unit instance reader
@@ -698,17 +699,37 @@
 ;;; ===========================================================================
 ;;;  Queued block methods
 
-(defgeneric beginning-queued-read (tag))
-(defgeneric ending-queued-read (tag))
+(defgeneric queued-streaming-block-reader (tag string-stream))
 
-;; Default do-nothing methods:
-(defmethod beginning-queued-read (tag)
-  tag)
-(defmethod ending-queued-read (tag)
-  tag)
+(defmethod queued-streaming-block-reader (tag string-stream)
+  (beginning-queued-read tag)           ; Remove soon!
+  (unwind-protect
+      ;; Read the queue-block:
+      (let ((eof-marker '#:eof))
+        (until (eq eof-marker (read string-stream nil eof-marker))))
+    (ending-queued-read tag)))          ; Remove soon!
+
+(defgeneric beginning-queued-read (tag)) ; Remove soon!
+(defgeneric ending-queued-read (tag))   ; Remove soon!
+(defmethod beginning-queued-read (tag) tag) ; Remove soon!
+(defmethod ending-queued-read (tag) tag) ; Remove soon!
          
 ;;; ---------------------------------------------------------------------------
-;;;  GBBopen streamer-command reader
+;;;  Queued-streaming-block reader
+         
+(defmethod saved/sent-object-reader ((char (eql #\Q)) stream)
+  ;; Skip the opening parenthesis:
+  (read-char stream 't nil 't)
+  (let* ((tag (read stream 't nil 't))
+         (length (read stream 't nil 't))
+         (block-string (make-string length)))
+    (read-sequence block-string stream)
+    (queued-streaming-block-reader tag (make-string-input-stream block-string)))
+  ;; Skip the closing parenthesis:
+  (read-char stream 't nil 't))
+
+;;; ---------------------------------------------------------------------------
+;;;  GBBopen streamer-command reader (remove soon!)
          
 (defmethod saved/sent-object-reader ((char (eql #\!)) stream)
   (let ((form (read stream 't nil 't)))
