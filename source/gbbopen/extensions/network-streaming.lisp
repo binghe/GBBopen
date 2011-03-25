@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 25 10:08:08 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 25 11:40:17 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -96,6 +96,8 @@
    (documentation :initform nil)
    (passphrase :type (or simple-string null) :initform nil)
    (authorized-nodes :initform ':all)
+   (accepted-streamer-node-class :initform 'accepted-streamer-node)
+   (accepted-streamer-node-initargs :initform nil)
    (server-thread :initform nil)))
 
 ;;; ---------------------------------------------------------------------------
@@ -315,25 +317,33 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun create-connecting-streamer-node (connecting-node-name connection)
+(defun create-connecting-streamer-node (server-streamer-node 
+                                        connecting-node-name
+                                        connection)
   (multiple-value-bind (host port)
       (remote-hostname-and-port connection)
     (format t "~&;; Accepting connection from ~s (~a/~s)...~%"
-            connecting-node-name host port)
-    ;; Create and return the streamer node for the connecting streamer, using
-    ;; the connection as its name:
-    (ensure-streamer-node 'accepted-streamer-node connection)))
+            connecting-node-name host port))
+  ;; Create and return the streamer node for the connecting streamer, using
+  ;; the connection as its name:
+  (apply #'ensure-streamer-node 
+         (accepted-streamer-node-class-of server-streamer-node)
+         connection
+         (accepted-streamer-node-initargs-of server-streamer-node)))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun network-streaming-client-connection-3 (connection
+(defun network-streaming-client-connection-3 (server-streamer-node
+                                              connection
                                               connecting-streamer-node-name
                                               any-node?)
   (let ((streamer-node
          (or (find-streamer-node connecting-streamer-node-name)
              (when any-node?
                (create-connecting-streamer-node
-                connecting-streamer-node-name connection)))))
+                server-streamer-node
+                connecting-streamer-node-name 
+                connection)))))
     (cond
      (streamer-node
       (let ((streamer (streamer-of streamer-node))
@@ -368,12 +378,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun network-streaming-client-connection-2 (local-streamer-node connection
+(defun network-streaming-client-connection-2 (server-streamer-node connection
                                               authentication-form)
   (destructuring-bind (client version passphrase 
                        connecting-streamer-node-name)
       authentication-form
-    (let ((authorized-nodes (authorized-nodes-of local-streamer-node))
+    (let ((authorized-nodes (authorized-nodes-of server-streamer-node))
           (any-node? nil))
       (cond 
        ((and (eq client ':gbbopen)
@@ -383,20 +393,23 @@
                    (setf any-node? 't))
                  (member connecting-streamer-node-name authorized-nodes
                          :test #'equalp))
-             (validate-passphrase passphrase local-streamer-node))
+             (validate-passphrase passphrase server-streamer-node))
         (network-streaming-client-connection-3
-         connection connecting-streamer-node-name any-node?))
+         server-streamer-node 
+         connection 
+         connecting-streamer-node-name
+         any-node?))
        (t (warn "Authorization failure: ~s" authentication-form))))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun network-streaming-client-connection (local-streamer-node connection)
+(defun network-streaming-client-connection (server-streamer-node connection)
   (let ((authentication-form (safe-read connection)))
     (cond
      ((and (consp authentication-form)
            (=& (length authentication-form) 4))
       (network-streaming-client-connection-2
-       local-streamer-node connection authentication-form))
+       server-streamer-node connection authentication-form))
      (t (warn "Protocol failure: ~s" authentication-form)))))
 
 ;;; ---------------------------------------------------------------------------
