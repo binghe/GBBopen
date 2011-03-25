@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Mar 24 04:14:07 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Mar 25 04:39:39 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -28140,55 +28140,6 @@ Add full mirroring of \code{hyp} \nobr{\glref{unit~instances}} to
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Generic~Function}{beginning-queued-read}{\var{tag}}
-\index{streamer!reading queued block}%
-
-\fnsyntax 
-
-\fnpurpose Perform initialization activities associated with reading a
-queued-streamer block.
-
-\fnmethods
-\fnalternate{beginning-queued-read}{\code{(}\var{tag\/} \code{t)}}
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:streaming}
-
-\fnargs
-\begin{args}{tag}
-\arg[tag] An object
-\end{args}
-
-\fndescription 
-%
-\textbf{Beginning-queued-read} is called when the start of a queued-streamer
-block is read; it should not be called directly.
-
-\begin{alsos}{with-queued-streaming}
-\also[ending-queued-read]
-\also[with-queued-streaming]
-\also[write-streamer-queue]
-\end{alsos}
-
-\fnexample
-\bfindexit{full-date-and-time}%
-% 
-Write a method that prints the time a queued-streamer block was started
-(recorded as the block's \var{tag\/}) when the block is read from a
-\glref{journal} file or \glref{network-streamer} connection:
-%
-\W\supp
-\begin{example}
-  (defmethod beginning-queued-read ((tag integer))
-    (format t "~&;; Reading block started at ~a...~\%"
-              (\entlink{full-date-and-time} tag)))
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
 \begin{functiondoc}{Function}{clear-streamer-queue}{\var{streamer}}
 \index{streamer queue!clearing}%
 
@@ -28218,57 +28169,6 @@ Clear \glref{streamer} \code{*streamer*}:
 \W\supp
 \begin{example}
   (clear-streamer-queue *streamer* :tag (get-universal-time))
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
-
-\begin{functiondoc}{Generic~Function}{ending-queued-read}{\var{tag}}
-\index{streamer!reading queued block}%
-
-\fnsyntax 
-
-\fnpurpose Perform completion activities associated with reading a
-queued-streamer block.
-
-\fnmethods
-\fnalternate{ending-queued-read}{\code{(}\var{tag\/} \code{t)}}
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:streaming}
-
-\fnargs
-\begin{args}{tag}
-\arg[tag] An object
-\end{args}
-
-\fndescription 
-%
-\textbf{Ending-queued-read} is called when the end of a queued-streamer block
-is read; it should not be called directly.  It will always be called with the
-same (but not necessarily \code{eq}) \var{tag\/} value as the corresponding
-\nobr{\textbf{\entlink{beginning-queued-read}}}. The matching
-\nobr{\textbf{ending-queued-read}} will not be called if reading of the
-queued-streamer block is not completed due to error (such as a premature
-ending of the input stream).
-
-\begin{alsos}{with-queued-streaming}
-\also[beginning-queued-read]
-\also[with-queued-streaming]
-\also[write-streamer-queue]
-\end{alsos}
-
-\fnexample
-% 
-Write a method that prints a notice when an empty queued-streamer block
-(tagged with the \var{tag\/} \code{:empty}) has been read:
-%
-\W\supp
-\begin{example}
-  (defmethod ending-queued-read ((tag (eql ':empty)))
-    (format t "~&;; An empty queued-streamer block was read.~\%"))
 \end{example}
 
 \end{functiondoc}
@@ -28351,6 +28251,71 @@ Write a method that prints a notice when an empty queued-streamer block
 % \end{example}
 
 % \end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Generic~Function}{queued-streaming-block-reader}%
+  {\var{tag string-stream}}
+\index{streamer!reading queued-streaming block}%
+
+\fnsyntax 
+
+\fnpurpose Reads a queued-streaming block.
+
+\fnmethods
+\fnalternate{queued-streaming-block-reader}%
+  {\code{(}\var{tag\/} \code{t)} \var{string-stream}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{tag}
+\arg[tag] An object
+\arg[string-stream] An input string stream
+\end{args}
+
+\fndescription 
+%
+\textbf{Queued-streaming-block-reader} is called when a queued-streaming block
+is read; it should not be called directly.
+
+\begin{alsos}{with-queued-streaming}
+\also[with-queued-streaming]
+\also[write-streamer-queue]
+\end{alsos}
+
+\fnexamples
+\bfindexit{full-date-and-time}%
+% 
+Write a method that prints the time a queued-streaming block was started
+(recorded as the block's \var{tag\/}) when the block is read from a
+\glref{journal} file or \glref{network-streamer} connection:
+%
+\W\supp
+\begin{example}
+  (defmethod queued-streaming-block-reader :around ((tag integer)
+                                                    string-stream)
+    (declare (ignorable string-stream))
+    (format t "~&;; Reading ~a queued-streaming block...~\%"
+              (\entlink{full-date-and-time} tag))
+    (call-next-method)
+    (format t "~&;; Reading queued-streaming block completed.~\%"))
+\end{example}
+
+Write a method that prints a notice when an empty queued-streaming block
+(tagged with the \var{tag\/} \code{:empty}) has been read:
+%
+\W\supp
+\begin{example}
+  (defmethod queued-streaming-block-reader :after ((tag (eql ':empty))
+                                                  string-stream)
+    (declare (ignorable string-stream))
+    (format t "~&;; An empty queued-streaming block was read.~\%"))
+\end{example}
+
+\end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
@@ -29178,15 +29143,13 @@ marked with the \var{tag\/} value.  Queued streaming is \glref{thread-local}
 
 If the value of \var{write-empty-queue-p\/} is true, the streamer queue is
 written even if it is empty (and
-\nobr{\textbf{\entlink{beginning-queued-read}}} and
-\nobr{\textbf{\entlink{ending-queued-read}}} will be called with the
-\var{tag\/} value when the empty queue is received at a
+\nobr{\textbf{\entlink{queued-streaming-block-reader}}} will be called with
+the \var{tag\/} value when the empty queue is received at a
 \nobr{\glref{streamer~node}} or read during \glref{journal} loading).
 
-\begin{alsos}{beginning-queued-read}
-\also[beginning-queued-read]
+\begin{alsos}{queued-streaming-block-reader}
 \also[clear-streamer-queue]
-\also[ending-queued-read]
+\also[queued-streaming-block-reader]
 \also[write-streamer-queue]
 \end{alsos}
 
@@ -29247,10 +29210,9 @@ further queueing.
 \arg[write-empty-queue-p] A \glref{generalized~boolean} (default is \nil)
 \end{args}
 
-\begin{alsos}{with-queued-streaming}
-\also[beginning-queued-read]
+\begin{alsos}{queued-streaming-block-reader}
 \also[clear-streamer-queue]
-\also[ending-queued-read]
+\also[queued-streaming-block-reader]
 \also[with-queued-streaming]
 \end{alsos}
 

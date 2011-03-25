@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 04:15:29 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 24 17:54:10 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -43,6 +43,9 @@
 (add-mirroring *streamer* 'standard-space-instance)
 (add-mirroring *streamer* 'path)
 (add-mirroring *streamer* 'location)
+
+;; Write an empty queue:
+(with-queued-streaming (*streamer* ':empty 't))
 
 ;; Generate some data, writing everything as a single queued block:
 (with-queued-streaming (*streamer* ':tutorial)

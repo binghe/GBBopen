@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave2.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 24 02:32:11 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 25 04:11:27 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -56,15 +56,12 @@
 (define-class link-ptr-with-value (standard-link-pointer)
   ((value :initform nil)))
 
-;; Silly queued-reception methods:
-(defmethod beginning-queued-read ((tag (eql ':tutorial)))
-  (format t "~&;; Beginning ~s queued receive...~%" tag))
-(defmethod ending-queued-read ((tag (eql ':tutorial)))
-  (format t "~&;; Ending ~s queued receive.~%" tag))
-(defmethod beginning-queued-read ((tag t))
-  (format t "~&;; Beginning ~a receive...~%" tag))
-(defmethod ending-queued-read ((tag t))
-  (format t "~&;; Ending ~a receive.~%" tag))
+;; Silly queued-streaming-block-reader method:
+(defmethod queued-streaming-block-reader :around ((tag t) string-stream)
+  (declare (ignorable string-stream))
+  (format t "~&;; Beginning queued ~a reading...~%" tag)
+  (call-next-method)
+  (format t "~&;; Ending queued ~a reading.~%" tag))
 
 ;; Silly command-form method:
 (defmethod handle-streamed-command-form (streamer (command (eql ':print)) &rest args)
