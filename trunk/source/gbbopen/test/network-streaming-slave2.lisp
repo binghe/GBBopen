@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave2.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 25 10:53:19 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 25 11:44:22 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -40,7 +40,8 @@
     :host "127.0.0.1"
     :port (1- *default-network-stream-server-port*)
     :package ':common-lisp
-    :authorized-nodes ':any)
+    :authorized-nodes ':any
+    :accepted-streamer-node-initargs '(:package :gbbopen))
 
 ;; The master host:
 (define-streamer-node "master"
