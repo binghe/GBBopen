@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 24 04:12:25 2011 *-*
+;;;; *-* Last-Edit: Fri Mar 25 10:08:08 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -132,9 +132,11 @@
   (call-next-method)
   (when (slot-boundp streamer 'streamer-node)
     (let ((streamer-node (streamer-node-of streamer)))
-      (format stream " ~a:~a"
-              (host-of streamer-node)
-              (port-of streamer-node)))))
+      (if (typep streamer-node 'streamer-node)
+          (format stream " ~a:~a"
+                  (host-of streamer-node)
+                  (port-of streamer-node))
+          (format stream " [accepted]")))))
 
 ;;; ===========================================================================
 ;;;   Network Streaming Server

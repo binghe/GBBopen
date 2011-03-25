@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Mar 25 04:39:39 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Fri Mar 25 10:52:18 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -28254,7 +28254,7 @@ Clear \glref{streamer} \code{*streamer*}:
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Generic~Function}{queued-streaming-block-reader}%
+\begin{functiondoc}{Generic~Function}{read-queued-streaming-block}%
   {\var{tag string-stream}}
 \index{streamer!reading queued-streaming block}%
 
@@ -28263,7 +28263,7 @@ Clear \glref{streamer} \code{*streamer*}:
 \fnpurpose Reads a queued-streaming block.
 
 \fnmethods
-\fnalternate{queued-streaming-block-reader}%
+\fnalternate{read-queued-streaming-block}%
   {\code{(}\var{tag\/} \code{t)} \var{string-stream}}
 
 \fnpackage \code{:gbbopen}
@@ -28278,7 +28278,7 @@ Clear \glref{streamer} \code{*streamer*}:
 
 \fndescription 
 %
-\textbf{Queued-streaming-block-reader} is called when a queued-streaming block
+\textbf{read-queued-streaming-block} is called when a queued-streaming block
 is read; it should not be called directly.
 
 \begin{alsos}{with-queued-streaming}
@@ -28295,8 +28295,8 @@ Write a method that prints the time a queued-streaming block was started
 %
 \W\supp
 \begin{example}
-  (defmethod queued-streaming-block-reader :around ((tag integer)
-                                                    string-stream)
+  (defmethod read-queued-streaming-block :around ((tag integer)
+                                                  string-stream)
     (declare (ignorable string-stream))
     (format t "~&;; Reading ~a queued-streaming block...~\%"
               (\entlink{full-date-and-time} tag))
@@ -28309,8 +28309,8 @@ Write a method that prints a notice when an empty queued-streaming block
 %
 \W\supp
 \begin{example}
-  (defmethod queued-streaming-block-reader :after ((tag (eql ':empty))
-                                                  string-stream)
+  (defmethod read-queued-streaming-block :after ((tag (eql ':empty))
+                                                 string-stream)
     (declare (ignorable string-stream))
     (format t "~&;; An empty queued-streaming block was read.~\%"))
 \end{example}
@@ -29143,13 +29143,13 @@ marked with the \var{tag\/} value.  Queued streaming is \glref{thread-local}
 
 If the value of \var{write-empty-queue-p\/} is true, the streamer queue is
 written even if it is empty (and
-\nobr{\textbf{\entlink{queued-streaming-block-reader}}} will be called with
+\nobr{\textbf{\entlink{read-queued-streaming-block}}} will be called with
 the \var{tag\/} value when the empty queue is received at a
 \nobr{\glref{streamer~node}} or read during \glref{journal} loading).
 
-\begin{alsos}{queued-streaming-block-reader}
+\begin{alsos}{read-queued-streaming-block}
 \also[clear-streamer-queue]
-\also[queued-streaming-block-reader]
+\also[read-queued-streaming-block]
 \also[write-streamer-queue]
 \end{alsos}
 
@@ -29210,9 +29210,9 @@ further queueing.
 \arg[write-empty-queue-p] A \glref{generalized~boolean} (default is \nil)
 \end{args}
 
-\begin{alsos}{queued-streaming-block-reader}
+\begin{alsos}{read-queued-streaming-block}
 \also[clear-streamer-queue]
-\also[queued-streaming-block-reader]
+\also[read-queued-streaming-block]
 \also[with-queued-streaming]
 \end{alsos}
 
@@ -29586,8 +29586,8 @@ Close the \glref{network~streamer} \code{*streamer*}:
 (default \code{"localhost"})
 \arg[port] An integer or a string specifying the service port (default
 is \nobr{\textbf{\entlink{*default-network-stream-server-port*}}})
-\arg[documentation] A documentation string or \nil (default is \nil)
-\arg[passphrase] A string or \nil (default is \nil)
+\arg[documentation] A documentation string or \nil{} (default is \nil)
+\arg[passphrase] A string or \nil{} (default is \nil)
 \arg[external-format] An external-file-format designator (default is
   \nobr{\code{:default}})
 \arg[package] A \glref{package~designator} indicating the package to be used
