@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 25 10:51:20 2011 *-*
+;;;; *-* Last-Edit: Sun Mar 27 15:02:58 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -301,6 +301,26 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun %on-each-constituent-streamer (fn broadcast-streamer)
+  ;; MAJOR HACK: Until robust broadcast streams are provided, write each
+  ;; constituent streamer separately, catching write errors and closing the
+  ;; constituent:
+  (dolist (constituent-streamer (streamers-of broadcast-streamer))
+    (with-error-handling (funcall fn constituent-streamer)
+      (remove-from-broadcast-streamer constituent-streamer broadcast-streamer)
+      (let ((*print-readably* nil))
+        (princ (error-message) *error-output*)
+        (terpri *error-output*)
+        (let ((connection (stream-of constituent-streamer)))
+          (when (and (streamp connection) (open-stream-p connection))
+            (format *error-output* 
+                    "~&;; Closing ~s due to write error...~%"
+                    connection)
+            (force-output *error-output*)
+            (close connection)))))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun %do-with-streamer-stream (streamer body-form-fn)
   (when (closed-of streamer)
     (error 'streamer-error :streamer streamer))
@@ -318,19 +338,43 @@
         (setf *package* (package-of streamer))
         (setf *read-default-float-format* 
               (read-default-float-format-of streamer))
-        (flet ((do-it ()
-                 (if streamer-queue
-                     ;; queued streaming:
+        (flet
+            ((do-it ()
+               (if streamer-queue
+                   ;; queued streaming:
+                   (let ((*recorded-class-descriptions-ht* 
+                          (streamer-queue.recorded-class-descriptions-ht
+                           streamer-queue)))
+                     (funcall body-form-fn 
+                              (streamer-queue.stream streamer-queue)))
+                   ;; regular streaming:
+                   (with-lock-held ((lock-of streamer))
                      (let ((*recorded-class-descriptions-ht* 
-                            (streamer-queue.recorded-class-descriptions-ht
-                             streamer-queue)))
-                       (funcall body-form-fn (streamer-queue.stream streamer-queue)))
-                     ;; regular streaming:
-                     (with-lock-held ((lock-of streamer))
-                       (let ((*recorded-class-descriptions-ht* 
-                              (recorded-class-descriptions-ht-of streamer-for-writing))
-                             (stream (stream-of streamer-for-writing)))
-                         (funcall body-form-fn stream) (force-output stream))))))
+                            (recorded-class-descriptions-ht-of 
+                             streamer-for-writing))
+                           (stream (stream-of streamer-for-writing)))
+                       (cond 
+                        ;; broadcast, non-queued streaming; formst to
+                        ;; string-stream and then write each constituent
+                        ;; streamer separately:
+                        (broadcast-streamer
+                         (let ((string-stream (make-string-output-stream)))
+                           (funcall body-form-fn string-stream)
+                           (let ((string 
+                                  (get-output-stream-string string-stream)))
+                             (flet
+                                 ((write-it (constituent-streamer)
+                                    (let ((stream
+                                           (stream-of constituent-streamer)))
+                                      (write-sequence string stream)
+                                      (force-output stream))))
+                               (declare (dynamic-extent #'write-it))
+                               (%on-each-constituent-streamer 
+                                #'write-it broadcast-streamer)))))
+                        ;; non-broadcast, non-queued streaming:
+                        (t (funcall body-form-fn stream)))
+                       ;; Flush the non-queued output:
+                       (force-output stream))))))
           ;; Quick & dirty handling of stream errors -- timeout checks and
           ;; notifying other endpoint needed!!
           (with-error-handling ((do-it) :conditions 'stream-error)
@@ -468,21 +512,11 @@
                          (%merge-recorded-class-descriptions-hts 
                           queued-ht streamer-ht)))))))))
         (if (typep streamer 'broadcast-streamer)
-            ;; MAJOR QUICK&DIRTY HACK: write each constituent streamer
-            ;; separately, catching write errors and closing the constituent:
-            (dolist (constituent-streamer (streamers-of streamer))
-              (with-error-handling (write-it streamer constituent-streamer)
-                (remove-from-broadcast-streamer constituent-streamer streamer)
-                (let ((*print-readably* nil))
-                  (princ (error-message) *error-output*)
-                  (terpri *error-output*)
-                  (let ((connection (stream-of constituent-streamer)))
-                    (when (and (streamp connection) (open-stream-p connection))
-                      (format *error-output* 
-                              "~&;; Closing ~s due to write error...~%"
-                              connection)
-                      (force-output *error-output*)
-                      (close connection))))))
+            ;; Write each constituent streamer separately:
+            (flet ((do-it (constituent-streamer) 
+                     (write-it streamer constituent-streamer)))
+              (declare (dynamic-extent #'do-it))
+              (%on-each-constituent-streamer #'do-it streamer))
             (write-it 
              ;; If the streamer is a constituent of a broadcast-streamer
              ;; use the broadcast-streamer's lock:
@@ -696,6 +730,12 @@
   (declare (ignorable streamer))
   (error "Unhandled streamed command: ~s" command))
          
+;;; ---------------------------------------------------------------------------
+;;;  Restartable reader
+
+(defun restartable-reader (stream eof-marker)
+  (read stream nil eof-marker))
+
 ;;; ===========================================================================
 ;;;  Queued block methods
 
@@ -706,7 +746,7 @@
   (unwind-protect
       ;; Read the queue-block:
       (let ((eof-marker '#:eof))
-        (until (eq eof-marker (read string-stream nil eof-marker))))
+        (until (eq eof-marker (restartable-reader string-stream eof-marker))))
     (ending-queued-read tag)))          ; Remove soon!
 
 (defgeneric beginning-queued-read (tag)) ; Remove soon!
@@ -1102,7 +1142,7 @@
           ;; Read everything:
           (let ((eof-marker '#:eof)
                 (counter 0))
-            (until (eq eof-marker (read stream nil eof-marker))
+            (until (eq eof-marker (restartable-reader stream eof-marker))
               ;; Load percentage hooks:
               (when *journal-load-percentage-hook-functions*
                 (unless (plusp& (decf& counter))

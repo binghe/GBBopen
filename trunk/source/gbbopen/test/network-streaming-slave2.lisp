@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave2.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 25 11:44:22 2011 *-*
+;;;; *-* Last-Edit: Sun Mar 27 15:14:38 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -53,6 +53,9 @@
 #+IF-DEBUGGING
 (setf gbbopen:*break-on-receive-errors* 't)
 
+;; Define the bogus package at slave2 (so only slave has a reading issue):
+(make-package ':bogus)
+
 ;; Define a link pointer:
 (define-class link-ptr-with-value (standard-link-pointer)
   ((value :initform nil)))
@@ -73,7 +76,7 @@
   (declare (ignorable streamer) (ignore args))
   (format t "~&;; Package: ~s ~%" *package*))
 
-;; A more useful command-form method:
+;; A still more useful command-form method:
 (defmethod handle-streamed-command-form (streamer 
                                          (command (eql ':disable-event-printing))
                                          &rest args)

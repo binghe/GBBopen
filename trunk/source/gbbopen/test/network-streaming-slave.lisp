@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 25 10:53:08 2011 *-*
+;;;; *-* Last-Edit: Sun Mar 27 15:05:12 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -72,7 +72,7 @@
   (declare (ignorable streamer) (ignore args))
   (format t "~&;; Package: ~s ~%" *package*))
 
-;; A more useful command-form method:
+;; A still more useful command-form method:
 (defmethod handle-streamed-command-form (streamer 
                                          (command (eql ':disable-event-printing))
                                          &rest args)
