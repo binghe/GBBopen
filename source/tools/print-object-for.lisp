@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 28 07:40:55 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 24 04:17:18 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -126,7 +126,7 @@
       (unless present-p
         (error "Class ~s has not been recorded in this saving/sending block"
                class-name))
-      (format stream "#GD(~s" class-name)
+      (format stream "~&#GD(~s" class-name)
       (dolist (slot slots-for-saving/sending)
         (let ((slot-name (slot-definition-name slot)))
           (format stream " ~s" slot-name)))
@@ -343,7 +343,7 @@
 ;;;  Classes (references only)
 
 (defmethod print-object-for-saving/sending ((class standard-class) stream)
-  (format stream "#GC(~s)" (class-name class))
+  (format stream "~&#GC(~s)" (class-name class))
   class)
 
 ;;; ---------------------------------------------------------------------------
@@ -365,7 +365,7 @@
           ;; performing the check for built-in-class instances:
           't))
         (class (class-of instance)))
-    (format stream "#GI(~s" (type-of instance))
+    (format stream "~&#GI(~s" (type-of instance))
     (dolist (slot slots-for-saving/sending)
       (write-char #\space stream)      
       (if (slot-boundp-using-class class instance slot)
@@ -418,7 +418,7 @@
 ;;;  Packages (references only)
 
 (defmethod print-object-for-saving/sending ((package package) stream)
-  (format stream "#GP(~s)" (package-name package))
+  (format stream "~&#GP(~s)" (package-name package))
   package)
 
 ;;; ---------------------------------------------------------------------------

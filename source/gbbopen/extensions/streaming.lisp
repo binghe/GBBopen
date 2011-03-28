@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 28 07:48:50 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 28 14:59:24 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -766,16 +766,11 @@
   ;; Skip the opening parenthesis:
   (read-char stream 't nil 't)
   (let* ((tag (read stream 't nil 't))
-         (length (read stream 't nil 't))
+         (length (read-preserving-whitespace stream))
          (block-string (make-string length)))
-    ;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    ;; Care must be taken as to the stream position after reading the length
-    ;; value (above) -- CLISP and Clozure CL eat the space (even using
-    ;; READ-PRESERVING-WHITESPACE).  So, we just READ and then skip any
-    ;; whitespace to be certain:
-    (peek-char 't stream)
-    ;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    (read-sequence block-string stream)
+    (unless (zerop& length)
+      (read-char stream)                ; skip the space following the length
+      (read-sequence block-string stream))
     (read-queued-streaming-block tag (make-string-input-stream block-string)))
   ;; Skip the closing parenthesis:
   (read-char stream 't nil 't))
@@ -849,7 +844,7 @@
 
 (defun stream-nonlink-slot-update (instance slot/slot-name new-value streamer)
   (%with-streamer-stream (stream streamer)
-    (format stream "#GS(~s " (type-of instance))
+    (format stream "~&#GS(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " (if (symbolp slot/slot-name)
                               slot/slot-name
