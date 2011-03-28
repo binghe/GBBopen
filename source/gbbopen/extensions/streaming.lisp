@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 28 14:59:24 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 28 15:10:39 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -479,14 +479,14 @@
                 ((zerop& (length string))
                  (when (streamer-queue.write-empty-queue-p streamer-queue)
                    (with-lock-held ((lock-of streamer-for-locking))
-                     (princ "#GQ(" stream)
+                     (princ "~&#GQ(" stream)
                      (write-sequence 
                       (streamer-queue.tag-string streamer-queue) stream)
                      (format stream " 0)")
                      (force-output stream))))
                 ;; Non-empty queue:
                 (t (with-lock-held ((lock-of streamer-for-locking))
-                     (princ "#GQ(" stream)
+                     (princ "~&#GQ(" stream)
                      (write-sequence 
                       (streamer-queue.tag-string streamer-queue) stream)
                      (format stream " ~s " (length string))
@@ -833,7 +833,7 @@
 
 (defun stream-delete-instance (instance streamer)
   (%with-streamer-stream (stream streamer)
-    (format stream "#GX(~s "
+    (format stream "~&#GX(~s "
             (if (typep instance 'deleted-unit-instance)
                 (class-name (original-class-of instance))
                 (type-of instance)))
@@ -865,7 +865,7 @@
 (defun stream-link (instance slot/slot-name other-instances streamer)
   (when other-instances
     (%with-streamer-stream (stream streamer)
-      (format stream "#G+(~s " (type-of instance))
+      (format stream "~&#G+(~s " (type-of instance))
       (print-object-for-saving/sending (instance-name-of instance) stream)
       (format stream " ~s " (if (symbolp slot/slot-name)
                                 slot/slot-name
@@ -878,7 +878,7 @@
 (defun stream-unlink (instance slot/slot-name other-instances streamer)
   (when other-instances
     (%with-streamer-stream (stream streamer)
-      (format stream "#G-(~s " (type-of instance))
+      (format stream "~&#G-(~s " (type-of instance))
       (print-object-for-saving/sending (instance-name-of instance) stream)
       (format stream " ~s " (if (symbolp slot/slot-name)
                                 slot/slot-name
@@ -893,7 +893,7 @@
     (setf space-instance 
           (find-space-instance-by-path space-instance ':with-error)))
   (%with-streamer-stream (stream streamer)
-    (format stream "#Ga(~s " (type-of instance))
+    (format stream "~&#Ga(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " (type-of space-instance))
     (print-object-for-saving/sending (instance-name-of space-instance) stream)
@@ -913,7 +913,7 @@
     (setf space-instance 
           (find-space-instance-by-path space-instance ':with-error)))
   (%with-streamer-stream (stream streamer)
-    (format stream "#Gr(~s " (type-of instance))
+    (format stream "~&#Gr(~s " (type-of instance))
     (print-object-for-saving/sending (instance-name-of instance) stream)
     (format stream " ~s " (type-of space-instance))
     (print-object-for-saving/sending (instance-name-of space-instance) stream)
@@ -929,7 +929,7 @@
 
 (defun stream-command-form (form streamer)
   (%with-streamer-stream (stream streamer)
-    (format stream "#G.(")
+    (format stream "~&#G.(")
     (print-object-for-saving/sending form stream)
     (princ ")" stream)))
 
