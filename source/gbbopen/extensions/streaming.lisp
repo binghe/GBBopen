@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 27 15:02:58 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 28 07:48:50 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -734,7 +734,12 @@
 ;;;  Restartable reader
 
 (defun restartable-reader (stream eof-marker)
-  (read stream nil eof-marker))
+  #-SOON
+  (read stream nil eof-marker)
+  #+SOON
+  (restart-case (read stream nil eof-marker)
+    (ignore-value () nil)
+    (use-value (value) value)))
 
 ;;; ===========================================================================
 ;;;  Queued block methods
@@ -763,6 +768,13 @@
   (let* ((tag (read stream 't nil 't))
          (length (read stream 't nil 't))
          (block-string (make-string length)))
+    ;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ;; Care must be taken as to the stream position after reading the length
+    ;; value (above) -- CLISP and Clozure CL eat the space (even using
+    ;; READ-PRESERVING-WHITESPACE).  So, we just READ and then skip any
+    ;; whitespace to be certain:
+    (peek-char 't stream)
+    ;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     (read-sequence block-string stream)
     (read-queued-streaming-block tag (make-string-input-stream block-string)))
   ;; Skip the closing parenthesis:
