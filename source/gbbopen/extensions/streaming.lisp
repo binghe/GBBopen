@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 28 15:10:39 2011 *-*
+;;;; *-* Last-Edit: Mon Mar 28 22:00:41 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -479,14 +479,14 @@
                 ((zerop& (length string))
                  (when (streamer-queue.write-empty-queue-p streamer-queue)
                    (with-lock-held ((lock-of streamer-for-locking))
-                     (princ "~&#GQ(" stream)
+                     (format stream "~&#GQ(")
                      (write-sequence 
                       (streamer-queue.tag-string streamer-queue) stream)
                      (format stream " 0)")
                      (force-output stream))))
                 ;; Non-empty queue:
                 (t (with-lock-held ((lock-of streamer-for-locking))
-                     (princ "~&#GQ(" stream)
+                     (format stream "~&#GQ(")
                      (write-sequence 
                       (streamer-queue.tag-string streamer-queue) stream)
                      (format stream " ~s " (length string))
