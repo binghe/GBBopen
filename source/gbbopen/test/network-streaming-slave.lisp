@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 29 19:16:29 2011 *-*
+;;;; *-* Last-Edit: Tue Mar 29 19:21:59 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -98,6 +98,12 @@
 ;; Don't warn that the Agenda Shell isn't running to process trigger events on
 ;; received goodies:
 (setf *warn-about-unusual-requests* nil)
+
+;; Define a "close" handler:
+#+USE-SKIP-FORM-RESTART
+(defmethod handle-stream-input-error ((condition error) stream)
+  (declare (ignorable stream))
+  (invoke-restart (find-restart 'close)))
 
 ;; Define a "skip-form" handler:
 (defmethod handle-stream-input-error ((condition error) stream)
