@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 27 15:05:12 2011 *-*
+;;;; *-* Last-Edit: Tue Mar 29 19:16:29 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -47,10 +47,6 @@
     :port (1+ (port-of (find-streamer-node "slave")))
     :read-default-float-format 'long-float
     :package ':gbbopen)
-
-;; Help 
-#+IF-DEBUGGING
-(setf gbbopen:*break-on-receive-errors* 't)
 
 ;; Define a link pointer:
 (define-class link-ptr-with-value (standard-link-pointer)
@@ -102,6 +98,11 @@
 ;; Don't warn that the Agenda Shell isn't running to process trigger events on
 ;; received goodies:
 (setf *warn-about-unusual-requests* nil)
+
+;; Define a "skip-form" handler:
+(defmethod handle-stream-input-error ((condition error) stream)
+  (declare (ignorable stream))
+  (invoke-restart (find-restart 'skip-form)))
 
 ;; Prepare to receive from the master:
 (defparameter *network-stream-server* (start-network-stream-server "slave"))

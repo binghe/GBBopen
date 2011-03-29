@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 27 15:15:01 2011 *-*
+;;;; *-* Last-Edit: Tue Mar 29 19:09:54 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -163,7 +163,10 @@
   (stream-command-form `(:print ,(intern "ERRORFUL" package)) 
                        *broadcast-streamer*))
 
-;; Send a silly command:
+;; Send the recovered command:
+(stream-command-form '(:print "Recovered correctly!") *broadcast-streamer*)
+
+;; Send "all done" command:
 (stream-command-form '(:print "All done!") *broadcast-streamer*)
 
 ;; Close the broadcast streamer:

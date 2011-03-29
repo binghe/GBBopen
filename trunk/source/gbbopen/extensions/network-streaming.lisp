@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 26 09:48:55 2011 *-*
+;;;; *-* Last-Edit: Tue Mar 29 16:14:22 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -34,8 +34,7 @@
   (import '(gbbopen-tools::write-saving/sending-block-info)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(*break-on-receive-errors*   ; not yet documented
-            *default-network-stream-server-port* ; not yet documented
+  (export '(*default-network-stream-server-port* ; not yet documented
             *remove-mirroring-when-streamer-closes* ; not yet documented
             close-network-streamer      ; deprecated, use CLOSE-STREAMER
             define-streamer-node
@@ -144,13 +143,12 @@
 ;;;   Network Streaming Server
 
 (defparameter *network-stream-format-version* 1)
-(defvar *break-on-receive-errors* nil)
 (defvar *remove-mirroring-when-streamer-closes* 't)
 
 ;;; ---------------------------------------------------------------------------
 
 (defun safe-read (connection eof-marker)
-  (with-error-handling (restartable-reader connection eof-marker)
+  (with-error-handling (read connection nil eof-marker)
     (format t "~&;; Read error occurred: ~a~%" (error-message))
     ':error))
 
@@ -253,23 +251,21 @@
         *queued-read-tag*
         form
         (eof-marker '#:eof))
-    (loop
-      (setf form 
-            (if *break-on-receive-errors*
-                (restartable-reader connection eof-marker)
-                (safe-read connection eof-marker)))
-      (cond
-       ((eq form eof-marker) (return nil))
-       ((eq form ':error)
-        (format *trace-output* "~&;; Read error: ~s~%" form)
-        (force-output *trace-output*)
-        (when (>=& (incf& contiguous-errors) maximum-contiguous-errors)
-          (format *trace-output* "~&;; Maximum contiguous errors exceeded; ~
-                                       closing connection ~s.~%"
-                  connection)
+    (catch 'close-stream
+      (loop
+        (setf form (restartable-reader connection eof-marker))
+        (cond
+         ((eq form eof-marker) (return nil))
+         ((eq form ':error)
+          (format *trace-output* "~&;; Read error: ~s~%" form)
           (force-output *trace-output*)
-          (return ':error)))
-       (t (setf contiguous-errors 0))))))
+          (when (>=& (incf& contiguous-errors) maximum-contiguous-errors)
+            (format *trace-output* "~&;; Maximum contiguous errors exceeded; ~
+                                       closing connection ~s.~%"
+                    connection)
+            (force-output *trace-output*)
+            (return ':error)))
+         (t (setf contiguous-errors 0)))))))
   
 ;;; ---------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave2.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 27 15:14:38 2011 *-*
+;;;; *-* Last-Edit: Tue Mar 29 16:14:57 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -48,10 +48,6 @@
     :port (1+ *default-network-stream-server-port*)
     :read-default-float-format 'long-float
     :package ':gbbopen)
-
-;; Help 
-#+IF-DEBUGGING
-(setf gbbopen:*break-on-receive-errors* 't)
 
 ;; Define the bogus package at slave2 (so only slave has a reading issue):
 (make-package ':bogus)
