@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Mar 28 22:00:41 2011 *-*
+;;;; *-* Last-Edit: Tue Mar 29 19:16:16 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -48,6 +48,7 @@
             ending-queued-read          ; remove soon!
             handle-streamed-command-atom ; not yet documented
             handle-streamed-command-form ; not yet documented
+            handle-stream-input-error   ; not yet documented
             journal-streamer            ; class-name (not yet documented)
             load-journal
             make-broadcast-streamer
@@ -56,6 +57,7 @@
             read-queued-streaming-block
             remove-from-broadcast-streamer ; not yet documented
             remove-mirroring
+            skip-form                   ; restart; not yet documented
             stream-command-form         ; not yet documented
             stream-add-instance-to-space-instance
             stream-add-to-space         ; old name, remove soon
@@ -733,13 +735,37 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Restartable reader
 
-(defun restartable-reader (stream eof-marker)
-  #-SOON
-  (read stream nil eof-marker)
-  #+SOON
-  (restart-case (read stream nil eof-marker)
-    (ignore-value () nil)
-    (use-value (value) value)))
+(defun skip-stream-input-form (stream)
+  (let (form)
+    (loop (setf form (read-char stream nil nil))
+      (when (or (null form)
+                (char= form #\newline))
+        (return nil)))))
+
+;;; ---------------------------------------------------------------------------
+
+(defgeneric handle-stream-input-error (condition stream))
+
+(defmethod handle-stream-input-error (condition stream)
+  (declare (ignore stream))
+  (break condition))  
+
+;;; ---------------------------------------------------------------------------
+
+(defun restartable-reader (input-stream eof-marker)
+  (with-error-handling 
+      ((restart-case (read input-stream nil eof-marker)
+         (skip-form () 
+             :report "Skip the offending input form"
+           (skip-stream-input-form input-stream)
+           nil)
+         (close ()
+             :report (lambda (stream)
+                       (format stream "Close the input stream ~s" 
+                               input-stream))
+           (throw 'close-stream ':error)))
+       ;; Handler
+       (handle-stream-input-error (error-condition) input-stream))))
 
 ;;; ===========================================================================
 ;;;  Queued block methods
@@ -1149,15 +1175,16 @@
           ;; Read everything:
           (let ((eof-marker '#:eof)
                 (counter 0))
-            (until (eq eof-marker (restartable-reader stream eof-marker))
-              ;; Load percentage hooks:
-              (when *journal-load-percentage-hook-functions*
-                (unless (plusp& (decf& counter))
-                  (setf counter *journal-load-percentage-reads-per-update*)
-                  (let ((load-percentage 
-                         (round (file-position stream) journal-length/100)))
-                    (dolist (fn *journal-load-percentage-hook-functions*)
-                      (funcall fn stream load-percentage))))))))
+            (catch 'close-stream
+              (until (eq eof-marker (restartable-reader stream eof-marker))
+                ;; Load percentage hooks:
+                (when *journal-load-percentage-hook-functions*
+                  (unless (plusp& (decf& counter))
+                    (setf counter *journal-load-percentage-reads-per-update*)
+                    (let ((load-percentage 
+                           (round (file-position stream) journal-length/100)))
+                      (dolist (fn *journal-load-percentage-hook-functions*)
+                        (funcall fn stream load-percentage)))))))))
         ;; Return the pathname, saved/sent-time, and saved/sent-value:
         (values (pathname stream)
                 *block-saved/sent-time* 

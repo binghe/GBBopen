@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Mar 27 15:16:54 2011 *-*
+;;;; *-* Last-Edit: Tue Mar 29 15:43:46 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -137,7 +137,14 @@
  (find-space-instance-by-path '(known-world))
  *streamer*)
 
-;; Send a silly command:
+;; Send a problematic command:
+(let ((package (make-package ':bogus)))
+  (stream-command-form `(:print ,(intern "ERRORFUL" package)) *streamer*))
+
+;; Send the recovered command:
+(stream-command-form '(:print "Recovered correctly!") *streamer*)
+
+;; Send "all done" command:
 (stream-command-form '(:print "All done!") *streamer*)
 
 ;;; ===========================================================================
