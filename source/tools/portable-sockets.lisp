@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 26 10:04:47 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 30 18:06:53 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -776,9 +776,12 @@
          (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
                 dotted
-                (let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
+                (let ((resolved 
+                       ;; CCL can error here:
+                       (ignore-errors (ccl:ipaddr-to-hostname ipaddr))))
                   (if resolved
-                      (format nil "~a (~a)" dotted resolved))))
+                      (format nil "~a (~a)" dotted resolved)
+                      dotted)))
             (ccl:local-port connection)))
   #+cmu
   (let ((fd (sys:fd-stream-fd connection)))
@@ -865,7 +868,9 @@
          (dotted (ccl:ipaddr-to-dotted ipaddr)))
     (values (if do-not-resolve
                 dotted
-                (let ((resolved (ccl:ipaddr-to-hostname ipaddr)))
+                (let ((resolved
+                       ;; CCL can error here:
+                       (ignore-errors (ccl:ipaddr-to-hostname ipaddr))))
                   (if resolved
                       (format nil "~a (~a)" dotted resolved)
                       dotted)))
