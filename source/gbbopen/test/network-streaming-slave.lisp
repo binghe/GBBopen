@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 29 19:21:59 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 30 09:47:33 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -103,12 +103,12 @@
 #+USE-SKIP-FORM-RESTART
 (defmethod handle-stream-input-error ((condition error) stream)
   (declare (ignorable stream))
-  (invoke-restart (find-restart 'close)))
+  (invoke-close-stream-restart))
 
 ;; Define a "skip-form" handler:
 (defmethod handle-stream-input-error ((condition error) stream)
   (declare (ignorable stream))
-  (invoke-restart (find-restart 'skip-form)))
+  (invoke-skip-form-restart))
 
 ;; Prepare to receive from the master:
 (defparameter *network-stream-server* (start-network-stream-server "slave"))

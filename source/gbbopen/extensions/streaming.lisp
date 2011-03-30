@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 29 19:16:16 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 30 09:45:37 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -49,6 +49,8 @@
             handle-streamed-command-atom ; not yet documented
             handle-streamed-command-form ; not yet documented
             handle-stream-input-error   ; not yet documented
+            invoke-close-stream-restart ; not yet documented
+            invoke-skip-form-restart    ; not yet documented
             journal-streamer            ; class-name (not yet documented)
             load-journal
             make-broadcast-streamer
@@ -733,22 +735,32 @@
   (error "Unhandled streamed command: ~s" command))
          
 ;;; ---------------------------------------------------------------------------
-;;;  Restartable reader
+;;;  Restartable reader & restarts
 
 (defun skip-stream-input-form (stream)
-  (let (form)
-    (loop (setf form (read-char stream nil nil))
-      (when (or (null form)
-                (char= form #\newline))
-        (return nil)))))
+  ;;; Scan to the next Newline character, which *could* be the next
+  ;;; form.  If the in-process form contains Newlines, then spurious reader
+  ;;; errors will be generated (but it is the best that we can do).
+  (peek-char #\newline stream nil))
 
 ;;; ---------------------------------------------------------------------------
 
 (defgeneric handle-stream-input-error (condition stream))
 
+;; Default method invokes the debugger:
 (defmethod handle-stream-input-error (condition stream)
   (declare (ignore stream))
   (break condition))  
+
+;;; ---------------------------------------------------------------------------
+
+(defun invoke-skip-form-restart ()
+  (invoke-restart (find-restart 'skip-form)))
+
+;;; ---------------------------------------------------------------------------
+
+(defun invoke-close-stream-restart ()
+  (invoke-restart (find-restart 'close)))
 
 ;;; ---------------------------------------------------------------------------
 
