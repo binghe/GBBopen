@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 25 10:52:54 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 31 06:08:35 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -25,6 +25,11 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :cl-user)
+
+;; Display UTF-8 characters on *standard-output* (when the CL requires it):
+;; [NOTE: Invoke Clozure CL with -K utf-8 to set *terminal-io* to :utf-8]
+#+cmu
+(setf (stream-external-format *standard-output*) ':utf-8)
 
 ;; Compile/load GBBopen's :streaming module:
 (streaming :create-dirs)
@@ -61,7 +66,7 @@
          *journal-load-percentage-hook-functions*)
 
 ;; Load the journal:
-(load-journal "tutorial")
+(load-journal "tutorial" :external-format ':utf-8)
 
 ;; Check the results:
 (unless (find-instances 'location '(known-world) '(= time -10))

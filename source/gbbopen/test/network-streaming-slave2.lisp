@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave2.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 29 16:14:57 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 31 06:08:57 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -29,6 +29,11 @@
 
 (in-package :cl-user)
 
+;; Display UTF-8 characters on *standard-output* (when the CL requires it):
+;; [NOTE: Invoke Clozure CL with -K utf-8 to set *terminal-io* to :utf-8]
+#+cmu
+(setf (stream-external-format *standard-output*) ':utf-8)
+
 ;; Compile/load GBBopen's :network-streaming module:
 (network-streaming :create-dirs)
 
@@ -40,14 +45,18 @@
     :host "127.0.0.1"
     :port (1- *default-network-stream-server-port*)
     :package ':common-lisp
+    :external-format ':utf-8
     :authorized-nodes ':any
-    :accepted-streamer-node-initargs '(:package :gbbopen))
+    :accepted-streamer-node-initargs '(:package :gbbopen 
+                                       :external-format :utf-8))
 
 ;; The master host:
 (define-streamer-node "master"
     :port (1+ *default-network-stream-server-port*)
     :read-default-float-format 'long-float
-    :package ':gbbopen)
+    :package ':gbbopen
+    :external-format ':utf-8)
+
 
 ;; Define the bogus package at slave2 (so only slave has a reading issue):
 (make-package ':bogus)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 24 17:54:10 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 30 15:38:48 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -38,7 +38,9 @@
 
 ;; Create the journal streamer:
 (defparameter *streamer*
-    (make-journal-streamer "tutorial" :package ':tutorial))
+    (make-journal-streamer "tutorial" 
+                           :package ':tutorial
+                           :external-format ':utf-8))
 
 (add-mirroring *streamer* 'standard-space-instance)
 (add-mirroring *streamer* 'path)
@@ -128,6 +130,27 @@
 
 ;; Update a bunch of new locations:
 (time (update-a-bunch 20000))
+
+;; A UTF-8 string:
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *utf-8-string* (format nil "UTF-8 characters: ~c~c~c~c~c"
+                                       ;; Latin_Capital_Letter_E_With_Grave
+                                       (code-char 200)
+                                       ;; Latin_Capital_Letter_C_With_Caron
+                                       (code-char 268) 
+                                       ;; Latin_Small_Letter_L_With_Stroke
+                                       (code-char 322)
+                                       ;; \Latin_Small_Letter_N_With_Acute
+                                       (code-char 324)
+                                       ;; Georgian_Paragraph_Separator
+                                       (code-char #x10FB))))
+
+;; Journal some UTF-8 characters:
+(stream-command-form '(:print #.*utf-8-string*) *streamer*)
+
+;; Journal the UTF-8 characters again (with queueing):
+(with-queued-streaming (*streamer* ':utf-8)
+  (stream-command-form '(:print #.*utf-8-string*) *streamer*))
 
 ;; Journal a silly command:
 (stream-command-form '(:print "All done!") *streamer*)
