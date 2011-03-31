@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 30 09:47:33 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 31 06:07:11 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -29,6 +29,11 @@
 
 (in-package :cl-user)
 
+;; Display UTF-8 characters on *standard-output* (when the CL requires it):
+;; [NOTE: Invoke Clozure CL with -K utf-8 to set *terminal-io* to :utf-8]
+#+cmu
+(setf (stream-external-format *standard-output*) ':utf-8)
+
 ;; Compile/load GBBopen's :network-streaming module:
 (network-streaming :create-dirs)
 
@@ -40,13 +45,15 @@
     :host "127.0.0.1"
     :package ':common-lisp
     :passphrase "Open, says me!"
-    :authorized-nodes '("master"))
+    :authorized-nodes '("master")
+    :external-format ':utf-8)
 
 ;; The master host:
 (define-streamer-node "master"
     :port (1+ (port-of (find-streamer-node "slave")))
     :read-default-float-format 'long-float
-    :package ':gbbopen)
+    :package ':gbbopen
+    :external-format ':utf-8)
 
 ;; Define a link pointer:
 (define-class link-ptr-with-value (standard-link-pointer)

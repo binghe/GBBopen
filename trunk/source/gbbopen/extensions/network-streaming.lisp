@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 29 16:14:22 2011 *-*
+;;;; *-* Last-Edit: Thu Mar 31 01:56:09 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -167,7 +167,6 @@
      streamer
      ;; A new streamer is needed; try to connect to the network server:
      (let ((connection 
-            ;; TODO: ** Extend open-connection to accept external-format
             (open-connection (host-of streamer-node) (port-of streamer-node) 
                              :keepalive 't))
            (package (ensure-package (package-of streamer-node)))
@@ -185,6 +184,11 @@
          (force-output connection))
        ;; If connection is established, make and return the streamer:
        (when connection
+         ;; TODO: Handle Lispworks & SBCL external-format setting:
+         #-(or lispworks sbcl)
+         (setf (stream-external-format connection) 
+               #+allegro (excl:find-external-format external-format)
+               #-allegro external-format)
          (let ((streamer
                 (apply #'make-instance
                        (streamer-class-of streamer-node)
@@ -352,18 +356,22 @@
           (warn "Unexpected connection request from ~s: already connected"
                 connecting-streamer-node-name))
          ;; Create the streamer:
-         (t (setf (streamer-of streamer-node)
-                  (apply 
-                   #'make-instance
-                   (streamer-class-of streamer-node)
-                   :streamer-node streamer-node
-                   :lock (make-lock :name "Streamer lock")
-                   :package package
-                   :external-format (external-format-of streamer-node)
-                   :read-default-float-format read-default-float-format
-                   :stream connection
-                   :connection-thread (current-thread)
-                   nil))
+         (t (let ((external-format (external-format-of streamer-node)))
+              ;; TODO: Handle Lispworks & SBCL external-format setting:
+              #-(or lispworks sbcl)
+              (setf (stream-external-format connection) 
+                    #+allegro (excl:find-external-format external-format)
+                    #-allegro external-format)
+              (setf (streamer-of streamer-node)
+                    (make-instance
+                        (streamer-class-of streamer-node)
+                      :streamer-node streamer-node
+                      :lock (make-lock :name "Streamer lock")
+                      :package package
+                      :external-format external-format
+                      :read-default-float-format read-default-float-format
+                      :stream connection
+                      :connection-thread (current-thread))))
             ;; Transmit the particulars used in writing to the connection:
             (let ((*package* package)
                   (*read-default-float-format* read-default-float-format))

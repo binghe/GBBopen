@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 29 15:43:46 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 30 17:46:25 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -40,20 +40,23 @@
     :host "127.0.0.1"
     :passphrase "Open, says me!"
     :package ':tutorial
-    :read-default-float-format 'double-float)
+    :read-default-float-format 'double-float
+    :external-format ':utf-8)
 
 ;; The master host (me!):
 (define-streamer-node "master"
     :port (1+ (port-of (find-streamer-node "slave")))
-    :package ':cl-user)
+    :package ':cl-user
+    :external-format ':utf-8)
 
 ;; Connect to slave image:
 (defparameter *streamer* (open-network-streamer "slave" "master"))
 
 ;; Slightly useful command-form method:
 (defmethod handle-streamed-command-form (streamer 
-                                         (command (eql ':pa)) &rest args)
-  (declare (ignoreable streamer) (ignore args))
+                                         (command (eql ':pa))
+                                         &rest args)
+  (declare (ignorable streamer) (ignore args))
   (format t "~&;; Package: ~s ~%" *package*))
 
 ;; Make a (trivial) broadcast streamer:
@@ -143,6 +146,27 @@
 
 ;; Send the recovered command:
 (stream-command-form '(:print "Recovered correctly!") *streamer*)
+
+;; A UTF-8 string:
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *utf-8-string* (format nil "UTF-8 characters: ~c~c~c~c~c"
+                                       ;; Latin_Capital_Letter_E_With_Grave
+                                       (code-char 200)
+                                       ;; Latin_Capital_Letter_C_With_Caron
+                                       (code-char 268) 
+                                       ;; Latin_Small_Letter_L_With_Stroke
+                                       (code-char 322)
+                                       ;; \Latin_Small_Letter_N_With_Acute
+                                       (code-char 324)
+                                       ;; Georgian_Paragraph_Separator
+                                       (code-char #x10FB))))
+
+;; Journal some UTF-8 characters:
+(stream-command-form '(:print #.*utf-8-string*) *streamer*)
+
+;; Journal the UTF-8 characters again (with queueing):
+(with-queued-streaming (*streamer* ':utf-8)
+  (stream-command-form '(:print #.*utf-8-string*) *streamer*))
 
 ;; Send "all done" command:
 (stream-command-form '(:print "All done!") *streamer*)
