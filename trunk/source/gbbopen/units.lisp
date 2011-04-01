@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb 26 09:53:37 2011 *-*
+;;;; *-* Last-Edit: Fri Apr  1 13:26:48 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -1082,7 +1082,7 @@
   (format t "~&~6t~s ~s ~:[<-- *** Inconsistent ***~;~]" 
           ':link 
           (direct-link-definition.inverse-link slot)
-          (check-a-link unit-class slot nil nil))
+          (%check-link-definition unit-class slot nil nil))
   (when (direct-link-definition.singular slot)
     (format t "~&~6t~s ~s" ':singular 't)))
 

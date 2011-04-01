@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Feb 22 14:24:19 2011 *-*
+;;;; *-* Last-Edit: Fri Apr  1 14:13:31 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -1251,6 +1251,8 @@
   (find-tests '((uc-1 (x y) uniform-buckets 
 		      :layout ((0 10 .2)
 			       (.5 10 .3))))) 
+  ;; Check link consistency:
+  (check-all-instance-links)
   ;; Time test:
   (reset-gbbopen)
   (do-time-tests *timing-tests-size*)

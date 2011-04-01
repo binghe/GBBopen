@@ -1,7 +1,7 @@
 ;;;; -*- Mode:COMMON-LISP; Package:TUTORIAL; Base:10 -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/examples/tutorial.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Mar 18 10:30:29 2011 *-*
+;;;; *-* Last-Edit: Wed Mar 30 13:55:00 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -243,14 +243,24 @@
 ;;;   Save/load repository
 ;;;
 
-(defun save-tutorial-repository (&optional (pathname "tutorial"))
-  (save-blackboard-repository pathname
-                              :package ':tutorial 
-                              :value *the-random-walk*))
+(defun save-tutorial-repository (&rest initargs &aux (pathname "tutorial"))
+  (declare (dynamic-extent initargs))
+  (when initargs
+    (unless (keywordp (first initargs))
+      (setf pathname (pop initargs))))
+  (apply #'save-blackboard-repository 
+         pathname
+         :package ':tutorial 
+         :value *the-random-walk*
+         initargs))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun load-tutorial-repository (&optional (pathname "tutorial"))
+(defun load-tutorial-repository (&rest initargs &aux (pathname "tutorial"))
+  (declare (dynamic-extent initargs))
+  (when initargs
+    (unless (keywordp (first initargs))
+      (setf pathname (pop initargs))))
   (multiple-value-bind (loaded-pathname saved-time saved-value)
       (with-events-disabled ()
         (flet ((show-progress (stream percent-loaded)
@@ -260,7 +270,7 @@
           (let ((*repository-load-percentage-hook-functions*
                  (list #'show-progress))
                 (*repository-load-percentage-reads-per-update* 20))
-            (load-blackboard-repository pathname))))
+            (apply #'load-blackboard-repository pathname initargs))))
     (setf *the-random-walk* saved-value)
     (values loaded-pathname saved-time)))
 

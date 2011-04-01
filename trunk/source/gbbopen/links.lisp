@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Feb 10 15:28:16 2011 *-*
+;;;; *-* Last-Edit: Fri Apr  1 14:12:53 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -47,13 +47,15 @@
 ;;;           lookups.  (Corkill)
 ;;;  06-19-09 Add link-pointer-object support.  (Corkill)
 ;;;  05-06-10 Memoize dlslotd lookups.  (Corkill)
+;;;  04-01-11 Add CHECK-ALL-INSTANCE-LINKS.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 (in-package :gbbopen)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(check-link-definitions
+  (export '(check-all-instance-links    ; not documented yet
+            check-link-definitions
             link-instance               ; STANDARD-LINK-POINTER slot
 	    link-setf
 	    linkf
@@ -709,7 +711,7 @@
 ;;; ===========================================================================
 ;;;   Link consistency checking
 
-(defun check-a-link (class linkd silent errorp)
+(defun %check-link-definition (class linkd silent errorp)
   (let ((inverse-link (direct-link-definition.inverse-link linkd)))
     (cond 
      ;; reflexive links are OK:
@@ -768,13 +770,14 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun check-link-definitions (&optional silent errorp)
+(defun check-link-definitions (&optional silentp errorp)
   (let ((result 't))
     (flet ((fn (class plus-subclasses)
              (declare (ignore plus-subclasses))
              (flet ((do-link (link) 
-                      (unless (check-a-link class link silent errorp)
-                        (if silent 
+                      (unless (%check-link-definition
+                               class link silentp errorp)
+                        (if silentp
                             (setf result nil)
                             (return-from check-link-definitions nil)))))
                (declare (dynamic-extent #'do-link))
@@ -787,9 +790,94 @@
        ;;       loaded, so we can't use load-time-value on this class
        ;;       "constant"
        (find-class 'standard-unit-instance)))
-    (when (and result (not silent))
+    (when (and result (not silentp))
       (format t "~&;; All link definitions are consistent.~%"))
     result))
+
+;;; ---------------------------------------------------------------------------
+
+(defun %check-instance-inverse-link (instance dslotd inverse-instance 
+                                     idslotd warn-fn)
+  (declare (function warn-fn))
+  ;;; Check that the inverse-pointer back to `instance' is present in
+  ;;; `inverse-instance'
+  (let* ((slot-name (slot-definition-name idslotd))
+         (link-slot-value (slot-value inverse-instance slot-name)))
+    (flet ((missing-link ()
+             (funcall warn-fn
+                      "Inverse link back to ~s (link-slot ~s) from ~s ~
+                       is missing in link-slot ~s:"
+                      instance
+                      (slot-definition-name dslotd)
+                      inverse-instance
+                      slot-name
+                      link-slot-value)))
+      (cond
+       ;; Singular link:
+       ((direct-link-definition.singular idslotd)
+        (unless (eq instance link-slot-value)
+          (missing-link)))
+       ;; Non-singular link:
+       (t (unless (and (consp link-slot-value)
+                       (memq instance link-slot-value))
+            (missing-link)))))))
+
+;;; ---------------------------------------------------------------------------
+
+(defun check-all-instance-links (&optional silentp errorp 
+                                 &aux (problem-counter 0))
+  (flet 
+      ((check-one (instance)
+         (let ((class (class-of instance)))
+           (flet ((warn-fn (&rest args)
+                    (declare (dynamic-extent args))
+                    (incf& problem-counter)
+                    (apply (if errorp #'error #'warn) args)))
+             (declare (dynamic-extent #'warn-fn))
+             (dolist (slot (class-slots class))
+               (when (typep slot 'effective-link-definition)
+                 (let* ((dslotd 
+                         (effective-link-definition.direct-slot-definition slot))
+                        (islotd
+                         (direct-link-definition.inverse-link-definition dslotd))
+                        (link-slot-value
+                         (slot-value-using-class class instance slot)))
+                   (when link-slot-value
+                     (cond
+                      ;; Singular link:
+                      ((direct-link-definition.singular dslotd)
+                       (if (consp link-slot-value)
+                           (funcall #'warn-fn
+                                    "Non-atomic link-slot value ~s in ~
+                                     singular link slot ~s of ~s"
+                                    link-slot-value
+                                    (slot-definition-name slot)
+                                    instance)
+                         (%check-instance-inverse-link 
+                          instance dslotd link-slot-value islotd #'warn-fn)))
+                      ;; Non-singular link:
+                      (t (unless (consp link-slot-value)
+                           (funcall #'warn-fn
+                                    "Atomic link-slot value ~s in ~
+                                     link slot ~s of ~s"
+                                    link-slot-value
+                                    (slot-definition-name slot)
+                                    instance)
+                           ;; Allow checking to continue:
+                           (setf link-slot-value (list link-slot-value)))
+                         (dolist (linked-instance link-slot-value)
+                           (%check-instance-inverse-link
+                            instance dslotd linked-instance islotd 
+                            #'warn-fn))))))))))))
+    (declare (dynamic-extent #'check-one))
+    (map-instances-of-class #'check-one 't)
+    (unless silentp
+      (if (zerop& problem-counter)
+          (format t "~&;; All instance links are consistent.~%")
+          (format t "~&;; ~s ~:[problems were~;problem was~] found.~%"
+                  problem-counter
+                  (=& 1 problem-counter))))
+    problem-counter))
 
 ;;; ===========================================================================
 ;;;				  End of File
