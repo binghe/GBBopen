@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/portable-sockets-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:02:47 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Sun Apr  3 15:03:28 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -92,11 +92,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun passive-socket-tests ()
-  (forced-format "~&;; Performing passive-socket and connection tests...")
-  (let ((passive-socket (make-passive-socket *test-port*))
-        (client1 (open-connection *localhost* *test-port*))
-        (client2 (open-connection *localhost* *test-port*)))
+(defun passive-socket-tests (&optional (port *test-port*) reuse-address)
+  (forced-format "~&;; Performing passive-socket and connection tests on ~s..."
+                 port)
+  (let ((passive-socket
+         (make-passive-socket port :reuse-address reuse-address))
+        (client1 (open-connection *localhost* port))
+        (client2 (open-connection *localhost* port)))
     (let ((server1 (accept-connection passive-socket))
           (server2 (accept-connection passive-socket))
           (form '(:a 1 :b "2" :c 3.0 :d 't)))
@@ -125,14 +127,21 @@
       (let ((read-form (read client2 nil ':eof)))
         (unless (eq read-form ':eof)
           (log-error "Didn't receive server close")))
-      (close client2)))
+      (close client2))
+    (close-passive-socket passive-socket))
   (forced-format "~&;; Passive-socket and connection tests completed."))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun portable-sockets-test ()
   (http-connect-test "GBBopen.org" 80 "/robots.txt")
-  (passive-socket-tests))
+  (let ((port *test-port*))
+    (passive-socket-tests port)
+    ;; Check a second port:
+    (incf port)
+    (passive-socket-tests port)
+    ;; Check reuse-address on the second port:
+    (passive-socket-tests port 't)))
 
 ;;; ---------------------------------------------------------------------------
 
