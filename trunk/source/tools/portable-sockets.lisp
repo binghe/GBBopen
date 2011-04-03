@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-SOCKETS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-sockets.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 30 18:06:53 2011 *-*
+;;;; *-* Last-Edit: Sun Apr  3 14:55:17 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -471,13 +471,15 @@
                    :input-timeout input-timeout
                    :output-timeout output-timeout)
   #+cmu
-  (make-instance 'passive-socket
-    :fd (ext:create-inet-listener port ':stream 
-                                  :backlog backlog
-                                  :host (or interface 0)
-                                  :reuse-address reuse-address)
-    :element-type 'base-char
-    :port port)    
+  (let ((fd (ext:create-inet-listener 
+             port ':stream 
+             :backlog backlog
+             :host (or interface 0)
+             :reuse-address reuse-address)))
+    (make-instance 'passive-socket
+      :fd fd
+      :element-type 'base-char
+      :port port))
   #+digitool-mcl
   (ccl::open-tcp-stream interface port
                         :reuse-local-port-p reuse-address)
@@ -498,16 +500,17 @@
     passive-socket)
   #+lispworks
   (let ((comm::*use_so_reuseaddr* reuse-address))
-    (prog1
+    (let ((fd (comm::create-tcp-socket-for-service 
+               port 
+               :address (or interface 0)
+               :backlog backlog)))
+      (unless fd
+        (error "Local socket address already in use on port ~s."
+               port))
       (make-instance 'passive-socket
-        :fd (comm::create-tcp-socket-for-service port 
-                                                 :address (or interface 0)
-                                                 :backlog backlog)
+        :fd fd
         :element-type 'base-char
-        :port port)
-      ;; Avoid Lispworks race condition on filling in the passive 
-      ;; socket fd value (still exists in LW 4.4.6):
-      (thread-yield)))
+        :port port)))
   #+sbcl
   (let ((passive-socket (make-instance 'sb-bsd-sockets:inet-socket
                           :protocol ':tcp
@@ -524,13 +527,15 @@
     (sb-bsd-sockets:socket-listen passive-socket backlog)
     passive-socket)
   #+scl
-  (make-instance 'passive-socket
-    :fd (ext:create-inet-listener port ':stream 
-                                  :backlog backlog
-                                  :host (or interface 0)
-                                  :reuse-address reuse-address)
-    :element-type 'base-char
-    :port port)    
+  (let ((fd (ext:create-inet-listener
+             port ':stream 
+             :backlog backlog
+             :host (or interface 0)
+             :reuse-address reuse-address)))
+    (make-instance 'passive-socket
+      :fd fd
+      :element-type 'base-char
+      :port port))
   #-(or allegro
         clisp
         clozure
@@ -670,10 +675,11 @@
   #+lispworks
   (let ((socket-fd (passive-socket.fd passive-socket)))
     (when (or wait (comm::socket-listen socket-fd))
-      (make-instance 'comm:socket-stream
-        :socket (comm::get-fd-from-socket socket-fd)
-        :direction ':io
-        :element-type (passive-socket.element-type passive-socket))))
+      (let ((socket (comm::get-fd-from-socket socket-fd)))
+        (make-instance 'comm:socket-stream
+          :socket socket
+          :direction ':io
+          :element-type (passive-socket.element-type passive-socket)))))
   #+sbcl
   (when (sb-sys:wait-until-fd-usable 
          (sb-bsd-sockets:socket-file-descriptor passive-socket) 
