@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr  5 13:45:23 2011 *-*
+;;;; *-* Last-Edit: Tue Apr  5 14:20:53 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -40,12 +40,10 @@
             add-to-broadcast-streamer
             begin-queued-streaming      ; not documented
             broadcast-streamer          ; class-name (not yet documented)
-            beginning-queued-read       ; remove soon!
             clear-streamer-queue
             close-streamer
             describe-mirroring          ; not yet documented
             end-queued-streaming        ; not documented
-            ending-queued-read          ; remove soon!
             handle-streamed-command-atom ; not yet documented
             handle-streamed-command-form ; not yet documented
             handle-stream-input-error   ; not yet documented
@@ -807,18 +805,10 @@
 (defgeneric read-queued-streaming-block (tag string-stream))
 
 (defmethod read-queued-streaming-block (tag string-stream)
-  (beginning-queued-read tag)           ; Remove soon!
-  (unwind-protect
-      ;; Read the queue-block:
-      (let ((eof-marker '#:eof))
-        (until (eq eof-marker (restartable-reader string-stream eof-marker))))
-    (ending-queued-read tag)))          ; Remove soon!
+  ;; Read the queue-block:
+  (let ((eof-marker '#:eof))
+    (until (eq eof-marker (restartable-reader string-stream eof-marker)))))
 
-(defgeneric beginning-queued-read (tag)) ; Remove soon!
-(defgeneric ending-queued-read (tag))   ; Remove soon!
-(defmethod beginning-queued-read (tag) tag) ; Remove soon!
-(defmethod ending-queued-read (tag) tag) ; Remove soon!
-         
 ;;; ---------------------------------------------------------------------------
 ;;;  Queued-streaming-block reader
          
@@ -841,8 +831,6 @@
 (defmethod saved/sent-object-reader ((char (eql #\!)) stream)
   (let ((form (read stream 't nil 't)))
     (case (first form)
-      (:bb (beginning-queued-read (setf *queued-read-tag* (second form))))
-      (:eb (ending-queued-read *queued-read-tag*))
       (otherwise (printv form)))))
 
 ;;; ===========================================================================
