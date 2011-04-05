@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  1 14:13:31 2011 *-*
+;;;; *-* Last-Edit: Sat Apr  2 05:07:09 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -202,6 +202,11 @@
 (defmethod print-instance-slots ((obj link-ptr-with-value) stream)
   (call-next-method)
   (print-instance-slot-value obj 'value stream))
+
+;;; ---------------------------------------------------------------------------
+;;;  Check link definitions
+
+(check-link-definitions)
 
 ;;; ===========================================================================
 ;;;  Basic timing functions

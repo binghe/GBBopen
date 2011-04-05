@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Fri Mar 25 10:52:18 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr  5 13:44:09 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -9047,14 +9047,16 @@ The following \code{\glref{pseudo-probability}} operators are provided:
 \index{pseudo-probability!division}%
 
 \fnsyntax
-\fnalternate{\textbf{/\%}}%
-  {\var{pseudo-probability-numerator\/}
-    \returns{} \var{reciprocal\/}}
 
 \fnpurpose Returns the quotient of dividing
   \nobr{\var{pseudo-probability-numerator\/}} by all of the
   \nobr{\var{pseudo-probability-denominators}}, performing
   \glref{pseudo-probability}-normalization in the process.
+
+\fnaltsyntax
+\fnalternate{/\%}%
+  {\var{pseudo-probability-numerator\/}
+    \returns{} \var{reciprocal\/}}
 
 \fnpackage \code{:gbbopen-tools}
 
@@ -20234,7 +20236,7 @@ end of the link that have consistent values.
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{check-link-definitions}{%
-    \nobr{\code{\&optional} \var{silent errorp\/}}
+    \nobr{\code{\&optional} \var{silentp errorp\/}}
     \nobr{\returns{} \var{boolean\/}}}
 \index{link!definitions, checking consistency of}%
 
@@ -20248,8 +20250,8 @@ end of the link that have consistent values.
 \fnmodule \code{:gbbopen-core}
 
 \fnargs
-\begin{args}{silent}
-\arg[silent] A \glref{generalized~boolean} (default is \nil)
+\begin{args}{silentp}
+\arg[silentp] A \glref{generalized~boolean} (default is \nil)
 \arg[errorp] A \glref{generalized~boolean} (default is \nil) 
 \arg[boolean] A \glref{generalized~boolean}
 \end{args}
@@ -20263,8 +20265,8 @@ inconsistency is displayed.  After the inconsistency has been repaired,
 \nobr{\textbf{check-link-definitions}} should be used again to check for
 additional inconsistencies.
 
-If \var{silent\/} is true, warning and success printing or error signaling is
-supressed.  If \var{silent\/} is \nil{} and \var{errorp\/} is true, an error
+If \var{silentp\/} is true, warning and success printing or error signaling is
+supressed.  If \var{silentp\/} is \nil{} and \var{errorp\/} is true, an error
 is signaled if a link inconsistency is found.
 
 \begin{alsos}{define-unit-class}
@@ -28140,6 +28142,52 @@ Add full mirroring of \code{hyp} \nobr{\glref{unit~instances}} to
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{add-to-broadcast-streamer}%
+  {\var{streamer \nobr{broadcast-streamer}\/}}
+\index{streamer!add to broadcast streamer}%
+\index{broadcast streamer!adding streamer to}%
+
+\fnsyntax 
+
+\fnpurpose Add a \glref{journal} or \glref{network~}\glref{streamer} to a
+\glref{broadcast~streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{broadcast-streamer}
+\arg[streamer] A journal or network \glref{streamer}.
+\arg[broadcast-streamer] A \glref{broadcast~streamer}
+\end{args}
+
+\fnerrors
+
+\begin{alsos}{remove-from-broadcast-streamer}
+\also[make-broadcast-streamer]
+\also[remove-from-broadcast-streamer]
+\end{alsos}
+
+\fnexample
+\bfindexit{open-network-streamer}%
+%
+Add a \glref{network~streamer} to \glref{streamer~node} \code{"you-too"} to
+\glref{broadcast~streamer} \nobr{\code{broadcast-streamer}}:
+%
+\W\supp
+\begin{example}
+  > (add-to-broadcast-streamer 
+      (\entlink{open-network-streamer} "me" "you-too")
+      broadcast-streamer)
+  #<broadcast-streamer 2 constituents>
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{clear-streamer-queue}{\var{streamer}}
 \index{streamer queue!clearing}%
 
@@ -28174,83 +28222,127 @@ Clear \glref{streamer} \code{*streamer*}:
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
+ 
+\begin{functiondoc}{Function}{close-streamer}%
+  {\var{streamer\/}}
+\index{streamer!closing}%
+\index{journal streamer!closing}%
+\index{network streamer!closing}%
 
-% \begin{functiondoc}{Function}{make-broadcast-streamer}%
-%   {\var{streamers\/}
-%     \nobr{\returns{} \var{broadcast-streamer\/}}}
-% \index{broadcast streamer!making}%
+\fnsyntax
 
-% \fnsyntax 
-% \fnalternate{\textbf{/\%}}%
-%   {\code{\&key} 
-%     \var{package
-%       \nobr{read-default-float-format\/}}
-%     \returns{} \var{broadcast-streamer\/}}
+\fnpurpose Close a \glref{journal} or \glref{network~}\glref{streamer}.
 
-% \fnpurpose Create a \glref{broadcast~streamer} that can be used to write
-% to multiple \glref{journal} and \glref{network~}\glref{streamers}.
+\fnmethods
+\fnalternate{close-streamer}%
+  {\code{(}\var{streamer\/} \nobr{\code{journal-streamer)}}}
+\fnalternate{close-streamer}%
+  {\code{(}\var{streamer\/} \code{network-streamer)}}
 
-% \fnpackage \code{:gbbopen}
+\fnpackage \code{:gbbopen}
 
-% \fnmodule \code{:streaming}
+\fnmodule \code{:streaming}
 
-% \fnargs
-% \begin{args}{read-default-float-format}
-% \arg[streamers] A list of journal or network \glref{streamers}.
-% \arg[package] A \glref{package~designator} indicating the package to be used
-% when writing to and reading from the \glref{streamers} associated with
-% the \var{broadcast-streamer\/} (default is \nobr{\code{:common-lisp}})
-% \arg[read-default-float-format] One of the atomic type specifiers
-% \nobr{\code{short-float}}, \nobr{\code{single-float}},
-% \nobr{\code{double-float}}, or \nobr{\code{long-float}} to be used when
-% to and reading from the \glref{streamers} associated with
-% the \var{broadcast-streamer\/} (default is \nobr{\code{single-float}})
-% \arg[broadcast-streamer] A \glref{broadcast~streamer}
-% \end{args}
+\fnargs
+\begin{args}{streamer}
+\arg[streamer] A \glref{journal} or \glref{network~}\glref{streamer}
+\end{args}
 
-% \begin{alsos}{omitted-slots-for-saving/sending}
-% \also[load-journal]
-% \also[omitted-slots-for-saving/sending]
-% \also[stream-instance]
-% \also[save-blackboard-repository]
-% \also[with-saving/sending-block]
-% \end{alsos}
+\fnerrors
+Threads (multiprocessing) is not supported on the Common Lisp implementation
+(only for \glref{network~streamers}).
 
-% \fnexample
-% %
-% Load the \code{:streaming} module followed by the GBBopen Tutorial Example
-% application (without running it). Then write a journal file recording what
-% occurred when taking a walk:
-% %
-% \W\supp
-% \begin{example}
-%   > :streaming
-%      \textrm{\ldots{}}
-%   > :tutorial-example :noautorun
-%      \textrm{\ldots{}}
-%   > (defparameter *streamer*
-%       (make-journal-streamer "tutorial" :package ':tutorial))
-%   *streamer*
-%   > *streamer*
-%   #<journal-streamer "/Users/cork/tutorial.bb">
-%   > (add-mirroring *streamer* 'standard-space-instance)
-%   nil
-%   > (add-mirroring *streamer* 'path)
-%   nil
-%   > (add-mirroring *streamer* 'location)
-%   nil
-%   > (take-a-walk)
-%   ;; Control shell 1 started
-%      \textrm{\ldots{}}
-%   ;; Explicit :stop issued by KS print-walk-ks
-%   ;; Control shell 1 exited: 41 cycles completed
-%   ;; Run time: 0.01 seconds
-%   ;; Elapsed time: 0 seconds
-%   :stop
-%   >
-% \end{example}
+\begin{alsos}{open-network-streamer}
+\also[define-streamer-node]
+\also[find-streamer-node]
+\also[open-network-streamer]
+\end{alsos}
 
-% \end{functiondoc}
+\fnexample
+%
+Close the \glref{network~streamer} \code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  (close-streamer *streamer*)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-broadcast-streamer}%
+  {\var{streamers\/}
+    \nobr{\returns{} \var{broadcast-streamer\/}}}
+\index{broadcast streamer!making}%
+
+\fnsyntax 
+
+\fnpurpose Create a \glref{broadcast~streamer} that can be used to write
+to multiple \glref{journal} and \glref{network~}\glref{streamers}.
+
+\fnaltsyntax
+\fnalternate{make-broadcast-streamer}%
+  {\code{\&key} 
+    \var{package
+      \nobr{read-default-float-format\/}
+      \nobr{external-format\/}}
+    \returns{} \var{broadcast-streamer\/}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{read-default-float-format}
+\arg[streamers] A list of journal or network \glref{streamers}.
+\arg[package] A \glref{package~designator} indicating the package to be used
+when writing to and reading from the \glref{streamers} associated with
+the \var{broadcast-streamer\/} (default is \nobr{\code{:common-lisp}})
+\arg[read-default-float-format] One of the atomic type specifiers
+\nobr{\code{short-float}}, \nobr{\code{single-float}},
+\nobr{\code{double-float}}, or \nobr{\code{long-float}} to be used when
+to and reading from the \glref{streamers} associated with
+the \var{broadcast-streamer\/} (default is \nobr{\code{single-float}})
+\arg[external-format] An external-file-format designator (default is
+  \nobr{\code{:default}})
+\arg[broadcast-streamer] A \glref{broadcast~streamer}
+\end{args}
+
+\fnerrors
+
+\begin{alsos}{remove-from-broadcast-streamer}
+\also[add-to-broadcast-streamer]
+\also[remove-from-broadcast-streamer]
+\end{alsos}
+
+\fnexamples
+\bfindexit{open-network-streamer}%
+%
+Create a broadcast streamer containing \glref{network~streamers} to 
+\glref{streamer~nodes} \code{"you"} and \code{"you-too"}:
+%
+\W\supp
+\begin{example}
+  > (make-broadcast-streamer 
+      (\entlink{open-network-streamer} "me" "you")
+      (\entlink{open-network-streamer} "me" "you-too"))
+  #<broadcast-streamer 2 constituents>
+  >
+\end{example}
+
+\indexit{UTF-8}
+Create a broadcast streamer with no constituents to be used with
+UTF-8 \glref{streamers}:
+%
+\W\supp
+\begin{example}
+  > (make-broadcast-streamer :external-format ':utf-8)
+  #<broadcast-streamer 0 constituents>
+  >
+\end{example}
+
+\end{functiondoc}
 
 %% ------------------------------------------------------------------------
 
@@ -28313,6 +28405,52 @@ Write a method that prints a notice when an empty queued-streaming block
                                                  string-stream)
     (declare (ignorable string-stream))
     (format t "~&;; An empty queued-streaming block was read.~\%"))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{remove-from-broadcast-streamer}%
+  {\var{streamer \nobr{broadcast-streamer}\/}}
+\index{streamer!remove from broadcast streamer}%
+\index{broadcast streamer!removing streamer from}%
+
+\fnsyntax 
+
+\fnpurpose Remove a \glref{journal} or \glref{network~}\glref{streamer} 
+from a \glref{broadcast~streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{broadcast-streamer}
+\arg[streamer] A journal or network \glref{streamer}.
+\arg[broadcast-streamer] A \glref{broadcast~streamer}
+\end{args}
+
+\fnerrors
+
+\begin{alsos}{add-to-broadcast-streamer}
+\also[make-broadcast-streamer]
+\also[add-to-broadcast-streamer]
+\end{alsos}
+
+\fnexample
+\bfindexit{open-network-streamer}%
+%
+Remove the \glref{network~streamer} to \glref{streamer~node} \code{"you-too"}
+from \glref{broadcast~streamer} \nobr{\code{broadcast-streamer}}:
+%
+\W\supp
+\begin{example}
+  > (remove-from-broadcast-streamer 
+      (\entlink{open-network-streamer} "me" "you-too")
+      broadcast-streamer)
+  #<broadcast-streamer 1 constituent>
+  >
 \end{example}
 
 \end{functiondoc}
@@ -29514,47 +29652,6 @@ a \glref{streamer~node}.
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
- 
-\begin{functiondoc}{Function}{close-network-streamer}%
-  {\var{network-streamer\/}}
-\index{network streamer!closing}%
-
-\fnsyntax
-
-\fnpurpose Close a \glref{network~streamer} (connection to an external
-\glref{streamer~node}).
-
-\fnpackage \code{:gbbopen}
-
-\fnmodule \code{:network-streaming}
-
-\fnargs
-\begin{args}{network-streamer}
-\arg[network-streamer] A \glref{network~streamer}
-\end{args}
-
-\fnerrors
-\nothreads{}
-
-\begin{alsos}{close-network-streamer}
-\also[define-streamer-node]
-\also[find-streamer-node]
-\also[close-network-streamer]
-\also[open-network-streamer]
-\end{alsos}
-
-\fnexample
-%
-Close the \glref{network~streamer} \code{*streamer*}:
-%
-\W\supp
-\begin{example}
-  (close-network-streamer *streamer*)
-\end{example}
-
-\end{functiondoc}
-
-%% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Macro}{define-streamer-node}{%
     \nobr{\var{name\/}}
@@ -29580,7 +29677,7 @@ Close the \glref{network~streamer} \code{*streamer*}:
 \fnmodule \code{:network-streaming}
 
 \fnargs
-\begin{args}{read-default-float-format}
+\begin{args}{accepted-streamer-node-initargs}
 \arg[name] An object naming the streamer node (not evaluated)
 \arg[host] A 32-bit internet address or a string specifying the remote host
 (default \code{"localhost"})
@@ -29598,13 +29695,16 @@ is \nobr{\textbf{\entlink{*default-network-stream-server-port*}}})
   \nobr{\code{double-float}}, or \nobr{\code{long-float}} to be used when
   establishing a streaming connection to \var{streamer-node\/} (default is
   \nobr{\code{single-float}})
+\arg[authorized-nodes] Needed (default is \code{:all})
+\arg[accepted-streamer-node-class] Needed (default is \code{accepted-streamer-node})
+\arg[accepted-streamer-node-initargs] Needed (default is \nil)
 \end{args}
 
 \fnreturns The newly defined or modified \glref{streamer~node} object.
 
 \begin{alsos}{*default-network-stream-server-port*}
 \also[*default-network-stream-server-port*]
-\also[close-network-streamer]
+\also[close-streamer]
 \also[find-streamer-node]
 \also[open-network-streamer]
 \end{alsos}
@@ -29815,15 +29915,17 @@ does not already exist.
 \fnreturns An open \glref{network~streamer} (either existing or newly
 created---see below).
 
-\fndescription If an open \glref{network~streamer} exists
-between \var{streamer-node\/} and \var{local-streamer-node\/}, 
-that \glref{network~streamer} is returned.
+\fndescription If an open \glref{network~streamer} exists between
+\var{streamer-node\/} and \var{local-streamer-node\/}, that
+\glref{network~streamer} is returned. Otherwise, a new connection to
+\var{streamer-node\/} is established and a new \glref{network~streamer} is
+returned.
 
 The class of the created \glref{network~streamer} is specified by
 the \code{streamer-class} slot of \var{streamer-node}.
 
 \begin{alsos}{network-stream-server-running-p}
-\also[close-network-streamer]
+\also[close-streamer]
 \also[define-streamer-node]
 \also[find-streamer-node]
 \also[network-stream-server-running-p]
