@@ -38,15 +38,17 @@ does not already exist.
 <p><span class="fndoclabel">Returns</span> <br />An open <a href="ref-glossary.html#id142">network&nbsp;streamer</a> (either existing or newly
 created&mdash;see below).
 </p>
-<p><span class="fndoclabel">Description</span> <br />If an open <a href="ref-glossary.html#id142">network&nbsp;streamer</a> exists
-between <var>streamer-node</var> and <var>local-streamer-node</var>, 
-that <a href="ref-glossary.html#id142">network&nbsp;streamer</a> is returned.
+<p><span class="fndoclabel">Description</span> <br />If an open <a href="ref-glossary.html#id142">network&nbsp;streamer</a> exists between
+<var>streamer-node</var> and <var>local-streamer-node</var>, that
+<a href="ref-glossary.html#id142">network&nbsp;streamer</a> is returned. Otherwise, a new connection to
+<var>streamer-node</var> is established and a new <a href="ref-glossary.html#id142">network&nbsp;streamer</a> is
+returned.
 </p>
 <p>The class of the created <a href="ref-glossary.html#id142">network&nbsp;streamer</a> is specified by
 the <code>streamer-class</code> slot of <var>streamer-node</var>.
 </p>
 <p><span class="fndoclabel">See also</span>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-close-network-streamer.html"><b>close-network-streamer</b></a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-close-streamer.html"><b>close-streamer</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-streamer-node.html"><b>define-streamer-node</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-find-streamer-node.html"><b>find-streamer-node</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-network-stream-server-running-p.html"><b>network-stream-server-running-p</b></a>

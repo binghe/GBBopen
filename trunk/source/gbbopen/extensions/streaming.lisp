@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 30 09:45:37 2011 *-*
+;;;; *-* Last-Edit: Tue Apr  5 13:45:23 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -37,12 +37,12 @@
             *journal-load-percentage-hook-functions* ; not yet documented
             *journal-load-percentage-reads-per-update* ; not yet documented
             add-mirroring
-            add-to-broadcast-streamer   ; not yet documented
+            add-to-broadcast-streamer
             begin-queued-streaming      ; not documented
             broadcast-streamer          ; class-name (not yet documented)
             beginning-queued-read       ; remove soon!
             clear-streamer-queue
-            close-streamer              ; not yet documented
+            close-streamer
             describe-mirroring          ; not yet documented
             end-queued-streaming        ; not documented
             ending-queued-read          ; remove soon!
@@ -57,7 +57,7 @@
             make-journal-streamer
             open-streamer-p             ; not yet documented
             read-queued-streaming-block
-            remove-from-broadcast-streamer ; not yet documented
+            remove-from-broadcast-streamer
             remove-mirroring
             skip-form                   ; restart; not yet documented
             stream-command-form         ; not yet documented
@@ -80,7 +80,7 @@
 	    with-mirroring-disabled
 	    with-mirroring-enabled
             with-queued-streaming
-            write-streamer-queue)))     ; not yet documented
+            write-streamer-queue)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -177,13 +177,23 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defmethod print-instance-slots ((broadcast-streamer broadcast-streamer) 
+                                 stream)
+  (call-next-method)
+  (let ((number-of-constituents (length (streamers-of broadcast-streamer))))
+    (format stream " ~s constituent~:p" number-of-constituents)))
+
+;;; ---------------------------------------------------------------------------
+
 (defun make-broadcast-streamer-given-initargs 
     (&key (package ':common-lisp-user)
-          (read-default-float-format *read-default-float-format*))
+          (read-default-float-format *read-default-float-format*)
+          (external-format 'default))
   (make-instance 'broadcast-streamer
     :lock (make-lock :name "Broadcast streamer lock")
     :package (ensure-package package)
-    :read-default-float-format read-default-float-format))
+    :read-default-float-format read-default-float-format
+    :external-format external-format))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -209,11 +219,13 @@
              streamer)))
   ;; TODO: Check that all streamers have the same package/default-float, no
   ;; duplicates, creating without any streamers, etc.
-  (let ((broadcast-streamer
-         (make-broadcast-streamer-given-initargs
+  (let* ((1st-streamer (car streamers))
+         (broadcast-streamer
+          (make-broadcast-streamer-given-initargs
           ;; For now, use the attributes of the 1st streamer:
-          :package (package-of (car streamers))
-          :read-default-float-format (read-default-float-format-of (car streamers)))))
+          :package (package-of 1st-streamer)
+          :read-default-float-format (read-default-float-format-of 1st-streamer)
+          :external-format (external-format-of 1st-streamer))))
     (set-broadcast-streamers broadcast-streamer streamers)
     ;; Return the broadcast streamer:
     broadcast-streamer))
@@ -233,22 +245,32 @@
   (let ((streamer-package (package-of streamer))
         (broadcast-package (package-of broadcast-streamer)))
     (unless (eq streamer-package broadcast-package)
-    (error "The ~s ~s of ~s does not match ~s of ~s"
-           ':package 
-           streamer-package
-           streamer
-           broadcast-package
-           broadcast-streamer)))
+      (error "The ~s ~s of ~s does not match ~s of ~s"
+             ':package 
+             streamer-package
+             streamer
+             broadcast-package
+             broadcast-streamer)))
   ;; Check :read-default-float-format:
   (let ((streamer-rdff (read-default-float-format-of streamer))
         (broadcast-rdff (read-default-float-format-of broadcast-streamer)))
     (unless (eq streamer-rdff broadcast-rdff)
-    (error "The ~s ~s of ~s does not match ~s of ~s"
-           ':read-default-float-format
-           streamer-rdff
-           streamer
-           broadcast-rdff
-           broadcast-streamer))))
+      (error "The ~s ~s of ~s does not match ~s of ~s"
+             ':read-default-float-format
+             streamer-rdff
+             streamer
+             broadcast-rdff
+             broadcast-streamer)))
+  ;; Check :external-format:
+  (let ((streamer-external-format (external-format-of streamer))
+        (broadcast-external-format (external-format-of broadcast-streamer)))
+    (unless (eq streamer-external-format broadcast-external-format)
+      (error "The ~s ~s of ~s does not match ~s of ~s"
+             ':external-format
+             streamer-external-format
+             streamer
+             broadcast-external-format
+             broadcast-streamer))))
 
 ;;; ---------------------------------------------------------------------------
 

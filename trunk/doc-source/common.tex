@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/common.tex *-*
-%% *-* Last-Edit: Sun Mar 13 05:33:53 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr  5 11:26:19 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2010, Dan Corkill <corkill@GBBopen.org>
@@ -446,7 +446,8 @@
  \newcommand{\alternatetarted}{}
 
  \newcommand{\fnalternate}[2]{%
-     \EmptyP{\alternatestarted}{\xml{table class="tight" width="100%"}}{\xml{table class="tighttop" width="100%"}}
+     \EmptyP{\alternatestarted}{\xml{table class="tight" width="100%"}}%
+      {\xml{table class="tightertop" width="100%"}}
       \renewcommand{\alternatestarted}{*}%
       \xml{tr valign="top"}%
       \xml{td align="left"}%
@@ -596,6 +597,8 @@
 %% This is the desired order in each functiondoc entry
 \newcommand{\fnpurpose}{\ckfnpartctr{1}{Purpose}%
  \fndocsec{Purpose}~\\[2pt]\nopagebreak}
+\newcommand{\fnaltsyntax}{\ckfnpartctr{2}{Alternate syntax}%
+  \fndocsec{Alternate syntax}~\\[4pt]\nopagebreak}
 \newcommand{\fnsetf}{\ckfnpartctr{2}{Setf}%
   \fndocsec{Setf syntax}~\\[2pt]\nopagebreak}
 \newcommand{\fnmethods}{\ckfnpartctr{3}{Method signatures}%
@@ -705,6 +708,9 @@
 
 \newcommand{\fnpurpose}{\par
   \xml{span class="fndoclabel"}Purpose\xml{/span} \\}
+\newcommand{\fnaltsyntax}{\separ
+  \renewcommand{\alternatestarted}{}%
+  \xml{span class="fndoclabel"}Alternate syntax\xml{/span}} 
 \newcommand{\fnsetf}{\separ
   \xml{span class="fndoclabel"}Setf syntax\xml{/span}} 
 \newcommand{\fnmethods}{\separ
