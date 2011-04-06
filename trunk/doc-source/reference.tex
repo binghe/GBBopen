@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Apr  5 13:44:09 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Apr  6 12:31:22 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -20235,6 +20235,106 @@ end of the link that have consistent values.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{check-all-instance-links}{%
+    \nobr{\code{\&optional} \var{silentp errorp\/}}
+    \nobr{\returns{} \var{problem-count\/}}}
+\index{links!checking consistency of}%
+
+\fnsyntax
+
+\fnpurpose Check the link slots of all \glref{unit~instances} for
+bi-directional consistency.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{silentp}
+\arg[silentp] A \glref{generalized~boolean} (default is \nil)
+\arg[errorp] A \glref{generalized~boolean} (default is \nil) 
+\arg[problem-count] An integer
+\end{args}
+
+\fnreturns The number of inconsistent links encountered.
+
+\fndescription GBBopen automatically maintains bidirectional relationship
+consistency all \glref{link-slot} definitions are consistent. (Definitional
+consistency can be checked with
+\nobr{\textbf{\entlink{check-link-definitions}}}).  Unintended destructive
+list modification of the value of a link slot (for example, using \code{sort}
+without a protective \code{copy-list}) can break this consistency.
+\nobr{\textbf{Check-all-instance-links}} detects link inconsistencies and,
+when \var{errorp\/} is true, assist in repairing them.
+
+If a link inconsistency is found, details of the inconsistency
+are printed to \nobr{\code{*standard-output*}}.
+
+If \var{silentp\/} is true, warning and summary messages are not printed.  If
+\var{silentp\/} is \nil{} and \var{errorp\/} is true, a correctable error is
+signaled if a link inconsistency is found.
+
+\begin{alsos}{check-link-definitions}
+\also[check-link-definitions]
+\end{alsos}
+
+\fnexamples
+%
+Check that all instance links are consistent:
+%
+\W\supp
+\begin{example}
+  > (check-all-instance-links)
+  ;; All instance links are consistent.
+  0
+  >
+\end{example}
+Check again, silently:
+%
+\W\supp\notpretop
+\begin{example}
+  > (check-all-instance-links 't)
+  0
+  >
+\end{example}
+
+The result of checking when something has set the \nobr{\code{next-location}}
+link slot in \code{location} 20 to \nil:
+%
+\W\supp
+\begin{example}
+  > (check-all-instance-links)
+  Warning: Inverse link back to #<location 21 (32 37)> (link-slot previous-location)
+           from #<location 20 (28 28)> is missing in link-slot next-location
+  ;; 1 problem was found.
+  1
+  >
+\end{example}
+
+Repeat, but with \var{errorp\/} true to prompt for automated repair of each problem:
+%
+\W\supp
+\begin{example}
+  > (check-all-instance-links nil 't)
+  Error: Inverse link back to #<location 21 (32 37)> (link-slot previous-location)
+         from #<location 20 (28 28)> is missing in link-slot next-location
+  Restart actions (select using :c n):
+    0: Fix the inconsistency.
+  >> :c 0
+  ;; Link to #<location 21 (32 37)> added.
+  ;; 1 problem was found.
+  ;; 1 repair was made.
+  1
+  > (check-all-instance-links)
+  ;; All instance links are consistent.
+  0
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{check-link-definitions}{%
     \nobr{\code{\&optional} \var{silentp errorp\/}}
     \nobr{\returns{} \var{boolean\/}}}
@@ -20269,8 +20369,9 @@ If \var{silentp\/} is true, warning and success printing or error signaling is
 supressed.  If \var{silentp\/} is \nil{} and \var{errorp\/} is true, an error
 is signaled if a link inconsistency is found.
 
-\begin{alsos}{define-unit-class}
+\begin{alsos}{check-all-instance-links}
 \also[define-unit-class]
+\also[check-all-instance-links]
 \end{alsos}
 
 \fnexamples 

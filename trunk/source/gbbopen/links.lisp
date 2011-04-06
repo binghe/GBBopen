@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  1 14:12:53 2011 *-*
+;;;; *-* Last-Edit: Wed Apr  6 10:13:17 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -285,10 +285,10 @@
               (setf (slot-value other-instance slot-name) instance-ptr-obj))))
          ;; multi-link ilink:
          (t 
-          (let* ((sort-function (direct-link-definition.sort-function idslotd))
-                 (sort-key (or (direct-link-definition.sort-key idslotd)
-                               #'identity))
-                 (slot-value (slot-value other-instance slot-name)))
+          (let ((sort-function (direct-link-definition.sort-function idslotd))
+                (sort-key (or (direct-link-definition.sort-key idslotd)
+                              #'identity))
+                (slot-value (slot-value other-instance slot-name)))
             ;; Do nothing, if the inverse pointer is present already:
             (unless (member instance slot-value
                             :key #'link-instance-of
@@ -797,7 +797,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun %check-instance-inverse-link (instance dslotd inverse-instance 
-                                     idslotd warn-fn)
+                                     idslotd warn-fn errorp)
   (declare (function warn-fn))
   ;;; Check that the inverse-pointer back to `instance' is present in
   ;;; `inverse-instance'
@@ -806,33 +806,67 @@
     (flet ((missing-link ()
              (funcall warn-fn
                       "Inverse link back to ~s (link-slot ~s) from ~s ~
-                       is missing in link-slot ~s:"
+                       is missing in link-slot ~s"
                       instance
                       (slot-definition-name dslotd)
                       inverse-instance
                       slot-name
-                      link-slot-value)))
+                      link-slot-value))
+           (link-added ()
+             (format t "~&;; Link to ~s added." instance)))
       (cond
        ;; Singular link:
        ((direct-link-definition.singular idslotd)
         (unless (eq instance link-slot-value)
-          (missing-link)))
+          (missing-link)
+          (when errorp
+            (let ((*%%allow-setf-on-link%%* 't))
+              (setf (slot-value inverse-instance slot-name) instance))
+            (link-added))))
        ;; Non-singular link:
        (t (unless (and (consp link-slot-value)
                        (memq instance link-slot-value))
-            (missing-link)))))))
+            (missing-link)
+            (when errorp
+              (let ((sort-function (direct-link-definition.sort-function idslotd))
+                    (sort-key (or (direct-link-definition.sort-key idslotd)
+                                  #'identity))
+                    (*%%allow-setf-on-link%%* 't)
+                    (slot-value (slot-value inverse-instance slot-name)))
+                (setf (slot-value inverse-instance slot-name)
+                      (if sort-function
+                          ;; sorted, put the pointer in the proper location:
+                          (flet ((fn (x)
+                                   (funcall sort-key (link-instance-of x))))
+                            (declare (dynamic-extent #'fn))
+                            (nsorted-insert 
+                             instance 
+                             slot-value
+                             sort-function 
+                             (when sort-key #'fn)))
+                          ;; unsorted, just push the pointer:
+                          (cons instance slot-value))))
+              (link-added))))))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun check-all-instance-links (&optional silentp errorp 
-                                 &aux (problem-counter 0))
+                                 &aux (problem-counter 0)
+                                      (repairs-counter 0))
   (flet 
       ((check-one (instance)
          (let ((class (class-of instance)))
            (flet ((warn-fn (&rest args)
                     (declare (dynamic-extent args))
                     (incf& problem-counter)
-                    (apply (if errorp #'error #'warn) args)))
+                    (cond 
+                     ;; Error (with possible fixup):
+                     (errorp 
+                      (apply #'cerror "Fix the inconsistency." args)
+                      (incf& repairs-counter))
+                     ;; Non-silent warn:
+                     ((not silentp)
+                      (apply #'warn args)))))
              (declare (dynamic-extent #'warn-fn))
              (dolist (slot (class-slots class))
                (when (typep slot 'effective-link-definition)
@@ -854,7 +888,8 @@
                                     (slot-definition-name slot)
                                     instance)
                          (%check-instance-inverse-link 
-                          instance dslotd link-slot-value islotd #'warn-fn)))
+                          instance dslotd link-slot-value islotd 
+                          #'warn-fn errorp)))
                       ;; Non-singular link:
                       (t (unless (consp link-slot-value)
                            (funcall #'warn-fn
@@ -868,7 +903,7 @@
                          (dolist (linked-instance link-slot-value)
                            (%check-instance-inverse-link
                             instance dslotd linked-instance islotd 
-                            #'warn-fn))))))))))))
+                            #'warn-fn errorp))))))))))))
     (declare (dynamic-extent #'check-one))
     (map-instances-of-class #'check-one 't)
     (unless silentp
@@ -876,10 +911,13 @@
           (format t "~&;; All instance links are consistent.~%")
           (format t "~&;; ~s ~:[problems were~;problem was~] found.~%"
                   problem-counter
-                  (=& 1 problem-counter))))
+                  (=& 1 problem-counter)))
+      (when (plusp& repairs-counter)
+        (format t "~&;; ~s ~:[repairs were~;repair was~] made.~%"
+                repairs-counter
+                (=& 1 repairs-counter))))
     problem-counter))
 
 ;;; ===========================================================================
 ;;;				  End of File
 ;;; ===========================================================================
-
