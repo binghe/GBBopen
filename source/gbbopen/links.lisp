@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  9 06:59:04 2011 *-*
+;;;; *-* Last-Edit: Sat Apr  9 12:09:53 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -799,58 +799,93 @@
 (defun %check-instance-inverse-link (instance dslotd inverse-instance 
                                      idslotd warn-fn errorp)
   (declare (function warn-fn))
-  ;;; Check that the inverse-pointer back to `instance' is present in
-  ;;; `inverse-instance'
-  (let* ((slot-name (slot-definition-name idslotd))
-         (link-slot-value (slot-value inverse-instance slot-name)))
-    (flet ((missing-link ()
-             (funcall warn-fn
-                      "Inverse link back to ~s (link-slot ~s) from ~s ~
-                       is missing in link-slot ~s"
-                      instance
-                      (slot-definition-name dslotd)
-                      inverse-instance
-                      slot-name
-                      link-slot-value))
-           (link-added ()
-             (format t "~&;; Link to ~s added." instance)))
-      (cond
-       ;; Singular link:
-       ((direct-link-definition.singular idslotd)
-        (unless (eq instance (link-instance-of link-slot-value))
+  (cond
+   ;; Pointer to a deleted instance:
+   ((instance-deleted-p (link-instance-of inverse-instance))
+    (let ((slot-name (slot-definition-name dslotd)))
+      (flet ((missing-link ()
+               (funcall warn-fn
+                        "Deleted instance ~s is referenced in link-slot ~
+                         ~s in ~s"
+                        inverse-instance
+                        slot-name
+                        instance))
+             (reference-removed ()
+               (format t "~&;; Reference to ~s removed." inverse-instance)))
+        (cond
+         ;; Singular link:
+         ((direct-link-definition.singular dslotd)
           (missing-link)
           (when errorp
             (let ((*%%allow-setf-on-link%%* 't))
-              (setf (slot-value inverse-instance slot-name) instance))
-            (link-added))))
-       ;; Non-singular link:
-       (t (unless (and (consp link-slot-value)
-                       (member instance link-slot-value
-                               :key #'link-instance-of
-                               :test #'eq))
-            (missing-link)
-            (when errorp
-              (let ((sort-function (direct-link-definition.sort-function idslotd))
-                    (sort-key (or (direct-link-definition.sort-key idslotd)
-                                  #'identity))
-                    (*%%allow-setf-on-link%%* 't)
-                    (slot-value (slot-value inverse-instance slot-name)))
-                (setf (slot-value inverse-instance slot-name)
-                      (if sort-function
-                          ;; sorted, put the pointer in the proper location:
-                          (flet ((fn (x)
-                                   (funcall sort-key (link-instance-of x))))
-                            (declare (dynamic-extent #'fn))
-                            (nsorted-insert 
-                             instance 
-                             slot-value
-                             sort-function 
-                             (when sort-key #'fn)))
-                          ;; unsorted, just push the pointer:
-                          (cons instance slot-value))))
-              (link-added))))))))
-
+              (setf (slot-value instance slot-name) nil))
+            (reference-removed)))
+         ;; Non-singular link:
+         (t (let ((link-slot-value (slot-value instance slot-name)))
+              (missing-link)
+              (when errorp
+                (let ((*%%allow-setf-on-link%%* 't))
+                  (setf (slot-value instance slot-name)
+                        (delete inverse-instance link-slot-value
+                                :key #'link-instance-of
+                                :test #'eq)))
+                (reference-removed))))))))
+  ;;; Check that the inverse-pointer back to `instance' is present in
+  ;;; `inverse-instance'
+   (t (let* ((slot-name (slot-definition-name idslotd))
+             (link-slot-value (slot-value inverse-instance slot-name)))
+        (flet ((missing-link ()
+                 (funcall warn-fn
+                          "Inverse link back to ~s (link-slot ~s) from ~s ~
+                           is missing in link-slot ~s"
+                          instance
+                          (slot-definition-name dslotd)
+                          inverse-instance
+                          slot-name
+                          link-slot-value))
+               (link-added ()
+                 (format t "~&;; Link to ~s added." instance)))
+          (cond
+           ;; Singular link:
+           ((direct-link-definition.singular idslotd)
+            (unless (eq instance (link-instance-of link-slot-value))
+              (missing-link)
+              (when errorp
+                (let ((*%%allow-setf-on-link%%* 't))
+                  (setf (slot-value inverse-instance slot-name) instance))
+                (link-added))))
+           ;; Non-singular link:
+           (t (unless (and (consp link-slot-value)
+                           (member instance link-slot-value
+                                   :key #'link-instance-of
+                                   :test #'eq))
+                (missing-link)
+                (when errorp
+                  (let ((sort-function
+                         (direct-link-definition.sort-function idslotd))
+                        (sort-key 
+                         (or (direct-link-definition.sort-key idslotd)
+                             #'identity))
+                        (*%%allow-setf-on-link%%* 't)
+                        (slot-value (slot-value inverse-instance slot-name)))
+                    (setf (slot-value inverse-instance slot-name)
+                          (if sort-function
+                              ;; sorted, put the pointer in the proper location:
+                              (flet ((fn (x)
+                                       (funcall sort-key (link-instance-of x))))
+                                (declare (dynamic-extent #'fn))
+                                (nsorted-insert 
+                                 instance 
+                                 slot-value
+                                 sort-function 
+                                 (when sort-key #'fn)))
+                              ;; unsorted, just push the pointer:
+                              (cons instance slot-value))))
+                  (link-added))))))))))
+   
 ;;; ---------------------------------------------------------------------------
+;;;   STILL TO DO: Fixup singular/non-singular errors, check & fixup sort
+;;;                order errors
 
 (defun check-all-instance-links (&optional silentp errorp 
                                  &aux (problem-counter 0)
@@ -889,7 +924,7 @@
                                     link-slot-value
                                     (slot-definition-name slot)
                                     instance)
-                           (%check-instance-inverse-link 
+                           (%check-instance-inverse-link                            
                             instance dslotd 
                             (link-instance-of link-slot-value)
                             islotd #'warn-fn errorp)))
