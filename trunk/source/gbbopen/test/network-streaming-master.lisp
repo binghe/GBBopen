@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 30 17:46:25 2011 *-*
+;;;; *-* Last-Edit: Sat Apr  9 07:00:30 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -139,6 +139,9 @@
  (find-instance-by-name 5 'location) 
  (find-space-instance-by-path '(known-world))
  *streamer*)
+
+;; Check instance links:
+(stream-command-form '(:check-all-instance-links) *streamer*)
 
 ;; Send a problematic command:
 (let ((package (make-package ':bogus)))

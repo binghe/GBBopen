@@ -47,7 +47,7 @@ Important changes since GBBopen 1.5:
   * Changes to GBBopen
      - New *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE* and 
        *REPOSITORY-LOAD-PERCENTAGE-HOOK-FUNCTIONS* variables
-     - New CHECK-INSTANCE-LOCATORS function
+     - New CHECK-ALL-INSTANCE-LINKS and CHECK-INSTANCE-LOCATORS functions
      - New WITH-BLACKBOARD-REPOSITORY-LOCKED macro
      - Documented *FIND-VERBOSE*, *USE-MARKING*, CHECK-FOR-DELETED-INSTANCE
 
@@ -55,7 +55,7 @@ Important changes since GBBopen 1.5:
      - Experimental journaling and network-streaming
 
   * Changes to Agenda Shell
-     - New CONTROL-SHELL-HIBERNATING/AWAKENED-EVENT abstrace control-shell
+     - New CONTROL-SHELL-HIBERNATING/AWAKENED-EVENT abstract control-shell
        event and CONTROL-SHELL-AWAKENED-EVENT control-shell event
 
 

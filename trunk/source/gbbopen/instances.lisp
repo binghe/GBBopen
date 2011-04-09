@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 23 18:13:55 2011 *-*
+;;;; *-* Last-Edit: Wed Apr  6 14:58:03 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -71,6 +71,7 @@
             check-instance-locators
             delete-instance
             deleted-instance-class
+            deleted/non-deleted-unit-instance ; class-name, not documented yet
             describe-instance
             describe-instance-slot-value
             do-instances-of-class
@@ -112,7 +113,7 @@
 ;;; ===========================================================================
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-class %%deleted/non-deleted-unit-instance%% 
+  (define-class deleted/non-deleted-unit-instance 
       (standard-gbbopen-instance)
     (instance-name)
     (:export-class-name t)
@@ -122,7 +123,7 @@
 ;;;   Deleted Unit Instances
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (define-class deleted-unit-instance (%%deleted/non-deleted-unit-instance%%)
+  (define-class deleted-unit-instance (deleted/non-deleted-unit-instance)
     (original-class)
     (:export-class-name t)
     (:export-accessors t)))
@@ -213,7 +214,7 @@
 ;; parse-unit-class/instance-specifier (below):
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (define-unit-class standard-unit-instance
-      (%%deleted/non-deleted-unit-instance%%)
+      (deleted/non-deleted-unit-instance)
     ((instance-name :accessor instance-name-of)
      (%%marks%% :initform 0 :type fixnum)
      ;; %%space-instances%% slot also indicates deleted unit instances (via
@@ -363,6 +364,18 @@
 
 ;;; ===========================================================================
 ;;;   Default LINK-INSTANCE-OF reader/writer
+
+(defmethod link-instance-of ((link deleted/non-deleted-unit-instance))
+  ;; The default value for a basic link to a unit instance is just the unit
+  ;; instance:
+  link)
+
+(defmethod (setf link-instance-of) 
+    (nv (link deleted/non-deleted-unit-instance))
+  ;; The default writer for a basic link to a unit instance is a noop:
+  nv)
+
+;;; ---------------------------------------------------------------------------
 
 (defmethod link-instance-of ((link standard-unit-instance))
   ;; The default value for a basic link to a unit instance is just the unit
