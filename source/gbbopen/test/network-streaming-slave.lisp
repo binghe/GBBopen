@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-streaming-slave.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Apr  3 16:34:21 2011 *-*
+;;;; *-* Last-Edit: Thu Apr  7 09:49:31 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -81,6 +81,12 @@
                                          &rest args)
   (declare (ignorable streamer) (dynamic-extent args))
   (apply #'disable-event-printing args))
+
+;; Link checking:
+(defmethod handle-streamed-command-form
+    (streamer (command (eql ':check-all-instance-links)) &rest args)
+  (declare (ignorable streamer) (ignore args))
+  (check-all-instance-links))
 
 ;; Silly connection-exiting method:
 (defmethod handle-stream-connection-exiting ((connection stream) exit-status)

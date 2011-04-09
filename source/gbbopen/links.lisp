@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  6 10:13:17 2011 *-*
+;;;; *-* Last-Edit: Sat Apr  9 06:59:04 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -817,7 +817,7 @@
       (cond
        ;; Singular link:
        ((direct-link-definition.singular idslotd)
-        (unless (eq instance link-slot-value)
+        (unless (eq instance (link-instance-of link-slot-value))
           (missing-link)
           (when errorp
             (let ((*%%allow-setf-on-link%%* 't))
@@ -825,7 +825,9 @@
             (link-added))))
        ;; Non-singular link:
        (t (unless (and (consp link-slot-value)
-                       (memq instance link-slot-value))
+                       (member instance link-slot-value
+                               :key #'link-instance-of
+                               :test #'eq))
             (missing-link)
             (when errorp
               (let ((sort-function (direct-link-definition.sort-function idslotd))
@@ -887,9 +889,10 @@
                                     link-slot-value
                                     (slot-definition-name slot)
                                     instance)
-                         (%check-instance-inverse-link 
-                          instance dslotd link-slot-value islotd 
-                          #'warn-fn errorp)))
+                           (%check-instance-inverse-link 
+                            instance dslotd 
+                            (link-instance-of link-slot-value)
+                            islotd #'warn-fn errorp)))
                       ;; Non-singular link:
                       (t (unless (consp link-slot-value)
                            (funcall #'warn-fn
@@ -902,8 +905,9 @@
                            (setf link-slot-value (list link-slot-value)))
                          (dolist (linked-instance link-slot-value)
                            (%check-instance-inverse-link
-                            instance dslotd linked-instance islotd 
-                            #'warn-fn errorp))))))))))))
+                            instance dslotd 
+                            (link-instance-of linked-instance)
+                            islotd #'warn-fn errorp))))))))))))
     (declare (dynamic-extent #'check-one))
     (map-instances-of-class #'check-one 't)
     (unless silentp

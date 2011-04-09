@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/network-mirroring-master.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 30 17:59:11 2011 *-*
+;;;; *-* Last-Edit: Sat Apr  9 07:04:57 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -160,6 +160,9 @@
 
 ;; Update a bunch of new locations:
 (time (update-a-bunch 20000))
+
+;; Check instance links:
+(stream-command-form '(:check-all-instance-links) *streamer*)
 
 ;; Send a problematic command:
 (let ((package (make-package ':bogus)))
