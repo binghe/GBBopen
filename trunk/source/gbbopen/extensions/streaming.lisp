@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 11 07:04:59 2011 *-*
+;;;; *-* Last-Edit: Mon Apr 11 11:51:16 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -114,6 +114,11 @@
    package
    external-format
    read-default-float-format))
+
+(defmethod print-instance-slots :after ((streamer basic-streamer) stream)
+  (unless (and (slot-boundp streamer 'stream)
+               (open-streamer-p streamer))
+    (format stream " (closed)")))
 
 ;;; ---------------------------------------------------------------------------
 
