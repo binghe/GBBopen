@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 31 01:56:09 2011 *-*
+;;;; *-* Last-Edit: Mon Apr 11 07:49:14 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -50,6 +50,7 @@
             network-streamer            ; class-name (not yet documented)
             open-network-streamer
             port-of                     ; not yet documented
+            read-count-of               ; not yet documented
             start-network-stream-server
             streamer-node               ; class-name (not yet documented)
             streamer-node-of)))         ; not yet documented
@@ -71,7 +72,8 @@
    (external-format :initform ':default)
    (read-default-float-format :initform *read-default-float-format*)
    (streamer-class :initform 'network-streamer)
-   (streamer :initform nil)))
+   (streamer :initform nil)
+   (read-count :initform 0)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -225,8 +227,11 @@
 (defun close-network-streamer (network-streamer)
   (let ((connection-thread (connection-thread-of network-streamer)))
     (when (and connection-thread (thread-alive-p connection-thread))
-      (run-in-thread connection-thread #'(lambda () (throw 'close nil))))))
-
+      (ignore-errors 
+       (run-in-thread 
+        connection-thread`
+        #'(lambda () (ignore-errors (throw 'close nil))))))))
+  
 ;;; ---------------------------------------------------------------------------
 
 (defmethod close-streamer ((streamer network-streamer))
@@ -250,11 +255,13 @@
 (defmethod network-stream-receiver ((network-streamer network-streamer) 
                                     connection)
   (declare (ignorable network-streamer))
-  (let ((maximum-contiguous-errors 2)
-        (contiguous-errors 0)
-        *queued-read-tag*
-        form
-        (eof-marker '#:eof))
+  (let* ((maximum-contiguous-errors 2)
+         (contiguous-errors 0)
+         *queued-read-tag*
+         form
+         (eof-marker '#:eof)
+         (streamer-node (streamer-node-of network-streamer))
+         (read-count (read-count-of streamer-node)))
     (catch 'close-stream
       (loop
         (setf form (restartable-reader connection eof-marker))
@@ -265,47 +272,63 @@
           (force-output *trace-output*)
           (when (>=& (incf& contiguous-errors) maximum-contiguous-errors)
             (format *trace-output* "~&;; Maximum contiguous errors exceeded; ~
-                                       closing connection ~s.~%"
+                                         closing connection ~s.~%"
                     connection)
             (force-output *trace-output*)
             (return ':error)))
-         (t (setf contiguous-errors 0)))))))
+         (t (setf contiguous-errors 0)
+            ;; Increment read-count, wrapping to keep it a fixnum:
+            (setf read-count
+                  (if (=& read-count most-positive-fixnum) 
+                      most-negative-fixnum
+                      (1+& read-count)))
+            (setf (read-count-of streamer-node) read-count)))))))
   
 ;;; ---------------------------------------------------------------------------
 
 (defun start-streaming-connection-endpoint (streamer-node connection)
-  (with-reading-saved/sent-objects-block 
-      (connection)
-    (let ((network-streamer (streamer-of streamer-node)))
-      (cond 
-       (network-streamer
-        (let (exit-status
-              ;; Bind the reading network streamer (for use by
-              ;; HANDLE-STREAMED-COMMAND-FORM and
-              ;; HANDLE-STREAMED-COMMAND-ATOM):
-              (*%%reading-streamer%%* network-streamer))
-          (unwind-protect 
-              (catch 'close
-                (setf exit-status
-                      (network-stream-receiver network-streamer connection)))
-            (let* ((streamer (streamer-of streamer-node))
-                   (broadcast-streamer (broadcast-streamer-of streamer)))
-              (setf (closed-of streamer) 't)
-              (when *remove-mirroring-when-streamer-closes*
-                (remove-mirroring streamer))
-              ;; Remove from broadcast-streamer:
-              (when broadcast-streamer
-                (remove-from-broadcast-streamer 
-                 streamer broadcast-streamer)))
-            (setf (streamer-of streamer-node) nil)
-            (remhash connection *streamer-nodes-ht*)
-            (setf (stream-of network-streamer) ':closed)
-            (handle-stream-connection-exiting network-streamer exit-status))))
-       (t (error "Missing network-streamer at ~s" streamer-node)))
-      ;; Clean up:
-      (when (and (streamp connection)
-                 (open-stream-p connection))
-        (close connection)))))
+  (let ((network-streamer (streamer-of streamer-node)))
+    (cond 
+     (network-streamer
+      (let ((exit-status ':error)
+            ;; Bind the reading network streamer (for use by
+            ;; HANDLE-STREAMED-COMMAND-FORM and
+            ;; HANDLE-STREAMED-COMMAND-ATOM):
+            (*%%reading-streamer%%* network-streamer))
+        (unwind-protect 
+            (catch 'close
+              (with-error-handling 
+                  ((restart-case 
+                       (with-reading-saved/sent-objects-block 
+                           (connection)
+                         (setf exit-status
+                               (network-stream-receiver 
+                                network-streamer connection)))
+                     (close ()
+                         :report (lambda (stream)
+                                   (format stream "Close the input stream ~s" 
+                                           connection))
+                       ':error))
+                   ;; Handler
+                   (handle-stream-input-error
+                       (error-condition) connection))))
+          (let ((broadcast-streamer (broadcast-streamer-of network-streamer)))
+            (setf (closed-of network-streamer) 't)
+            (when *remove-mirroring-when-streamer-closes*
+              (remove-mirroring network-streamer))
+            ;; Remove from broadcast-streamer:
+            (when broadcast-streamer
+              (remove-from-broadcast-streamer 
+               network-streamer broadcast-streamer)))
+          (setf (streamer-of streamer-node) nil)
+          (remhash connection *streamer-nodes-ht*)
+          (setf (stream-of network-streamer) ':closed)
+          (handle-stream-connection-exiting network-streamer exit-status))))
+     (t (error "Missing network-streamer at ~s" streamer-node))))
+  ;; Clean up:
+  (when (and (streamp connection)
+             (open-stream-p connection))
+    (close connection)))
 
 ;;; ---------------------------------------------------------------------------
 

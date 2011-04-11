@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr  5 14:20:53 2011 *-*
+;;;; *-* Last-Edit: Mon Apr 11 07:04:59 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -774,8 +774,12 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun invoke-skip-form-restart ()
-  (invoke-restart (find-restart 'skip-form)))
+(defun invoke-skip-form-restart (&optional (allow-close 't))
+  (invoke-restart (or (find-restart 'skip-form)
+                      ;; If the skip-form restart is not available because
+                      ;; form processing has not begun, close the stream if
+                      ;; allowed:
+                      (and allow-close (find-restart 'close)))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -805,6 +809,7 @@
 (defgeneric read-queued-streaming-block (tag string-stream))
 
 (defmethod read-queued-streaming-block (tag string-stream)
+  (declare (ignore tag))
   ;; Read the queue-block:
   (let ((eof-marker '#:eof))
     (until (eq eof-marker (restartable-reader string-stream eof-marker)))))
