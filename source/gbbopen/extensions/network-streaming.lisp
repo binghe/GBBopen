@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 11 07:49:14 2011 *-*
+;;;; *-* Last-Edit: Mon Apr 11 11:48:24 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -229,7 +229,7 @@
     (when (and connection-thread (thread-alive-p connection-thread))
       (ignore-errors 
        (run-in-thread 
-        connection-thread`
+        connection-thread
         #'(lambda () (ignore-errors (throw 'close nil))))))))
   
 ;;; ---------------------------------------------------------------------------
