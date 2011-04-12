@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 12 02:22:26 2011 *-*
+;;;; *-* Last-Edit: Tue Apr 12 01:57:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -535,13 +535,13 @@
                                            slots slot-values missing-slot-names
                                            &aux (*%%doing-initialize-instance%%* 't))
   (declare (ignore slots slot-values missing-slot-names))
-  ;; Remove incompleteness mark (whether or not it was set before); the
-  ;; instance must be marked complete before it is added to its space
-  ;; instances:
-  (clear-incomplete-instance-mark instance)
   ;; Allow setf setting of link-slot pointers. 
   (let ((*%%allow-setf-on-link%%* 't))
     (call-next-method))
+  ;; remove incompleteness mark (whether or not it was set before); the
+  ;; instance must be marked complete before it is added to its space
+  ;; instances:
+  (clear-incomplete-instance-mark instance)
   ;; Add the instance to space instances:
   (with-blackboard-repository-locked ()
     (let ((space-instance-paths
