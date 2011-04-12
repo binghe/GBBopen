@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/glossary.tex *-*
-%% *-* Last-Edit: Tue Apr  5 12:28:28 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr 12 01:46:58 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -527,6 +527,20 @@ arguments supplied to it.
 
 %% ------------------------------------------------------------------------
 
+\glent[incomplete~unit~instance]
+\gllabel{incomplete}%
+\index{unit instance!incomplete}%
+\index{incomplete unit instance}%
+%
+A forward-referenced \glref{unit~instance} created during the loading of a
+blackboard repository or journal file or the reading of a
+\glref{network~stream}.  An incomplete unit instance does not reside on any
+\glref{space~instance} or have all of its saved/sent slot values present until
+it becomes "complete" by loading or receiving a form containing the instance's
+full details.
+
+%% ------------------------------------------------------------------------
+
 \glent[incomposite~dimension~value]
 \index{incomposite dimension value}%
 \index{dimension value!incomposite}%
@@ -826,9 +840,12 @@ An object that is used as a sending destination for
 
 \glent[network~streaming] 
 \gllabel{network-streaming}%
+\gllabel{network~stream}%
 \index{network streaming}%
 %
-Sending \glref{unit~instances} (and \glref{space~instances}, changes made to the \glref{blackboard~repository}, and commands to a \glref{streamer~node} (typically in another Common Lisp image).
+Sending \glref{unit~instances} (and \glref{space~instances}, changes made to
+the \glref{blackboard~repository}, and commands to a \glref{streamer~node}
+(typically in another Common Lisp image).
 
 %% ------------------------------------------------------------------------
 
@@ -1375,7 +1392,7 @@ time zone must be a multiple of
 
 \glent[unit]
 \index{unit!class}%
-\index{unit!instance}%
+\index{unit instance}%
 \index{class!unit}%
 \index{instance!unit}%
 %
@@ -1401,7 +1418,7 @@ An object that is a subclass of \nobr{\textbf{\entlinknoex{standard-unit-class}}
 \gllabel{unit-instance}%
 \gllabel{instance}%
 \gllabel{instances}%
-\index{unit!instance}%
+\index{unit instance}%
 \index{instance!unit}%
 \bfindexit{standard-unit-instance}%
 %

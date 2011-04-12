@@ -48,7 +48,7 @@ marked with the <var>tag</var> value.  Queued streaming is <a href="ref-glossary
 written even if it is empty (and
 <nobr><b><a href="ref-read-queued-streaming-block.html">read-queued-streaming-block</a></b></nobr> will be called with
 the <var>tag</var> value when the empty queue is received at a
-<nobr><a href="ref-glossary.html#id230">streamer&nbsp;node</a></nobr> or read during <a href="ref-glossary.html#gl:journal">journal</a> loading).
+<nobr><a href="ref-glossary.html#id232">streamer&nbsp;node</a></nobr> or read during <a href="ref-glossary.html#gl:journal">journal</a> loading).
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-clear-streamer-queue.html"><b>clear-streamer-queue</b></a>
@@ -57,7 +57,7 @@ the <var>tag</var> value when the empty queue is received at a
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1">Assuming</a> that <code>hyp</code> &nbsp;<a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> are being mirrored to
 <a href="ref-glossary.html#gl:streamer">streamer</a> <code>*streamer*</code>, queue the mirroring of a created <code>hyp</code> tagged
-with the <a href="ref-glossary.html#id220">space&nbsp;instance</a> <nobr><code>(bb hyps)</code></nobr>:
+with the <a href="ref-glossary.html#id222">space&nbsp;instance</a> <nobr><code>(bb hyps)</code></nobr>:
 <pre class="pretop">
   &gt; (with-queued-streaming (*streamer* (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)))
        (<a href="ref-make-instance.html">make-instance</a> 'hyp 

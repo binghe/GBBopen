@@ -21,7 +21,7 @@
 </td></tr></table></p>
 <p><span class="fndoclabel">Purpose</span> <br />Set <var><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></var> to be precisely
 <nobr><var>unit-instance-or-instances</var></nobr> <a href="ref-glossary.html#gl:links">links</a> between
-<nobr><a href="ref-glossary.html#id254">unit&nbsp;instance</a></nobr> and <nobr><var>unit-instance-or-instances</var></nobr>.
+<nobr><a href="ref-glossary.html#id256">unit&nbsp;instance</a></nobr> and <nobr><var>unit-instance-or-instances</var></nobr>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
@@ -29,9 +29,9 @@
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:form">form</a> which is suitable for use as a
-<a href="ref-glossary.html#id88">generalized&nbsp;reference</a> to a <a href="ref-glossary.html#id126">link&nbsp;slot</a>
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instance-or-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id254">unit&nbsp;instance</a>, a 
-<a href="ref-glossary.html#id128">link-pointer&nbsp;object</a>, or a list of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> and 
+<a href="ref-glossary.html#id88">generalized&nbsp;reference</a> to a <a href="ref-glossary.html#id128">link&nbsp;slot</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-instance-or-instances</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id256">unit&nbsp;instance</a>, a 
+<a href="ref-glossary.html#id130">link-pointer&nbsp;object</a>, or a list of <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> and 
 <a href="ref-glossary.html#gl:link-pointer-object">link-pointer&nbsp;objects</a>
 </td></tr></table>
 </p>
@@ -42,7 +42,7 @@
 <p><ul class="tight"><li>all pointers that are removed from the specified
 <nobr><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></nobr>
 <li>each inverse pointer of the <a href="ref-glossary.html#gl:link">link</a> that is removed-from
-another <nobr><a href="ref-glossary.html#id254">unit&nbsp;instance</a></nobr>
+another <nobr><a href="ref-glossary.html#id256">unit&nbsp;instance</a></nobr>
 </ul>
 A <code>link-event</code> is signaled for:
 </p>
@@ -51,7 +51,7 @@ A <code>link-event</code> is signaled for:
 is signaled even if no new pointers were added to
 <nobr><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></nobr>)
 <li>each inverse pointer of the <a href="ref-glossary.html#gl:link">link</a> that is added to
-another <nobr><a href="ref-glossary.html#id254">unit&nbsp;instance</a></nobr>
+another <nobr><a href="ref-glossary.html#id256">unit&nbsp;instance</a></nobr>
 </ul>
 </p>
 <p><span class="fndoclabel">Description</span> <br />Any existing <a href="ref-glossary.html#gl:links">links</a> in <nobr><var><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></var></nobr> that 
@@ -66,7 +66,7 @@ are added.
 maintained when settting the value of <nobr><var><a href="ref-glossary.html#gl:link-slot-place">link-slot-place</a></var></nobr>, if
 no <nobr><code>:sort-function</code></nobr> was specified as a
 <nobr><var>link-slot-option</var></nobr> in the <a href="ref-glossary.html#gl:unit-class">unit-class</a> definition for that
-<a href="ref-glossary.html#id126">link&nbsp;slot</a>.  Any duplicates in
+<a href="ref-glossary.html#id128">link&nbsp;slot</a>.  Any duplicates in
 <nobr><var>unit-instance-or-instances</var></nobr> are removed, but the order of the
 remaining elements will be the same as the order in which they appeared in
 <nobr><var>unit-instance-or-instances.</var></nobr>
@@ -78,8 +78,8 @@ remaining elements will be the same as the order in which they appeared in
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unlinkf.html"><b>unlinkf</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-unlinkf-all.html"><b>unlinkf-all</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Set the <nobr><code>supporting-hyps</code></nobr> <a href="ref-glossary.html#id126">link&nbsp;slot</a> of the
-<code>hyp</code> <a href="ref-glossary.html#id254">unit&nbsp;instance</a> to the <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> in
+<p><span class="fndoclabel">Examples</span> <br />Set the <nobr><code>supporting-hyps</code></nobr> <a href="ref-glossary.html#id128">link&nbsp;slot</a> of the
+<code>hyp</code> <a href="ref-glossary.html#id256">unit&nbsp;instance</a> to the <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> in
 <nobr><code>supporting-hyps</code></nobr>:
 <pre class="pretop">
   &gt; (link-setf (supporting-hyps-of unit-instance) supporting-hyps)
@@ -118,7 +118,7 @@ Replace the existing <a href="ref-glossary.html#gl:link-pointer-object">link-poi
   &gt;
 </pre>
 Of course, a <code>value</code> change can also be done directly in 
-an existing <a href="ref-glossary.html#id128">link-pointer&nbsp;object</a>:
+an existing <a href="ref-glossary.html#id130">link-pointer&nbsp;object</a>:
 <pre>
   &gt; (supporting-hyps-of unit-instance)
   (#&lt;link-ptr-with-value #&lt;hyp 231 (1488 7405) 0.63 [0..8]&gt;)

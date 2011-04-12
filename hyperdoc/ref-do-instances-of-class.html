@@ -28,7 +28,7 @@
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen-core</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id258">variable&nbsp;symbol</a>
+<tr valign="top"><td valign="baseline" nowrap><i>var</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id260">variable&nbsp;symbol</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>unit-classes-specifier</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id73">extended&nbsp;unit-classes&nbsp;specification</a>
 (see below)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>declaration</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A declare expression (not evaluated)
@@ -68,7 +68,7 @@
 <code>:plus-subclasses</code> and <code>=</code> to <code>:no-subclasses</code>.
 </p>
 <p><span class="fndoclabel">Description</span> <br />The iteration over the <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the specified
-<a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> is performed once for each <a href="ref-glossary.html#id254">unit&nbsp;instance</a>, whether
+<a href="ref-glossary.html#gl:unit-class">unit&nbsp;classes</a> is performed once for each <a href="ref-glossary.html#id256">unit&nbsp;instance</a>, whether
 or not the instances reside on any <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.
 </p>
 <p><span class="fndoclabel">See also</span>
@@ -81,7 +81,7 @@ or not the instances reside on any <a href="ref-glossary.html#gl:space-instance"
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-instances-on-space-instances.html"><b>map-instances-on-space-instances</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-map-sorted-instances-of-class.html"><b>map-sorted-instances-of-class</b></a>
 </p>
-<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the <a href="ref-glossary.html#id252">unit&nbsp;class</a> <code>hyp</code>:
+<p><span class="fndoclabel">Examples</span> <br />Delete all <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a> of the <a href="ref-glossary.html#id254">unit&nbsp;class</a> <code>hyp</code>:
 <pre class="pretop">
   (do-instances-of-class (instance 'hyp)
     (<a href="ref-delete-instance.html">delete-instance</a> instance))
@@ -99,9 +99,9 @@ or simply:
 </pre> 
 </p>
 <p><span class="fndoclabel">Note</span> <br /><a name="id2">The</a> consequences are unspecified if an attempt is made to add or delete a
-<a href="ref-glossary.html#id254">unit&nbsp;instance</a> while <nobr><b>do-instances-of-class</b></nobr> is in
+<a href="ref-glossary.html#id256">unit&nbsp;instance</a> while <nobr><b>do-instances-of-class</b></nobr> is in
 progress.  There is one exception to this restriction: the current
-<a href="ref-glossary.html#id254">unit&nbsp;instance</a> in the iteration (bound to <var>var</var>) can be deleted,
+<a href="ref-glossary.html#id256">unit&nbsp;instance</a> in the iteration (bound to <var>var</var>) can be deleted,
 provided that the deletion does not trigger the deletion of any other
 <a href="ref-glossary.html#gl:instances">unit&nbsp;instances</a>.  For example, the following form intended to delete
 all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> violates this restriction:
@@ -110,13 +110,13 @@ all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> viola
                              '(<a href="ref-standard-space-instance.html">standard-space-instance</a> :plus-subclasses))
      (<a href="ref-delete-space-instance.html">delete-space-instance</a> space-instance))</font>
 </pre>
-because deletion of a <a href="ref-glossary.html#id220">space&nbsp;instance</a> with children automatically
+because deletion of a <a href="ref-glossary.html#id222">space&nbsp;instance</a> with children automatically
 deletes those child <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a>.  The function
 <nobr><b><a href="ref-delete-all-space-instances.html">delete-all-space-instances</a></b></nobr> provides an efficient
 means of deleting all <a href="ref-glossary.html#gl:space-instance">space&nbsp;instances</a> without violating this rule.
 </p>
 <p><span class="fndoclabel">REPL Note</span> <br /><a name="id3">The</a> equivalent of <nobr><code>(do-instances-of-class (instance <var>arg</var>)
-(print instance))</code></nobr> can be invoked using the <a href="ref-glossary.html#id196">REPL&nbsp;command</a>
+(print instance))</code></nobr> can be invoked using the <a href="ref-glossary.html#id198">REPL&nbsp;command</a>
 <nobr><code>:pic <span 
     style="font-family: serif; font-style: normal">[</span><var>arg</var><span 
     style="font-family: serif; font-style: normal">]</span></code></nobr>.  If <var>arg</var> is
