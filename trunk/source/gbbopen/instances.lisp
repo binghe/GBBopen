@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  6 14:58:03 2011 *-*
+;;;; *-* Last-Edit: Tue Apr 12 01:57:15 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -79,7 +79,7 @@
             find-instance-by-name
             find-all-instances-by-name
             find-instances-of-class
-            incomplete-instance-p       ; not yet documented
+            incomplete-instance-p
             initial-class-instance-number
             instance-dimension-value
             instance-dimension-values
@@ -532,7 +532,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-saved/sent-instance ((instance standard-unit-instance)
-                                           slots slot-values missing-slot-names)
+                                           slots slot-values missing-slot-names
+                                           &aux (*%%doing-initialize-instance%%* 't))
   (declare (ignore slots slot-values missing-slot-names))
   ;; Allow setf setting of link-slot pointers. 
   (let ((*%%allow-setf-on-link%%* 't))

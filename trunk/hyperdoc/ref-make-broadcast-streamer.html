@@ -38,7 +38,7 @@ to multiple <a href="ref-glossary.html#gl:journal">journal</a> and <a href="ref-
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
 <tr valign="top"><td valign="baseline" nowrap><i>streamers</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A list of journal or network <a href="ref-glossary.html#gl:streamers">streamers</a>.
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>package</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id158">package&nbsp;designator</a> indicating the package to be used
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>package</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id160">package&nbsp;designator</a> indicating the package to be used
 when writing to and reading from the <a href="ref-glossary.html#gl:streamers">streamers</a> associated with
 the <var>broadcast-streamer</var> (default is <nobr><code>:common-lisp</code></nobr>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>read-default-float-format</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of the atomic type specifiers
@@ -57,7 +57,7 @@ the <var>broadcast-streamer</var> (default is <nobr><code>single-float</code></n
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-remove-from-broadcast-streamer.html"><b>remove-from-broadcast-streamer</b></a>
 </p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1">Create</a> a broadcast streamer containing <a href="ref-glossary.html#gl:network-streamer">network&nbsp;streamers</a> to 
-<a href="ref-glossary.html#id231">streamer&nbsp;nodes</a> <code>"you"</code> and <code>"you-too"</code>:
+<a href="ref-glossary.html#id233">streamer&nbsp;nodes</a> <code>"you"</code> and <code>"you-too"</code>:
 <pre class="pretop">
   &gt; (make-broadcast-streamer 
       (<a href="ref-open-network-streamer.html">open-network-streamer</a> "me" "you")

@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Apr  6 15:11:58 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Apr 12 01:46:23 2011; Edited-By: cork *-*
 %% *-* Machine: twister.local *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -18908,6 +18908,58 @@ Return the GBBopen implementation-version string:
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{incomplete-instance-p}{\var{unit-instance\/}
+    \nobr{\returns{} \var{boolean\/}}}
+
+\fnsyntax
+
+\fnpurpose Determine whether a \glref{unit~instance} is \glref{incomplete}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:gbbopen-core}
+
+\fnargs
+\begin{args}{unit-instance}
+\arg[unit-instance] A \glref{unit~instance}
+\arg[boolean] A \glref{generalized~boolean}
+\end{args}
+
+\fnreturns True if the \glref{unit~instance} is \glref{incomplete}; \nil{}
+otherwise.
+
+\begin{alsos}{instance-deleted-p}
+\also[instance-deleted-p]
+\end{alsos}
+
+\fnexample
+%
+\bfindexit{add-event-function}
+%
+Define an event function that recomputes the area of a complete
+\glref{unit~instance} when the value of its \code{height} or \code{width} slot
+changes:
+%
+\W\supp
+\begin{example}
+  (defun update-area-evfn (event-name 
+                             &key instance
+                             &allow-other-keys)
+    (declare (ignore event-name))
+    ;; Do not compute the area of an incomplete instance:
+    (unless (incomplete-instance instance)
+      (setf (area-of instance) 
+            (* (width-of instance) (height-of instance)))))
+
+  (\entlink{add-event-function} 'update-area-evfn 
+                      'rectangle
+                      :slot-names '(width height))
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Generic~Function}{initial-class-instance-number}%
   {\nobr{\var{unit-class-name-or-instance\/}}
     \nobr{\returns{} \var{integer\/}}}
@@ -18991,6 +19043,7 @@ true for the unit class.
 \also[*skip-deleted-unit-instance-class-change*]
 \also[check-for-deleted-instance]
 \also[delete-instance]
+\also[incomplete-instance-p]
 \end{alsos}
 
 \fnexample
@@ -20526,6 +20579,9 @@ as a \glref{link} pointer.
 \fnalternate{link-instance-of}%
  {\code{(}\var{object\/} \code{deleted/non-deleted-unit-instance)}
   \returns{} \var{object}}
+\fnalternate{link-instance-of}%
+ {\code{(}\var{object\/} \code{standard-link-pointer)}
+  \returns{} \var{unit-instance}}
 
 \fnpackage \code{:gbbopen}
 
@@ -20541,8 +20597,8 @@ as a \glref{link} pointer.
 
 \fndescription
 %
-The default \textbf{link-instance-of} method on a \glref{unit~instance} 
-returns its argument unit-instance object (an \code{identity} function).
+The \textbf{link-instance-of} method on a \glref{unit~instance} returns its
+argument unit-instance object.
 
 \begin{alsos}{standard-link-pointer}
 \also[linkf]

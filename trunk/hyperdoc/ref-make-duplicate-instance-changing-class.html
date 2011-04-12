@@ -82,25 +82,25 @@
 <tr valign="top"><td valign="baseline" nowrap><i>instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <code>standard-object</code> <a href="ref-glossary.html#gl:instances">instance</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>new-class</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id19">class&nbsp;designator</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>unduplicated-slot-names</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A list of slot names
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id94">initialization&nbsp;argument&nbsp;list</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>initargs</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An <a href="ref-glossary.html#id96">initialization&nbsp;argument&nbsp;list</a>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>new-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <code>standard-object</code> <a href="ref-glossary.html#gl:instances">instance</a>
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slots</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id176">proper&nbsp;list</a> of slot objects
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>slots</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id178">proper&nbsp;list</a> of slot objects
 </td></tr></table>
 </p>
 <p><span class="fndoclabel">Returns</span> <br />Two values: the (newly created) duplicate <a href="ref-glossary.html#gl:instances">instance</a> and a
 list of the slots that were duplicated or explicitly initialized.
 </p>
-<p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id254">unit&nbsp;instance</a> is duplicated, events are signaled in the
+<p><span class="fndoclabel">Events</span> <br /><a name="id1">When</a> a <a href="ref-glossary.html#id256">unit&nbsp;instance</a> is duplicated, events are signaled in the
 following sequence: 
 </p>
 <p><ol class="tight"><li>An <nobr><code>nonlink-slot-updated-event</code></nobr> or <nobr><code>link-event</code></nobr> is
 signaled for each initialized slot in the duplicated
-<a href="ref-glossary.html#id254">unit&nbsp;instance</a>.  A <nobr><code>link-event</code></nobr> is also signaled for
-each inverse pointer from an existing <a href="ref-glossary.html#id254">unit&nbsp;instance</a> to the
-(newly created) duplicate <a href="ref-glossary.html#id254">unit&nbsp;instance</a>.
+<a href="ref-glossary.html#id256">unit&nbsp;instance</a>.  A <nobr><code>link-event</code></nobr> is also signaled for
+each inverse pointer from an existing <a href="ref-glossary.html#id256">unit&nbsp;instance</a> to the
+(newly created) duplicate <a href="ref-glossary.html#id256">unit&nbsp;instance</a>.
 <li>An <nobr><code>instance-added-to-space-instance-event</code></nobr> is signaled
-for each <a href="ref-glossary.html#id220">space&nbsp;instance</a> on which the duplicate
-<a href="ref-glossary.html#id254">unit&nbsp;instance</a> is added.
+for each <a href="ref-glossary.html#id222">space&nbsp;instance</a> on which the duplicate
+<a href="ref-glossary.html#id256">unit&nbsp;instance</a> is added.
 <li>A <code>instance-created-event</code> is signaled.
 </ol>
 </p>
@@ -124,18 +124,18 @@ calling <nobr><b><a href="ref-unduplicated-slot-names.html">unduplicated-slot-na
 forms.
 </ul>
 </p>
-<p>When creating (duplicating) a new <a href="ref-glossary.html#id254">unit&nbsp;instance</a>, specifying a
+<p>When creating (duplicating) a new <a href="ref-glossary.html#id256">unit&nbsp;instance</a>, specifying a
 <nobr><code>:instance-name</code></nobr> initialization argument causes that value to be
-used as the <a href="ref-glossary.html#id98">instance&nbsp;name</a> of the newly created <a href="ref-glossary.html#id254">unit&nbsp;instance</a>
+used as the <a href="ref-glossary.html#id100">instance&nbsp;name</a> of the newly created <a href="ref-glossary.html#id256">unit&nbsp;instance</a>
 instead of the instance-name counter value associated with the
-<a href="ref-glossary.html#id252">unit&nbsp;class</a> (if the <nobr><code>:use-global-instance-name-counter</code></nobr>
+<a href="ref-glossary.html#id254">unit&nbsp;class</a> (if the <nobr><code>:use-global-instance-name-counter</code></nobr>
 class option is <code>nil</code> or was not specified for the unit class) or the global
 instance-name counter value (if the
 <nobr><code>:use-global-instance-name-counter</code></nobr> class option is true for the
 unit class).
 </p>
 <p>A <nobr><code>:space-instances</code></nobr> initialization argument must be provided when
-creating a new a <a href="ref-glossary.html#id220">space&nbsp;instance</a>.
+creating a new a <a href="ref-glossary.html#id222">space&nbsp;instance</a>.
 </p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-change-class.html"><b>change-class</b></a>
@@ -193,7 +193,7 @@ creating a new a <a href="ref-glossary.html#id220">space&nbsp;instance</a>.
   &gt;
 </pre>
 </p>
-<p><a name="id4">Create</a> a duplicate of the <code>hyp</code> <code>419</code> <a href="ref-glossary.html#id254">unit&nbsp;instance</a> as a 
+<p><a name="id4">Create</a> a duplicate of the <code>hyp</code> <code>419</code> <a href="ref-glossary.html#id256">unit&nbsp;instance</a> as a 
 <nobr><code>probable-hyp</code></nobr>:'
 <pre class="pretop">
   &gt; (make-duplicate-instance-changing-class 

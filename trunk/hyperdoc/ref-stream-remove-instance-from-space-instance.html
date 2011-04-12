@@ -19,17 +19,17 @@
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>instance</var></nobr></td><td valign="baseline" align="right">[<i>Function</i>]
 </td></tr></table></p>
-<p><span class="fndoclabel">Purpose</span> <br />Write removing a <a href="ref-glossary.html#id254">unit&nbsp;instance</a> from a
-<a href="ref-glossary.html#id220">space&nbsp;instance</a> to a <a href="ref-glossary.html#gl:streamer">streamer</a>.
+<p><span class="fndoclabel">Purpose</span> <br />Write removing a <a href="ref-glossary.html#id256">unit&nbsp;instance</a> from a
+<a href="ref-glossary.html#id222">space&nbsp;instance</a> to a <a href="ref-glossary.html#gl:streamer">streamer</a>.
 </p>
 <p><span class="fndoclabel">Package</span>&nbsp;&nbsp;&nbsp;<code>:gbbopen</code>
 </p>
 <p><span class="fndoclabel">Module</span>&nbsp;&nbsp;&nbsp;<code>:streaming</code>
 </p>
 <p><span class="fndoclabel">Arguments and values</span><table class="tighttop">
-<tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The removed <a href="ref-glossary.html#id254">unit&nbsp;instance</a>
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>space-instance-or-path</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id220">space&nbsp;instance</a> or 
-<a href="ref-glossary.html#id222">space-instance&nbsp;path</a> from which the <nobr><a href="ref-glossary.html#id254">unit&nbsp;instance</a></nobr> is removed
+<tr valign="top"><td valign="baseline" nowrap><i>unit-instance</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The removed <a href="ref-glossary.html#id256">unit&nbsp;instance</a>
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>space-instance-or-path</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> The <a href="ref-glossary.html#id222">space&nbsp;instance</a> or 
+<a href="ref-glossary.html#id224">space-instance&nbsp;path</a> from which the <nobr><a href="ref-glossary.html#id256">unit&nbsp;instance</a></nobr> is removed
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>streamer</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#gl:streamer">streamer</a>
 </td></tr></table>
 </p>
@@ -45,8 +45,8 @@
 </p>
 <p><span class="fndoclabel">Examples</span> <br /></p>
 <p><span class="fndoclabel">Examples</span> <br /><a name="id1">Stream</a> to <a href="ref-glossary.html#gl:streamer">streamer</a> <code>*streamer*</code> the
-removal of an incorrect hypothesis <a href="ref-glossary.html#id254">unit&nbsp;instance</a>,
-<nobr><code>incorrect-hyp</code></nobr>, from the <code>hyps</code> <a href="ref-glossary.html#id220">space&nbsp;instance</a>:
+removal of an incorrect hypothesis <a href="ref-glossary.html#id256">unit&nbsp;instance</a>,
+<nobr><code>incorrect-hyp</code></nobr>, from the <code>hyps</code> <a href="ref-glossary.html#id222">space&nbsp;instance</a>:
 <pre class="pretop">
   &gt; (stream-remove-instance-from-space-instance
       incorrect-hyp (<a href="ref-find-space-instance-by-path.html">find-space-instance-by-path</a> '(bb hyps)))
