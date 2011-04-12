@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 12 01:57:15 2011 *-*
+;;;; *-* Last-Edit: Tue Apr 12 17:06:05 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -655,10 +655,11 @@
      ;; allocate an incomplete instance, add it to the instance-name hash
      ;; table of the unit-class, and record it as forward referenced:
      (let* ((class (find-class class-name 't))
-            (instance (allocate-instance class)))
+            (instance (allocate-instance class))
+            (*%%doing-initialize-instance%%* 't))
+       (set-incomplete-instance-mark instance 0)
        (setf (instance-name-of instance) instance-name)
        (setf (standard-unit-instance.%%space-instances%% instance) nil)
-       (set-incomplete-instance-mark instance 0)
        ;; Initialize all link slots to nil:
        (dolist (slot (class-slots class))
          (when (typep slot 'effective-link-definition)
