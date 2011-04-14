@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Mar 29 04:36:45 2011 *-*
+;;;; *-* Last-Edit: Thu Apr 14 00:59:16 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -560,7 +560,7 @@
   #+(and clisp mt)
   (mt:thread-active-p obj)
   #+clozure
-  (ccl::process-active-p obj)
+  (not (ccl:process-exhausted-p obj))
   #+(and cmu mp)
   (mp:process-alive-p obj)
   #+digitool-mcl
@@ -585,7 +585,7 @@
   #+(and clisp mt)
   `(mt:thread-active-p ,obj)
   #+clozure
-  `(ccl::process-active-p ,obj)
+  `(not (ccl:process-exhausted-p ,obj))
   #+(and cmu mp)
   `(mp:process-alive-p ,obj)
   #+digitool-mcl
