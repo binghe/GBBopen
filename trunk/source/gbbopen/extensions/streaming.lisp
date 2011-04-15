@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 11 11:51:16 2011 *-*
+;;;; *-* Last-Edit: Thu Apr 14 22:20:09 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -354,13 +354,13 @@
   (when (closed-of streamer)
     (error 'streamer-error :streamer streamer))
   (let ((streamer-for-writing streamer)
-        (broadcast-streamer 
+        (broadcast-streamer-of-streamer
          (when (typep streamer 'streamer)
            (broadcast-streamer-of streamer))))
     ;; If streamer is a constituent of a broadcast-streamer, use the
     ;; streamer for writing/queuing but the broadcast-streamer for locking:
-    (when broadcast-streamer
-      (setf streamer broadcast-streamer))
+    (when broadcast-streamer-of-streamer
+      (setf streamer broadcast-streamer-of-streamer))
     (let* ((streamer-acons (assq streamer-for-writing *%%streamer-queues%%*))
            (streamer-queue (cdr streamer-acons)))
       (with-standard-io-syntax 
@@ -386,7 +386,7 @@
                         ;; broadcast, non-queued streaming; formst to
                         ;; string-stream and then write each constituent
                         ;; streamer separately:
-                        (broadcast-streamer
+                        ((typep streamer-for-writing 'broadcast-streamer)
                          (let ((string-stream (make-string-output-stream)))
                            (funcall body-form-fn string-stream)
                            (let ((string 
@@ -399,7 +399,7 @@
                                       (force-output stream))))
                                (declare (dynamic-extent #'write-it))
                                (%on-each-constituent-streamer 
-                                #'write-it broadcast-streamer)))))
+                                #'write-it streamer-for-writing)))))
                         ;; non-broadcast, non-queued streaming:
                         (t (funcall body-form-fn stream)))
                        ;; Flush the non-queued output:
