@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/timing-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Apr  7 10:09:37 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon Apr 25 14:01:27 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -293,6 +293,8 @@
 
 (defun do-timing-tests ()
   ;; Prepare for the tests:
+  (unless (confirm-if-blackboard-repository-not-empty-p)
+    (return-from do-timing-tests))
   (reset-gbbopen)
   (make-instance 'empty-standard-instance)
   (make-instance 'non-empty-standard-instance)
