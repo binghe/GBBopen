@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 25 13:59:17 2011 *-*
+;;;; *-* Last-Edit: Mon Apr 25 15:42:46 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -42,9 +42,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-;; CLISP unfortunately initializes CLOS classes at compile time, so we need the
-;; test-size value in the compilation environment:
-(eval-when (#+clisp :compile-toplevel :load-toplevel :execute)
+;; Allegro, CLISP, and Lispworks initialize CLOS classes at compile time, so
+;; we need the test-size value in the compilation environment on those
+;; implementations:
+(eval-when (#+(or clisp allegro lispworks) :compile-toplevel
+              :load-toplevel :execute)
   (defparameter *timing-tests-size* 10000))
 
 ;;; ---------------------------------------------------------------------------
@@ -156,6 +158,12 @@
 (define-unit-class uc-2-clone (uc-2)
   ())
 
+(define-unit-class uc-2-on-space-2 (uc-2)
+  ()
+  (:initial-space-instances (bb sub-bb space-2))
+  (:estimated-instances *timing-tests-size*)
+  (:use-global-instance-name-counter t))
+
 (define-unit-class uc-3 (uc-1) 
   ((link-1 :documentation "Added doc for link-1.")))
 
@@ -211,12 +219,13 @@
 ;;; ===========================================================================
 ;;;  Basic timing functions
 
-(defun make-time-test (n)
+(defun make-time-test (n &optional (class-name 'uc-2) qualifier-string)
   (declare (fixnum n))
-  (fformat t "~&;; Running make-instance timing test (~:d instance~:p)..." 
+  (fformat t "~&;; Running make-instance~@[ ~a~] timing test (~:d instance~:p)..." 
+           qualifier-string
            n)
   (make-instance 'uc-1 :x 0 :y 0)
-  (format-ticks (brief-timer n (make-instance 'uc-2 :x i :y i))))
+  (format-ticks (brief-timer n (make-instance class-name :x i :y i))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -346,8 +355,17 @@
    :dimensions (dimensions-of 'uc-1)
    :storage `(((uc-1 :plus-subclasses) y uniform-buckets :layout (0 ,n 10)))
    :make-parents t)
+  (make-space-instance 
+   '(bb sub-bb space-2) 
+   :dimensions (dimensions-of 'uc-1)
+   :storage `((uc-2-on-space-2) classification hashed)
+   :make-parents t)
   ;; Measure instance creation:
   (make-time-test n)
+  ;; Measure instance creation with space insertion onto enumerated storage:
+  (progn
+    (make-time-test n 'uc-2-on-space-2 "(enumerated storage)")
+    (map-instances-of-class #'delete-instance 'uc-2-on-space-2))
   ;; Measure nonlink-slot access:
   (nonlink-slot-access-time-test n)
   ;; Measure change-class:
