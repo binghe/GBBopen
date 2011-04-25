@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  2 05:07:09 2011 *-*
+;;;; *-* Last-Edit: Mon Apr 25 13:59:17 2011 *-*
 ;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
@@ -1204,6 +1204,35 @@
 		     :removed-instances (list u1)
 		     :directp nil)	
 	(check-for-unprocessed-events)
+        (format t "~&;;   link-ptr events...~%")
+        (let ((u3-ptr (make-instance 'link-ptr-with-value 
+                        :link-instance u3
+                        :value -3)))
+          (linkf (link-2-of u1) u3-ptr)
+          ;; Exisiting link, so events should not be signaled:
+          (check-for-unprocessed-events)
+          ;; But check for added link-ptr results
+          #+SOON check-them-please
+          (format t "~&;;   unlink-ptr events...~%")
+          (let ((u2-ptr (make-instance 'link-ptr-with-value
+                          :link-instance u2
+                          :value -2)))
+            (unlinkf (link-2-of u1) u2-ptr)
+            #+SOON
+            (check-event 'unlink-event 
+                         :instance u1
+                         :slot-name 'link-2
+                         :current-value (list u3-ptr)
+                         :removed-instances (list u2-ptr)
+                         :directp 't)
+            #+SOON
+            (check-event 'unlink-event 
+                         :instance u2-ptr
+                         :slot-name 'backlink-2
+                         :current-value nil
+                         :removed-instances (list u1)
+                         :directp nil)
+            (check-for-unprocessed-events)))
         (format t "~&;;   delete-instance events...~%")
         (delete-instance u1)
 	(check-event 'delete-instance-event
@@ -1230,6 +1259,8 @@
 ;;;   Run the tests
 
 (defun all-tests ()
+  (unless (confirm-if-blackboard-repository-not-empty-p)
+    (return-from all-tests))
   (clos/mop-tests)
   (basic-tests)
   (format t "~&;;~%")
