@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Dec 10 15:41:46 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Tue May  3 12:09:43 2011 *-*
+;;;; *-* Machine: twister.local *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2008-2011, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -136,7 +136,7 @@
        "Jul 4" :year-first 't)
       (test-it `(0 0 0 4 7 ,assumed-july-4th-year nil nil 5)
        "4/7  " :month-precedes-date nil) 
-      (test-it `(0 0 0 7 4 ,assumed-july-4th-year nil nil 3)
+      (test-it `(0 0 0 7 4 ,assumed-april-7th-year nil nil 3)
        "4/7" :month-precedes-date 't) 
       (test-it `(0 0 0 4 7 ,year nil nil 5)
        "4 Jul" :default-to-current-year 't)
@@ -213,6 +213,13 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun terror (&rest args)
+  ;; Signal testing error (continuable):
+  (declare (dynamic-extent args))
+  (apply #'cerror "Continue testing." args))
+
+;;; ---------------------------------------------------------------------------
+
 (defun parse-date-test ()
   (format t "~&;;   Starting parse-date test...~%")
   (multiple-value-bind (second minute hour date month year)
@@ -235,13 +242,13 @@
                                        returned-position)
                      (apply #'parse-date string args)
                    (flet ((bad-result (field expected-value returned-value)
-                            (error "Incorrect ~s ~s result for ~s: ~
-                                    ~s expected; ~s returned"
-                                   'parse-date
-                                   field
-                                   string
-                                   expected-value
-                                   returned-value)))
+                            (terror "Incorrect ~s ~s result for ~s: ~
+                                     ~s expected; ~s returned"
+                                    'parse-date
+                                    field
+                                    string
+                                    expected-value
+                                    returned-value)))
                      (unless (=& expected-year returned-year)
                        (bad-result 'year expected-year returned-year))
                      (unless (=& expected-month returned-month)
@@ -281,13 +288,13 @@
                                      returned-daylight-savings-p returned-position)
                    (apply #'parse-time string args)
                  (flet ((bad-result (field expected-value returned-value)
-                          (error "Incorrect ~s ~s result for ~s: ~
-                                    ~s expected; ~s returned"
-                                 'parse-time
-                                 field
-                                 string
-                                 expected-value
-                                 returned-value)))
+                          (terror "Incorrect ~s ~s result for ~s: ~
+                                   ~s expected; ~s returned"
+                                  'parse-time
+                                  field
+                                  string
+                                  expected-value
+                                  returned-value)))
                    (unless (=& expected-hour returned-hour)
                        (bad-result 'hour expected-hour returned-hour))
                      (unless (=& expected-minute returned-minute)
@@ -335,11 +342,11 @@
                           (encode-universal-time 
                            second hour minute date month year))
                       :destination *standard-output*))
-                   (error "Incorrect ~s~{ ~s~} result for ~s: ~s"
-                          'parse-date-and-time
-                          args
-                          string
-                          result)))))
+                   (terror "Incorrect ~s~{ ~s~} result for ~s: ~s"
+                           'parse-date-and-time
+                           args
+                           string
+                           result)))))
       (inserted-date-tests)
       (let ((*time-first* 't))
         (inserted-time-tests))
@@ -439,9 +446,9 @@
       (unless (string-equal string 
                             #-lispworks "#@single-float-infinity"
                             #+lispworks "#@double-float-infinity")
-        (error "Incorrect portable printing of INFINITY$: ~s" string))
+        (terror "Incorrect portable printing of INFINITY$: ~s" string))
       (unless (= infinity$ (read-from-string string))
-        (error "Unable to read infinite value"))))
+        (terror "Unable to read infinite value"))))
   (format t "~&;;   Infinite-values test completed.~%"))
 
 ;;; ---------------------------------------------------------------------------
