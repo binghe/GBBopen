@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 25 15:42:46 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Sun May 29 12:20:03 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -42,10 +42,10 @@
 
 ;;; ---------------------------------------------------------------------------
 
-;; Allegro, CLISP, and Lispworks initialize CLOS classes at compile time, so
-;; we need the test-size value in the compilation environment on those
+;; Allegro, CLISP, ECL, and Lispworks initialize CLOS classes at compile time,
+;; so we need the test-size value in the compilation environment on those
 ;; implementations:
-(eval-when (#+(or clisp allegro lispworks) :compile-toplevel
+(eval-when (#+(or clisp allegro ecl lispworks) :compile-toplevel
               :load-toplevel :execute)
   (defparameter *timing-tests-size* 10000))
 
