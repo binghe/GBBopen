@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 22 05:36:55 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Thu Jun  2 10:47:51 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -165,7 +165,6 @@
       (fformat t "~&;;   Fastest member timing (~:d iterations)..."
                iterations)
       (time-it (car (member 1 (the list list))))
-      (setf warning-time (*& 2 time))
       (fformat t "~&;;   Fastest member eq timing (~:d iterations)..."
                iterations)
       (time-it (car (member 1 (the list list) :test #'eq)))
