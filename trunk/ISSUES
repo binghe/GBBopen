@@ -3,12 +3,12 @@
 
 ECL 11.1.1 (all platforms)
  - :gbbopen-tools-test encounters an incorrect ratio comparison result:
-      Incorrect GBBOPEN-TOOLS:PARSE-TIME GBBOPEN-TOOLS-USER::ZONE result for 
-      "10:30 IST": -11/2 expected; -11/2 returned
+   Incorrect GBBOPEN-TOOLS:PARSE-TIME GBBOPEN-TOOLS-USER::ZONE result for 
+   "10:30 IST": -11/2 expected; -11/2 returned
 
-SBCL 1.0.44-48 (all platforms)
- - :agenda-shell-test fails to trigger all KSAs when started by load/autorun, 
+SBCL 1.0.44-49 (all platforms)
+ - :agenda-shell-test fails to trigger all KSAs when started by load/autorun; 
    works correctly when invoked after file loading
 
 ==============================================================================
-File updated: May 9, 2011
+File updated: June 6, 2011
