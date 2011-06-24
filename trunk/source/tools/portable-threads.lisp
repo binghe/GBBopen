@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 14 00:59:16 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Fri Jun 24 14:07:48 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -71,6 +71,7 @@
 ;;;           periodic-scheduled-functions.lisp file.  (Corkill)
 ;;;  03-29-11 Added partial ABCL support (provided by Chun Tian (binghe);
 ;;;           thanks!)
+;;;  06-24-11 Updates for Digitool MCL & ABCL (from Chun Tian (binghe))
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -722,7 +723,7 @@
   `(nth-value 1 (mp:process-whostate ,thread)))
 
 (defun (setf thread-whostate) (whostate thread)
-  ;;; Only Allegro, Clozure CL, and Digitool MCL support user-settable 
+  ;;; Only Allegro and Clozure CL support user-settable 
   ;;; whostates; this function is a NOOP on other CLs.
   #+abcl
   (declare (ignore thread))
@@ -741,8 +742,9 @@
   #+(and cmu mp)
   whostate                              ; no-op
   #+digitool-mcl
-  (setf (ccl:process-whostate thread) whostate)
-  ;; We fake a basic whostate for ECL/threads:
+  (declare (ignore thread))
+  #+digitool-mcl
+  whostate				; no-op
   #+(and ecl threads)
   (declare (ignore thread))
   #+(and ecl threads)
@@ -751,7 +753,6 @@
   (declare (ignore thread))
   #+lispworks
   whostate                              ; no-op
-  ;; We fake a basic whostate for SBCL/sb-threads:
   #+(and sbcl sb-thread)
   (declare (ignore thread))
   #+(and sbcl sb-thread)
@@ -1524,7 +1525,14 @@
 	 (let ((.abcl-lock. (and (lock-p ,lock-sym)
 				 (lock-abcl-lock (the lock ,lock-sym))))
 	       ,saved-whostate)
-	   )
+	   (when (> (java:jcall +get-hold-count+ .abcl-lock.) 1)
+	     (do ()
+		 ((= (java:jcall +get-hold-count+ .abcl-lock.) 1))
+	       (java:jcall +unlock+ .abcl-lock.)))
+	   (java:jcall +unlock+ .abcl-lock.)
+	   (unwind-protect
+		(progn ,@body)
+	     (java:jcall +lock+ .abcl-lock.)))
          #+allegro
          (let ((.current-thread. system:*current-process*)
                ,saved-whostate)
@@ -1587,13 +1595,11 @@
                  (non-holder-lock-release-error
                   ,lock-sym .current-thread. .holding-thread.))
                (setf ,saved-whostate (thread-whostate .current-thread.))
-               (setf (thread-whostate .current-thread.) ,whostate)
-               (ccl:release-lock .ccl-lock.)))
+               (ccl:process-unlock .ccl-lock.)))
            (unwind-protect
                (progn ,@body)
              (ccl:without-interrupts
-               (ccl:grab-lock .ccl-lock.)
-               (setf (thread-whostate .current-thread.) ,saved-whostate))))
+               (ccl:process-lock .ccl-lock. :whostate ,saved-whostate))))
          #+(and ecl threads)
          (progn
            (mp:giveup-lock ,lock-sym)   ; performs valid-holder check
@@ -2188,6 +2194,12 @@
     (unless (thread-holds-lock-p lock)
       (condition-variable-lock-needed-error
        condition-variable 'condition-variable-wait-with-timeout))
+    #+abcl
+    (let ((abcl-lock (lock-abcl-lock lock)))
+      (threads:synchronized-on condition-variable
+        (java:jcall +unlock+ abcl-lock)
+        (threads:object-wait condition-variable (round (* 1000 seconds)))
+      (java:jcall +lock+ abcl-lock)))
     #+allegro
     (progn
       (push system:*current-process*
@@ -2338,6 +2350,9 @@
   (unless (thread-holds-lock-p (condition-variable-lock condition-variable))
     (condition-variable-lock-needed-error
      condition-variable 'condition-variable-broadcast))
+  #+abcl
+  (threads:synchronized-on condition-variable
+    (threads:object-notify-all condition-variable))
   #+(or allegro
         (and cmu mp)
         digitool-mcl
