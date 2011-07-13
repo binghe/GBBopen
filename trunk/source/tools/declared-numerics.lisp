@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 22 05:46:39 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Wed Jul 13 06:31:32 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -221,16 +221,18 @@
             set-inf-reader-dispatch-macro-character)))
 
 ;;; ---------------------------------------------------------------------------
-;;;  The fastest (/ fixnum fixnum)=>fixnum (full-fixnum division) operator for
-;;;  each CL (determined by :cl-timing tests).
+;;;  The fastest (/ fixnum fixnum) => fixnum [completely-fixnum division]
+;;;  operator for each CL (as determined by :cl-timing tests) -- either
+;;;  /&, floor&, or truncate&.
+;;;
+;;; Programmers must take care in using /& only where fixnum results will be
+;;; created.
 
 (defconstant fastest-fixnum-div-operator
-    ;; Care must be taken to use /& only where fixnum results will be created.
     ;; When timings are very close, truncate& is preferred.  Tested on x86 and
     ;; PPC architectures (could vary on others--reports welcomed!).
     (or #+abcl 'truncate&
-        #+(and allegro (not 64-bit)) '/&
-        #+(and allegro 64-bit) 'truncate&
+        #+allegro 'truncate&
         #+clisp 'floor&
         #+clozure 'truncate&
         #+cmu 'truncate&
