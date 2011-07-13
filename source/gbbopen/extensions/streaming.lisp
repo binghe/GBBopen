@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Apr 14 22:20:09 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Wed Jul 13 06:33:24 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -193,7 +193,7 @@
           (read-default-float-format *read-default-float-format*)
           (external-format 'default))
   (make-instance 'broadcast-streamer
-    :lock (make-lock :name "Broadcast streamer lock")
+    :lock (make-recursive-lock :name "Broadcast streamer lock")
     :package (ensure-package package)
     :read-default-float-format read-default-float-format
     :external-format external-format))
