@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Mar 12 11:14:46 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Mon Jul 18 11:50:49 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -808,7 +808,8 @@
                ;; Assume next year, if the date is past in the current year:
                (when (or (< (& month) (& current-month))
                          (and (= (& month) (& current-month))
-                              (< (& date) (& current-date))))
+                              (< (& (or date 1)) ; date is 1 if not specified
+                                 (& current-date))))
                  (incf& year))))
            
            ;; Upgrade year YY to YYYY -- YY assumed within +/- 50 years from
@@ -1027,7 +1028,7 @@
               (setf date current-date
                     month current-month
                     year current-year)))))
-      
+
         ;; A month wasn't provided, use January:
         (unless month
           (setf month 1))
