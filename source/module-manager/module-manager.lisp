@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul 18 11:50:49 2011 *-*
+;;;; *-* Last-Edit: Mon Jul 25 10:57:30 2011 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1083,7 +1083,7 @@
 ;;;  Directory operators
 ;;;
 ;;; Unlike probe-file, probe-directory returns false on a non-directory file.
-;;; It should return true for a symbolic link to a directory.
+;;; It should also return true for a symbolic link to a directory.
 
 (defun probe-directory (path)
   #+abcl
@@ -1100,10 +1100,11 @@
     (and pathname
          (null (pathname-name pathname))
          (null (pathname-type pathname))))       
-  #+(and cmu unix)
-  (let ((dir (namestring 
-              (make-pathname :name nil :type nil :defaults path))))
-    (eq (unix::unix-file-kind dir) :directory))
+  #+cmu
+  (let ((pathname (probe-file path)))
+    (and pathname
+         (null (pathname-name pathname))
+         (null (pathname-type pathname))))       
   #+cormanlisp
   (cormanlisp:directory-p path)
   #+digitool-mcl
@@ -1123,28 +1124,28 @@
        (directory path))
   #+lispworks
   (system::file-directory-p path)
-  #+(and sbcl unix)
-  (let ((dir (namestring 
-              (make-pathname :name nil :type nil :defaults path)))
-        (fn (or (find-symbol "NATIVE-FILE-KIND" :sb-impl)               
-                ;; Pre-1.0.29 name for the above -- remove eventually:
-                (find-symbol "UNIX-FILE-KIND" :sb-unix))))
-    (eq (funcall fn dir) :directory))
-  #+(and scl unix)
-  (ext:unix-namestring (make-pathname :name nil :type nil :version nil
-                                      :defaults path))
+  #+sbcl
+  (let ((pathname (probe-file path)))
+    (and pathname
+         (null (pathname-name pathname))
+         (null (pathname-type pathname))))       
+  #+scl
+  (let ((pathname (probe-file path)))
+    (and pathname
+         (null (pathname-name pathname))
+         (null (pathname-type pathname))))       
   #-(or abcl
         allegro
         clisp
         clozure
-        (and cmu unix)
+        cmu
         cormanlisp 
         digitool-mcl
         ecl
         gcl
         lispworks 
-        (and sbcl unix)
-        (and scl unix)
+        sbcl
+        scl
         xcl)
   (need-to-port probe-directory))
 

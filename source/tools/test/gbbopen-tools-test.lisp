@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May  3 12:09:43 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Mon Jul 25 11:23:56 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -438,6 +438,27 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun probe-directory-test ()
+  ;;; Someday, add symbolic-link tests...
+  (format t "~&;;   Starting probe-directory test...~%")
+  (let* ((gbbopen-tools-directory (module-directories ':gbbopen-tools))
+         (gbbopen-tools-file (make-pathname :name "gbbopen-tools" :type "lisp"
+                                            :defaults gbbopen-tools-directory))
+         (bogus-directory (get-directory gbbopen-tools-directory "bogus"))
+         (bogus-file  (make-pathname :name "bogus-tools" :type "lisp"
+                                     :defaults bogus-directory)))
+    (unless (module-manager::probe-directory gbbopen-tools-directory)
+      (terror "~s failed on ~s" 'probe-directory gbbopen-tools-directory))
+    (when (module-manager::probe-directory gbbopen-tools-file)
+      (terror "~s failed on ~s" 'probe-directory gbbopen-tools-file))
+    (when (module-manager::probe-directory bogus-directory)
+      (terror "~s failed on ~s" 'probe-directory bogus-directory))
+    (when (module-manager::probe-directory bogus-file)
+      (terror "~s failed on ~s" 'probe-directory bogus-file)))
+  (format t "~&;;   Infinite-values test completed.~%"))
+
+;;; ---------------------------------------------------------------------------
+
 (defun infinite-values-test ()
   (format t "~&;;   Starting infinite-values test...~%")
   (with-output-to-string (buffer)
@@ -527,6 +548,7 @@
 
 (defun gbbopen-tools-tests (&optional verbose)
   (format t "~&;;; Starting GBBopen-Tools tests...~%")
+  (probe-directory-test)
   (infinite-values-test)
   (full-date-and-time-test)
   (parse-date-test)
