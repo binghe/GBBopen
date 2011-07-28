@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 13 06:33:24 2011 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Thu Jul 28 10:12:27 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -53,7 +53,7 @@
             load-journal
             make-broadcast-streamer
             make-journal-streamer
-            open-streamer-p             ; not yet documented
+            open-streamer-p
             read-queued-streaming-block
             remove-from-broadcast-streamer
             remove-mirroring
@@ -68,7 +68,7 @@
             stream-instances-on-space-instances
             stream-link
             stream-nonlink-slot-update
-            stream-of                   ; not yet documented
+            stream-of
             stream-remove-from-space    ; old name, remove soon
             stream-remove-instance-from-space-instance
             stream-slot-update          ; old name, remove soon
@@ -103,7 +103,7 @@
   recorded-class-descriptions-ht)
 
 ;;; ===========================================================================
-;;;   Streamers
+;;;   Streamers (%trivial-streamer% is defined in ../events.lisp)
 
 (define-class basic-streamer (%trivial-streamer%)
   (lock
@@ -315,7 +315,7 @@
   (remove-mirroring streamer)
   (with-lock-held ((lock-of streamer))
     (setf (closed-of streamer) 't)
-    (setf (stream-of streamer) ':closed)
+    (setf (stream-of streamer) nil)
     ;; Disconnect all constituents:
     (dolist (constituent-streamer (streamers-of streamer))
       (setf (broadcast-streamer-of constituent-streamer) nil))

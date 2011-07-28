@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/network-streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Apr 11 11:48:24 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Wed Jul 27 11:41:15 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -322,7 +322,7 @@
                network-streamer broadcast-streamer)))
           (setf (streamer-of streamer-node) nil)
           (remhash connection *streamer-nodes-ht*)
-          (setf (stream-of network-streamer) ':closed)
+          (setf (stream-of network-streamer) nil)
           (handle-stream-connection-exiting network-streamer exit-status))))
      (t (error "Missing network-streamer at ~s" streamer-node))))
   ;; Clean up:

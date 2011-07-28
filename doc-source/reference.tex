@@ -1,7 +1,7 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Apr 12 01:46:23 2011; Edited-By: cork *-*
-%% *-* Machine: twister.local *-*
+%% *-* Last-Edit: Thu Jul 28 10:22:07 2011; Edited-By: cork *-*
+%% *-* Machine: phoenix *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project.
@@ -3635,8 +3635,8 @@ Return the source and compiled directories of the Agenda Shell \glref{module}:
 
 \fnsyntax 
 
-\fnpurpose Return a value indicating whether a \glref{module} has been fully
-loaded into Common Lisp.
+\fnpurpose Determine if a \glref{module} has been fully loaded into Common
+Lisp.
 
 \fnpackage \code{:module-manager}
 
@@ -14371,7 +14371,7 @@ the global symbol value.
 
 \fnsyntax
 
-\fnpurpose Return a value indicating whether a \glref{thread} is alive.
+\fnpurpose Determine if a \glref{thread} is alive.
 
 \fnpackage \code{:portable-threads}
 
@@ -15998,8 +15998,7 @@ randomly sets whether to reschedule itself (and at what interval):
 
 \fnsyntax
 
-\fnpurpose Return a value indicating whether \glref{scheduled-function}
-scheduling is paused.
+\fnpurpose Determine if \glref{scheduled-function} scheduling is paused.
 
 \fnpackage \code{:portable-threads}
 
@@ -16047,8 +16046,7 @@ Pause the \glref{scheduled-function} scheduler:
 
 \fnsyntax
 
-\fnpurpose Return a value indicating whether the \glref{scheduled-function}
-scheduler is running.
+\fnpurpose Determine if the \glref{scheduled-function} scheduler is running.
 
 \fnpackage \code{:portable-threads}
 
@@ -16584,7 +16582,7 @@ Accept a connection made to a newly created passive socket:
            (connection (accept-connection passive-socket)))
        (\entlink{close-passive-socket} passive-socket)
        connection)
-  #<stream socket connected from localhost/5555 to localhost/59946>
+  #<socket stream connected from localhost/5555 to localhost/59946>
   >
 \end{example}
 
@@ -16806,7 +16804,7 @@ Open a socket connection to the GBBopen Project web server:
 \W\supp
 \begin{example}
   > (open-connection "GBBopen.org" 80)
-  #<stream socket connected from localhost/51756 to gbbopen.org/80>
+  #<socket stream connected from localhost/51756 to gbbopen.org/80>
   >
 \end{example}
 
@@ -18913,7 +18911,7 @@ Return the GBBopen implementation-version string:
 
 \fnsyntax
 
-\fnpurpose Determine whether a \glref{unit~instance} is \glref{incomplete}.
+\fnpurpose Determine if a \glref{unit~instance} is \glref{incomplete}.
 
 \fnpackage \code{:gbbopen}
 
@@ -19025,7 +19023,7 @@ true for the unit class.
 
 \fnsyntax
 
-\fnpurpose Determine whether a \glref{unit~instance} has been deleted. 
+\fnpurpose Determine if a \glref{unit~instance} has been deleted. 
 
 \fnpackage \code{:gbbopen}
 
@@ -19264,7 +19262,7 @@ to using \nobr{\textbf{instance-dimension-values}} when obtaining individual
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Generic~Function}{instance-name-of}%
+\begin{functiondoc}{Generic~Accessor}{instance-name-of}%
   {\var{unit-instance\/}
     \nobr{\returns{} \var{instance-name\/}}}
 
@@ -20564,7 +20562,7 @@ default effective link-definition \glref{metaobject~class} of
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Generic~Function}{link-instance-of}{\var{object\/}
+\begin{functiondoc}{Generic~Accessor}{link-instance-of}{\var{object\/}
     \nobr{\returns{} \var{instance\/}}}
 
 \fnsyntax
@@ -28380,7 +28378,7 @@ Clear \glref{streamer} \code{*streamer*}:
 
 %% ------------------------------------------------------------------------
  
-\begin{functiondoc}{Function}{close-streamer}%
+\begin{functiondoc}{Generic~Function}{close-streamer}%
   {\var{streamer\/}}
 \index{streamer!closing}%
 \index{journal streamer!closing}%
@@ -28407,12 +28405,15 @@ Clear \glref{streamer} \code{*streamer*}:
 
 \fnerrors
 Threads (multiprocessing) is not supported on the Common Lisp implementation
-(only for \glref{network~streamers}).
+(only \glref{network~streamers} require threads).
 
 \begin{alsos}{open-network-streamer}
 \also[define-streamer-node]
 \also[find-streamer-node]
+\also[make-journal-streamer]
 \also[open-network-streamer]
+\also[open-streamer-p]
+\also[stream-of]
 \end{alsos}
 
 \fnexample
@@ -28471,6 +28472,7 @@ the \var{broadcast-streamer\/} (default is \nobr{\code{single-float}})
 \begin{alsos}{remove-from-broadcast-streamer}
 \also[add-to-broadcast-streamer]
 \also[remove-from-broadcast-streamer]
+\also[stream-of]
 \end{alsos}
 
 \fnexamples
@@ -28497,6 +28499,51 @@ UTF-8 \glref{streamers}:
   > (make-broadcast-streamer :external-format ':utf-8)
   #<broadcast-streamer 0 constituents>
   >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+ 
+\begin{functiondoc}{Function}{open-streamer-p}%
+  {\var{streamer\/}
+    \nobr{\returns{} \var{boolean}}}
+\index{streamer!check if open}%
+\index{journal streamer!check if open}%
+\index{network streamer!check if open}%
+
+\fnsyntax
+
+\fnpurpose Determine if a \glref{journal} or \glref{network~}\glref{streamer} is
+open.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{streamer}
+\arg[streamer] A \glref{journal} or \glref{network~}\glref{streamer}
+\end{args}
+
+\fnreturns True if the streamer is open; otherwise \nil.
+
+\begin{alsos}{open-network-streamer}
+\also[close-streamer]
+\also[find-streamer-node]
+\also[make-journal-streamer]
+\also[open-network-streamer]
+\also[stream-of]
+\end{alsos}
+
+\fnexample
+%
+Check if the \glref{network~streamer} \code{*streamer*} is open:
+%
+\W\supp
+\begin{example}
+  > (open-streamer-p *streamer*)
+  t
 \end{example}
 
 \end{functiondoc}
@@ -28884,6 +28931,51 @@ to \glref{streamer} \code{*streamer*}:
 \W\supp
 \begin{example}
   (stream-instances-of-class 'hyp *streamer*)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+ 
+\begin{functiondoc}{Generic~Reader}{stream-of}%
+  {\var{streamer\/}
+    \nobr{\returns{} \var{stream}}}
+\index{streamer!associated stream of}%
+\index{journal streamer!associated stream of}%
+\index{network streamer!associated stream of}%
+
+\fnsyntax
+
+\fnpurpose Return the stream associated with a \glref{journal} or
+\glref{network~}\glref{streamer}.
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:streaming}
+
+\fnargs
+\begin{args}{streamer}
+\arg[streamer] A \glref{journal} or \glref{network~}\glref{streamer}
+\end{args}
+
+\fnreturns The associated stream if the streamer is open; otherwise \nil.
+
+\begin{alsos}{open-network-streamer}
+\also[close-streamer]
+\also[find-streamer-node]
+\also[make-journal-streamer]
+\also[open-network-streamer]
+\also[open-streamer-p]
+\end{alsos}
+
+\fnexample
+%
+Get the output file stream of the \glref{journal~streamer} \code{*streamer*}:
+%
+\W\supp
+\begin{example}
+  > (stream-of *streamer*)
+  #<output file stream "\var{<homedir>\/}/tutorial.jnl">
 \end{example}
 
 \end{functiondoc}
@@ -29739,7 +29831,7 @@ occurred when taking a walk:
       (make-journal-streamer "tutorial" :package ':tutorial))
   *streamer*
   > *streamer*
-  #<journal-streamer "/Users/cork/tutorial.bb">
+  #<journal-streamer "\var{<homedir>\/}/tutorial.jnl">
   > (add-mirroring *streamer* 'standard-space-instance)
   nil
   > (add-mirroring *streamer* 'path)
@@ -29864,6 +29956,8 @@ is \nobr{\textbf{\entlink{*default-network-stream-server-port*}}})
 \also[close-streamer]
 \also[find-streamer-node]
 \also[open-network-streamer]
+\also[open-streamer-p]
+\also[stream-of]
 \end{alsos}
 
 \fnexample
@@ -30002,8 +30096,8 @@ Kill the network-stream connection server running at local
 
 \fnsyntax
 
-\fnpurpose Return a value indicating whether a network-stream connection server
-for a local \glref{streamer~node} is running.
+\fnpurpose Determine if a network-stream connection server for a local
+\glref{streamer~node} is running.
 
 \fnpackage \code{:gbbopen}
 
@@ -30086,6 +30180,8 @@ the \code{streamer-class} slot of \var{streamer-node}.
 \also[define-streamer-node]
 \also[find-streamer-node]
 \also[network-stream-server-running-p]
+\also[open-streamer-p]
+\also[stream-of]
 \end{alsos}
 
 \fnexample
@@ -30328,7 +30424,7 @@ Return the trigger \glref{unit~instances} of a KSA:
 
 \fnsyntax
 
-\fnpurpose Return a value indicating whether a control shell is running.
+\fnpurpose Determine if a control shell is running.
 
 \fnpackage \code{:agenda-shell}
 
@@ -32378,7 +32474,7 @@ stepping enabled):
 
 %% ------------------------------------------------------------------------
 
-\begin{functiondoc}{Generic~Function}{trigger-events-of}{\var{ksa\/} 
+\begin{functiondoc}{Generic~Reader}{trigger-events-of}{\var{ksa\/} 
     \nobr{\returns{} \var{events\/}}}
 \index{events!that triggered a KSA}%
 \index{KSA!triggering events of}%
