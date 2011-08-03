@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jun 24 14:07:48 2011 *-*
+;;;; *-* Last-Edit: Wed Aug  3 10:30:49 2011 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -1102,7 +1102,8 @@
          
 ;;; ---------------------------------------------------------------------------
 
-#+(or allegro
+#+(or abcl
+      allegro
       clozure
       digitool-mcl
       lispworks)
@@ -1211,6 +1212,7 @@
 	   (java:jcall +lock+ .abcl-lock.)
 	   (unwind-protect
 		(progn ,@body)
+             #+NOT-WORKING-PROPERLY
 	     (when (> (java:jcall +get-hold-count+ .abcl-lock.) 1)
 	       (do ()
 		   ((= (java:jcall +get-hold-count+ .abcl-lock.) 1))
@@ -1516,7 +1518,8 @@
           scl)
     (declare (ignore whostate))
     (let ((lock-sym (gensym))
-          #+(or allegro
+          #+(or abcl
+                allegro
                 clozure
                 digitool-mcl)
           (saved-whostate (gensym)))
