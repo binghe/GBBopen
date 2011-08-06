@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug  3 10:30:49 2011 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Sat Aug  6 05:17:51 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -447,7 +447,7 @@
 (defun all-threads ()
   #+abcl
   (let ((threads nil))
-    (flet ((push-thread (tread)
+    (flet ((push-thread (thread)
              (push thread threads)))
       (declare (dynamic-extent #'push-thread))
       (threads:mapcar-threads #'push-thread)
@@ -775,6 +775,29 @@
 
 #-(or allegro (and cmu mp))
 (defmacro with-timeout ((seconds &body timeout-body) &body timed-body)
+  #+abcl
+  (let ((tag-sym (gensym))
+        (timed-thread-sym (gensym))
+        (timer-thread-sym (gensym)))
+    ;; No timers in ABCL, so we use SLEEP in a separate "timer" thread:
+    `(catch ',tag-sym
+       (let* ((,timed-thread-sym (threads:current-thread))
+              (,timer-thread-sym
+               (threads:make-thread
+                #'(lambda ()
+                    (sleep ,seconds)
+                    (threads:interrupt-thread
+                     ,timed-thread-sym
+                     #'(lambda ()
+                         (ignore-errors
+                          (throw ',tag-sym
+                            (progn ,@timeout-body))))))
+                :name "WITH-TIMEOUT timer")))
+         (sleep 0)
+         (unwind-protect (progn ,@timed-body)
+           (when (threads:thread-alive-p ,timer-thread-sym)
+             (threads:destroy-thread ,timer-thread-sym)
+             (sleep 0))))))
   #+(and clisp mt)
   `(mt:with-timeout (,seconds ,@timeout-body) ,@timed-body)
   #+clozure
@@ -1212,11 +1235,7 @@
 	   (java:jcall +lock+ .abcl-lock.)
 	   (unwind-protect
 		(progn ,@body)
-             #+NOT-WORKING-PROPERLY
-	     (when (> (java:jcall +get-hold-count+ .abcl-lock.) 1)
-	       (do ()
-		   ((= (java:jcall +get-hold-count+ .abcl-lock.) 1))
-		 (java:jcall +unlock+ .abcl-lock.)))
+             ;; Unlock (recursively held locks have their count decremented):
 	     (java:jcall +unlock+ .abcl-lock.)
 	     (values)))
          #+allegro
