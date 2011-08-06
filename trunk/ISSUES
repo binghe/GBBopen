@@ -1,6 +1,12 @@
 
           Known Common Lisp Implementation Issues when using GBBopen
 
+CMUCL 20b (all platforms)
+ - CMUCL's native WITH-TIMEOUT (used in :portable-threads) doesn't nest
+   correctly; however we still expose the native version (in the hope that it
+   will be fixed someday) rather than rolling our own.  Nested WITH-TIMEOUT
+   users beware!!!!
+
 ECL 11.1.1 (all platforms)
  - :gbbopen-tools-test encounters an incorrect ratio comparison result:
    Incorrect GBBOPEN-TOOLS:PARSE-TIME GBBOPEN-TOOLS-USER::ZONE result for 
@@ -11,4 +17,4 @@ SBCL 1.0.44-50 (all platforms)
    works correctly when invoked after file loading
 
 ==============================================================================
-File updated: July 13, 2011
+File updated: August 6, 2011
