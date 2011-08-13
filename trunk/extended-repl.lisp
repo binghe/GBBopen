@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan  4 04:08:32 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Sat Aug 13 10:48:41 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -293,10 +293,7 @@
                                 cl-user-fn-name system-name))
                (eq help-control ':no-help)))
          *extended-repl-commands*)
-        #'(lambda (a b)
-            (string< 
-             (the simple-base-string (symbol-name a))
-             (the simple-base-string (symbol-name b))))
+        #'string<
         :key #'first))
 
 (compile-if-advantageous 'sorted/filtered-extended-repl-commands)
@@ -315,6 +312,9 @@
     (format t "~&;; System ~s was not found.~%"
             system-name))
    (t (let ((2nd-column 28))
+        (if system-name
+            (format t "~&System ~s Commands:~%" system-name)
+            (format t "~&All Commands:~%"))
         (format t "~&Command~v,4tDescription~:*~
                    ~%-------~v,4t-----------~%"
                 2nd-column)

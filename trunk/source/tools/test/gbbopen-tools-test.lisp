@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul 25 11:23:56 2011 *-*
+;;;; *-* Last-Edit: Sat Aug 13 10:12:07 2011 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -550,6 +550,8 @@
   (format t "~&;;; Starting GBBopen-Tools tests...~%")
   (probe-directory-test)
   (infinite-values-test)
+  ;; Check this extended-REPL operation:
+  (cl-user::commands ':gbbopen)
   (full-date-and-time-test)
   (parse-date-test)
   (parse-time-test)
