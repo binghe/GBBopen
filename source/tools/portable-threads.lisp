@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug  6 05:17:51 2011 *-*
+;;;; *-* Last-Edit: Sat Aug  6 11:50:18 2011 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1813,6 +1813,17 @@
   ;;  2. true if the symbol is bound; nil otherwise
   ;; The global symbol value is returned if no thread-local value is
   ;; bound.
+  #+abcl
+  (let ((result nil))
+    (threads:interrupt-thread
+     thread
+     #'(lambda () 
+         (setf result (if (boundp symbol)
+                          `(,(symbol-value symbol) t)
+                          '(nil nil)))))
+    ;; Wait for result:
+    (loop until result do (sleep 0))
+    (values-list result))
   #+allegro
   (multiple-value-bind (value boundp)
       (mp:symeval-in-process symbol thread)

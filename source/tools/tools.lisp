@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 12:38:15 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Sat Aug 20 05:48:28 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -70,6 +70,7 @@
 ;;;  04-26-10 Added SORTF & STABLE-SORTF.  (Corkill)
 ;;;  09-09-10 Added WHITESPACE-CHAR-P.  (Corkill)
 ;;;  09-13-10 Added SORTED-MAPHASH.  (Corkill)
+;;;  08-20-11 Added MAKE-HASH-VALUES-VECTOR.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -211,6 +212,7 @@
             list-length>2
             macrolet-debug              ; not documented
             make-keyword
+            make-hash-values-vector
             memq
             multiple-value-setf
             nicer-time                  ; not yet documented
@@ -513,7 +515,20 @@
 (define-modify-macro stable-sortf (place &rest args) stable-sort args)
 
 ;;; ===========================================================================
-;;;  Sorted-maphash
+;;;  Make-hash-values-vector & sorted-maphash
+
+(defun make-hash-values-vector (hash-table)
+  ;; Return a newly allocated vector containing all values in `hash-table'.
+  (let ((vector (make-array  (list (hash-table-size hash-table))
+                             :fill-pointer 0)))
+    (flet ((push-value (key value)
+             (declare (ignore key))
+             (vector-push value vector)))
+      (declare (dynamic-extent #'push-value))
+      (maphash #'push-value hash-table))
+    vector))
+
+;;; ---------------------------------------------------------------------------
 
 (defun sorted-maphash (function hash-table predicate &key key)
   (let ((function (coerce function 'function))

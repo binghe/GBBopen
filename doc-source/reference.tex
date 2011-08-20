@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Thu Jul 28 10:22:07 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Aug 20 06:07:07 2011; Edited-By: cork *-*
 %% *-* Machine: phoenix *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -6008,6 +6008,49 @@ provided: \nobr{\textbf{incf-after\&}}, \nobr{\textbf{incf-after\$\&}},
   nil
   > (list-length>2 '(a b c . d))
   t
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
+\begin{functiondoc}{Function}{make-hash-values-vector}{\var{hash-table\/}
+    \nobr{\returns{} \var{vector\/}}}
+\index{hash-table!coerce values to a vector}%
+  
+\fnsyntax
+
+\fnpurpose Return a vector containing all values in \nobr{\var{hash-table}}.
+
+\fnpackage \code{:gbbopen-tools}
+
+\fnmodule \code{:gbbopen-tools}
+
+\fnargs
+\begin{args}{hash-table}
+\arg[hash-table] A hash table
+\arg[vector] A vector
+\end{args}
+
+\fnreturns The newly allocated \var{vector}.
+
+\fnexamples
+%
+\W\supp
+\begin{example}
+  > (defparameter *ht* (make-hash-table))
+  *ht*
+  > (make-hash-values-vector *ht*)
+  #()
+  > (setf (gethash 'a *ht*) 1)
+  1
+  > (setf (gethash 'b *ht*) 2)
+  2
+  > (setf (gethash 'c *ht*) 3)
+  3
+  > (make-hash-values-vector *ht*)
+  #(3 1 2)
   >
 \end{example}
 
