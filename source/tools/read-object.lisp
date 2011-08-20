@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  2 04:05:13 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Sat Aug 20 10:12:50 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -357,14 +357,18 @@
 (defmethod saved/sent-object-reader ((char (eql #\H)) stream)
   (destructuring-bind (ht-test ht-count ht-values &rest keys-and-values)
       (read stream 't nil 't)
-    (let ((ht (make-keys-only-hash-table-if-supported
-               :test ht-test :size ht-count)))
-      (if ht-values 
+      (cond 
+       (ht-values 
+        (let ((ht (make-hash-table :test ht-test :size ht-count)))
           (loop for (key value) on keys-and-values by #'cddr
               do (setf (gethash key ht) value))
-          (dolist (key keys-and-values)
-            (setf (gethash key ht) 't)))
-      ht)))
+          ht))
+       ;; value-less hash table:
+       (t (let ((ht (make-keys-only-hash-table-if-supported
+                     :test ht-test :size ht-count)))
+            (dolist (key keys-and-values)
+              (setf (gethash key ht) 't))
+            ht)))))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Standard-object reader
