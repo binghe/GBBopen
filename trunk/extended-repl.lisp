@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 13 10:48:41 2011 *-*
+;;;; *-* Last-Edit: Sat Aug 13 16:28:32 2011 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -461,12 +461,7 @@
                  ;; Keep the 2nd column at 24 to be consistent with CLISP's
                  ;; own help format:
                  (list (format nil "~%~a~24,4t~a" command-name doc)))))))
-   (sort (copy-list *extended-repl-commands*)
-         #'(lambda (a b)
-             (string< 
-              (the simple-base-string (symbol-name a))
-              (the simple-base-string (symbol-name b))))
-         :key #'first)))
+   (sort (copy-list *extended-repl-commands*) #'string< :key #'first)))
 
 #+clisp
 (compile-if-advantageous 'user-commands)

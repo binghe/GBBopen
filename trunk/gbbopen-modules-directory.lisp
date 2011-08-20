@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:Common-Lisp-User; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen-modules-directory.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 14 12:53:14 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Sat Aug 13 16:31:01 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -98,8 +98,6 @@
 (defun process-the-gbbopen-modules-directory (modules-dir filename shared?)
   ;;; Common function to process GBBopen's shared-gbbopen-modules directory
   ;;; and a user's personal gbbopen-modules directory.
-  #+(and sbcl (not sb-unicode))
-  (declare (type simple-base-string filename))
   (let* ((subdirs-pathname
 	  #-(or abcl clozure lispworks xcl)
           (make-pathname

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Apr  1 13:26:48 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Sun Aug 14 12:37:49 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -765,10 +765,10 @@
         (setf classes
               (flet ((fn (class-spec1 class-spec2)
                        (string<
-                        (the simple-base-string
-                          (symbol-name (class-name (first class-spec1))))
-                        (the simple-base-string
-                          (symbol-name (class-name (first class-spec2)))))))
+                        ;; SBCL (last checked 1.0.50) does not infer symbol
+                        ;; result from CLASS-NAME
+                        (the symbol (class-name (first class-spec1)))
+                        (the symbol (class-name (first class-spec2))))))
                 (declare (dynamic-extent #'fn))
                 (sort classes #'fn)))
         (dolist (class-spec classes)
