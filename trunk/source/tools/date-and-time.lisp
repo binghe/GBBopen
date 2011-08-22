@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Oct 14 10:30:57 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon Aug 22 13:18:26 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -1042,15 +1042,17 @@
 (defun do-ut-repl-command (arg)
   (let ((maybe-ut
          ;; Handle evaluating REPLs:
-         (if (integerp arg)
+         (if (or (integerp arg) (stringp arg))
              ;; Already evaluated:
              arg
              ;; Try evaluating:
              (ignore-errors (eval arg)))))
     (when maybe-ut
-      (funcall 'full-date-and-time maybe-ut
-               :include-seconds 't
-               :destination *standard-output*)
+      (setf maybe-ut 
+            (if (stringp maybe-ut)
+                (encode-date-and-time maybe-ut)
+                (full-date-and-time maybe-ut :include-seconds 't)))
+      (format t "~&~s" maybe-ut)
       maybe-ut)))
 
 ;;; ---------------------------------------------------------------------------
@@ -1060,7 +1062,7 @@
            (declare (special *current-system-name*))
            
            (define-repl-command :ut (&rest args)
-             "Describe universal-time value"
+             "Describe universal-time value or encode string to universal time"
              (do-ut-repl-command (sole-element args))))))
 
 ;;; ===========================================================================

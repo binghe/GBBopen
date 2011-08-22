@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Sat Aug 20 06:07:07 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Aug 22 12:06:33 2011; Edited-By: cork *-*
 %% *-* Machine: phoenix *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -10154,6 +10154,19 @@ parse ended.
   >
 \end{example}
 
+\replnote 
+%
+\REPLindex{:ut}%
+%
+The equivalent of:
+%
+\W\supp
+\begin{example}
+  (print (\entlink{encode-date-and-time} \var{string\/}))
+\end{example} 
+%
+can be invoked using the \glref{REPL~command} \nobr{\code{:ut} \var{string\/}}.
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -10557,9 +10570,8 @@ The equivalent of:
 %
 \W\supp
 \begin{example}
-  (\entlink{full-date-and-time} \var{universal-time\/} 
-     :include-seconds 't
-     :destination *standard-output*)
+  (print (\entlink{full-date-and-time} \var{universal-time\/} 
+            :include-seconds 't))
 \end{example} 
 %
 can be invoked using the \glref{REPL~command} \nobr{\code{:ut} \var{universal-time\/}}.
