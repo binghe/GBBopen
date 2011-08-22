@@ -44,6 +44,9 @@ Important changes since GBBopen 1.5:
      - Support user-provided string-coalescing hash table in 
        WITH-READING-SAVED/SENT-OBJECTS-BLOCK
 
+  * Changes to extended-REPL commands
+     - :ut (describe/encode univeral-time value) command encodes string argument
+
   * Changes to GBBopen
      - New *SKIP-DELETED-UNIT-INSTANCE-CLASS-CHANGE* and 
        *REPOSITORY-LOAD-PERCENTAGE-HOOK-FUNCTIONS* variables

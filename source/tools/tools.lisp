@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 20 05:48:28 2011 *-*
+;;;; *-* Last-Edit: Mon Aug 22 13:19:12 2011 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -534,6 +534,7 @@
   (let ((function (coerce function 'function))
         (vector (make-array (hash-table-count hash-table)
                             :fill-pointer 0)))
+    #-sbcl
     (declare (dynamic-extent vector))
     (flet ((push-entry (key value)
              (vector-push (cons key value) vector)))
