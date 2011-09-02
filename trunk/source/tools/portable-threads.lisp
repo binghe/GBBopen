@@ -68,7 +68,7 @@
 ;;;           SCHEDULED-FUNCTION-SCHEDULER-PAUSED-P, and
 ;;;           SCHEDULED-FUNCTION-SCHEDULER-RUNNING-P.  (Corkill)
 ;;;  12-18-09 Moved scheduled & periodic functions to separate 
-;;;           periodic-scheduled-functions.lisp file.  (Corkill)
+;;;           scheduled-periodic-functions.lisp file.  (Corkill)
 ;;;  03-29-11 Added partial ABCL support (provided by Chun Tian (binghe);
 ;;;           thanks!)
 ;;;  06-24-11 Updates for Digitool MCL & ABCL (from Chun Tian (binghe))
