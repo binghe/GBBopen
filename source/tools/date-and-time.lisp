@@ -60,7 +60,8 @@
             iso8661-date-and-time       ; mis-named (remove soon!)
             message-log-date-and-time
             encode-date-and-time
-            encode-time-of-day          ; duplicated in portable-threads.lisp
+            encode-time-of-day          ; duplicated in
+                                        ; scheduled-periodic-functions.lisp
             parse-date                  ; also from module-manager.lisp
             parse-date-and-time
             parse-duration
@@ -714,7 +715,7 @@
   (multiple-value-bind (current-second current-minute current-hour
                         date month year)
       (if universal-time
-          (decode-universal-time (get-universal-time))
+          (decode-universal-time universal-time)
           (get-decoded-time))
     ;; substitute the supplied hour, minute, and second values:
     (let ((tentative-result
