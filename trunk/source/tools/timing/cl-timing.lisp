@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/timing/cl-timing.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jun  2 10:47:51 2011 *-*
+;;;; *-* Last-Edit: Wed Sep  7 17:12:14 2011 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -21,6 +21,7 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  07-02-08 File created.  (Corkill)
+;;;  09-07-11 Add HASH-TABLE-COUNT timing.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -349,7 +350,13 @@
         (time-it (gethash 1 keys-only-ht)))
       (fformat t "~&;;   Normal eq hash table timing (~:d iterations)..."
                iterations)
-      (time-it (gethash 1 ht)))))
+      (time-it (gethash 1 ht))      
+      (let ((hash-time time))
+        (fformat t "~&;;   Normal eq hash-table-count timing (~:d iterations)..."
+                 iterations)
+        (time-it (hash-table-count ht))
+        (when (>& time hash-time)
+          (format t " *****"))))))
 
 ;;; ---------------------------------------------------------------------------
 
