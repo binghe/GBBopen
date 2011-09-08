@@ -1,6 +1,11 @@
 
           Known Common Lisp Implementation Issues when using GBBopen
 
+Clozure CL 1.7 (all platforms)
+ - HASH-TABLE-COUNT is very costly relative to GETHASH and as compared with
+   HASH-TABLE-COUNT on other CL implementations.  This slows journal loading 
+   (among other things) by an order of magnitude.
+
 CMUCL 20b (all platforms)
  - CMUCL's native WITH-TIMEOUT (used in :portable-threads) doesn't nest
    correctly; however we still expose the native version (in the hope that it
@@ -17,4 +22,4 @@ SBCL 1.0.44-51 (all platforms)
    works correctly when invoked after file loading
 
 ==============================================================================
-File updated: September 5, 2011
+File updated: September 8, 2011
