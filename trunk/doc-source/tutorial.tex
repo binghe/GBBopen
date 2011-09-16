@@ -1,7 +1,7 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Mon Mar 14 11:41:12 2011; Edited-By: cork *-*
-%% *-* Machine: twister.local *-*
+%% *-* Last-Edit: Wed Sep 14 14:41:41 2011; Edited-By: cork *-*
+%% *-* Machine: phoenix.corkills.org *-*
 
 %% Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project.
@@ -2548,11 +2548,13 @@ Here is my \nobr{\code{.clinit.cl}} initialization file for
             :defaults defaults)))
 \end{example}
 
-The initialization file names for supported GBBopen ports are:
+The initialization file names for various Common Lisp implementations are:
 %
 \begin{tabular}{llll}
-~~~~~~ & \xsitelink{Allegro CL}{http://franz.com/products/allegrocl/} &
-~~~~~~ & \code{.clinit.cl} \\
+~~~~~~ & \xsitelink{ABCL}{http://common-lisp.net/project/armedbear/} &
+~~~~~~ & \code{.abclrc} \\
+       & \xsitelink{Allegro CL}{http://franz.com/products/allegrocl/} &
+       & \code{.clinit.cl} \\
        & \xsitelink{CLISP}{http://www.clisp.org/} &
        & \code{.clisprc} \\
        & \xsitelink{Clozure CL}{http://trac.clozure.com/ccl} &

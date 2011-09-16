@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 13 16:28:32 2011 *-*
+;;;; *-* Last-Edit: Tue Sep 13 14:36:01 2011 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -9,8 +9,8 @@
 ;;;; *
 ;;;; *                      Extended REPL Command Processing
 ;;;; * 
-;;;; *  for CLISP, Closure CL, CMUCL, ECL, Lispworks, SBCL, SCL, and XCL REPL 
-;;;; *  and for SLIME (Emacs->Swank)
+;;;; *  for ABCL, CLISP, Closure CL, CMUCL, ECL, Lispworks, SBCL, SCL, and 
+;;;; *  XCL REPL and for SLIME (Emacs->Swank)
 ;;;; *
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -37,7 +37,8 @@
 ;;;  02-04-06 Added SLIME (Emacs->Swank) support.  (Corkill)
 ;;;  04-17-08 Reworked SLIME mechanism.  (Corkill)
 ;;;  10-15-09 Added XCL support.  (Corkill)
-;;;  01-04-11 Added XCL support.  (Corkill)
+;;;  01-04-11 Added partial ABCL support.  (Corkill)
+;;;  09-13-11 Completed ABCL support.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
@@ -127,7 +128,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#+xcl
+#+(or abcl
+      xcl)
 (defun read-args-from-string (string)
   (when string
     (ignore-errors
@@ -182,8 +184,13 @@
              `((pushnew ,(string-downcase (symbol-name command-name))
                         *non-native-help-commands* :test #'equal)))
          ;; Define the command function:
+         #+abcl
+         (defun ,tlc-sym (line)
+           (flet ((do-it ,lambda-list ,@body))
+             (apply #'do-it (read-args-from-string line))))
+         #-abcl
          (defun ,tlc-sym ,lambda-list 
-           ,@body)
+             ,@body)
          ;; Always add command to *extended-repl-commands* (for SLIME
          ;; interface and more):
          (add-repl-command-spec
