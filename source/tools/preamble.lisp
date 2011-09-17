@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/preamble.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 21 17:32:20 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Sat Sep 17 03:41:24 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -193,7 +193,9 @@
 ;;;  Object-address (can be useful in conjunction with printv)
 
 (defun object-address (obj &optional hex-string-p)
-  (let ((address #+allegro
+  (let ((address #+abcl
+                 (system:identity-hash-code obj)
+                 #+allegro
                  (excl::pointer-to-address obj)
                  #+clisp
                  (system::address-of obj)
@@ -211,7 +213,10 @@
                  (sb-kernel:get-lisp-obj-address obj) 
                  #+scl
                  (kernel:get-lisp-obj-address obj)
-                 #-(or allegro
+                 #+xcl
+                 (system:address-of obj)
+                 #-(or abcl
+                       allegro
                        clisp
                        clozure
                        cmu
@@ -219,7 +224,8 @@
                        ecl
                        lispworks
                        sbcl
-                       scl)
+                       scl
+                       xcl)
                  (need-to-port object-address)))
     (if hex-string-p
         (format nil "~x" address)
