@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 28 10:12:27 2011 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Sat Sep 17 12:30:20 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -780,11 +780,12 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun invoke-skip-form-restart (&optional (allow-close 't))
-  (invoke-restart (or (find-restart 'skip-form)
-                      ;; If the skip-form restart is not available because
-                      ;; form processing has not begun, close the stream if
-                      ;; allowed:
-                      (and allow-close (find-restart 'close)))))
+  (let ((restart (or (find-restart 'skip-form)
+                     ;; If the skip-form restart is not available because
+                     ;; form processing has not begun, close the stream if
+                     ;; allowed:
+                     (and allow-close (find-restart 'close)))))
+    (when restart (invoke-restart restart))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1149,7 +1150,8 @@
                                    (external-format ':default)
                                    (read-default-float-format 
                                     *read-default-float-format*)
-                                   (streamer-class 'journal-streamer))
+                                   (streamer-class 'journal-streamer)
+                                   (value nil))
   (let ((stream (if (streamp pathname)
                     pathname
                     (open (make-jnl-pathname pathname)
@@ -1160,7 +1162,7 @@
                           #+clozure :sharing #+clozure ':external)))
         (*package* (ensure-package package))
         (*read-default-float-format* read-default-float-format))
-    (write-saving/sending-block-info stream)
+    (write-saving/sending-block-info stream value)
     ;; Why is this needed to prevent reading problems...?
     (princ " " stream)
     (force-output stream)
@@ -1173,7 +1175,7 @@
            :read-default-float-format read-default-float-format 
            :stream stream
            (remove-properties initargs
-                              '(:if-exists :package :streamer-class)))))
+                              '(:if-exists :package :streamer-class :value)))))
 
 ;;; ---------------------------------------------------------------------------
 
