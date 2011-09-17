@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-writer.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar 30 15:38:48 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Wed Sep 14 17:29:37 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -40,7 +40,8 @@
 (defparameter *streamer*
     (make-journal-streamer "tutorial" 
                            :package ':tutorial
-                           :external-format ':utf-8))
+                           :external-format ':utf-8
+                           :value (round pi 2)))
 
 (add-mirroring *streamer* 'standard-space-instance)
 (add-mirroring *streamer* 'path)

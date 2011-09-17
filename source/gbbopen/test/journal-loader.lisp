@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:CL-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/journal-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  9 07:07:10 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Wed Sep 14 17:34:49 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -66,7 +66,11 @@
          *journal-load-percentage-hook-functions*)
 
 ;; Load the journal:
-(load-journal "tutorial" :external-format ':utf-8)
+(multiple-value-bind (pathname save-time save-value)
+    (load-journal "tutorial" :external-format ':utf-8)
+  (declare (ignore pathname save-time))
+  (unless (= save-value (round pi 2))
+    (error "Incorrect save-value ~s" save-value)))
 
 ;; Check instance links:
 (check-all-instance-links)
