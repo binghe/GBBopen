@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 14 13:14:59 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Wed Sep 14 16:24:36 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -182,7 +182,8 @@
      nil         
      "abcl"
      nil
-     (lisp-implementation-version))
+     (let ((version (lisp-implementation-version)))
+       (subseq version 0 (position #\- version))))
     ;; Franz Allegro:
     #+allegro
     (values (check                      ; ensure one feature match
@@ -351,8 +352,9 @@
 (defparameter *compiled-directory-name*
     (multiple-value-bind (os/platform cl-implementation modern-mode-p version)
         (cl-implementation-values)
-      ;; CLISP compiled files are OS/platform independent:
-      #-clisp
+      ;; ABCL & CLISP compiled files are OS/platform independent:
+      #-(or abcl 
+            clisp)
       (unless os/platform
         ;; Unknown CL:
         (need-to-port-warning/error '*compiled-directory-name* nil))
