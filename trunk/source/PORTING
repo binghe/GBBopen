@@ -30,15 +30,15 @@ module-manager/module-manager.lisp
 tools/atable.lisp
   - determine ATABLE, ESET, and ET transition sizes
 ------------------------------------------------------------------------------
+tools/clos-interface.lisp
+  - import required MOP symbols
+------------------------------------------------------------------------------
 tools/declarations.lisp
   - implement ALLOW-REDEFINITION (optional)
 ------------------------------------------------------------------------------
 tools/declared-numerics.lisp
   - implement FIXNUMP, SINGLE-FLOAT-P, and DOUBLE-FLOAT-P, where needed
   - infinity and negative-infinity values, reading, and printing
-------------------------------------------------------------------------------
-tools/mop-interface.lisp
-  - import required MOP symbols
 ------------------------------------------------------------------------------
 tools/os-interface.lisp
   - implementation-specific OS process entities
