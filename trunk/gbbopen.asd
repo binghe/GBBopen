@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Aug 25 15:33:39 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Wed Nov 16 13:08:29 2011 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -79,9 +79,16 @@
 
 (defun mm-component-defsystem (module-name &optional no-components-p)
   (eval `(asdf:defsystem ,module-name
-	     :author "The GBBopen Project <gbbopen@GBBopen.org>"
+             :description 
+               ,(if (eq ':gbbopen module-name)
+                    "The GBBopen blackboard-system framework"
+                    (format nil
+                            "GBBopen ~s module; part of the GBBopen blackboard-system framework"
+                            module-name))
+	     :author "The GBBopen Project <gbbopen@GBBopen.org>"             
 	     :maintainer "Dan Corkill <corkill@GBBopen.org>"
              :version ,common-lisp-user::*gbbopen-version*
+             :licence "Licensed under Apache License 2.0 (see LICENSE for license information)."
 	     ,@(unless no-components-p
                  `(:components ((:mm-component ,module-name)))))))
 
