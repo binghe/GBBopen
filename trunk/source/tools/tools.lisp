@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Aug 22 13:19:12 2011 *-*
+;;;; *-* Last-Edit: Mon Dec  5 15:12:22 2011 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -1598,10 +1598,6 @@
 
 ;;; ===========================================================================
 ;;;   Add missing extract-specializer-names
-
-#+abcl
-(defun extract-specializer-names (arglist)
-  (mop::extract-specializers arglist))
 
 #+ecl
 (defun extract-specializer-names (arglist)
