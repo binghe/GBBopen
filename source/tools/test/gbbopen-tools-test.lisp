@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 13 10:12:07 2011 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Tue Dec  6 10:37:27 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -21,6 +21,7 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  06-15-08 File created.  (Corkill)
+;;;  08-29-11 Added duration parsing/display tests.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -209,7 +210,19 @@
       (test-it `(0 30 10 ,date ,month ,year -11/2 nil 9)
        "10:30 IST")
       (test-it `(0 30 10 ,date ,month ,year 7 nil 11)
-       "10:30 UTC-7"))))
+       "10:30 UTC-7")
+      (test-it `(20 30 10 ,date ,month ,year nil nil 8)
+       "10:30:20")
+      (test-it `(20 30 22 ,date ,month ,year nil nil 10)
+       "10:30:20pm")
+      (test-it `(20 30 10 ,date ,month ,year 4 t 12)
+       "10:30:20 EDT")
+      (test-it `(20.4 30 10 ,date ,month ,year nil nil 10)
+       "10:30:20.4" :allow-fractional-second t)
+      (test-it `(20.4 30 22 ,date ,month ,year nil nil 12)
+       "10:30:20.4pm" :allow-fractional-second t)
+      (test-it `(20.4 30 10 ,date ,month ,year 4 t 14)
+       "10:30:20.4 EDT" :allow-fractional-second t))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -268,6 +281,11 @@
   
 ;;; ---------------------------------------------------------------------------
 
+(defun round-if-not-fixnum (n)
+  (if (fixnump n) n (round n)))
+
+;;; ---------------------------------------------------------------------------
+
 (defun parse-time-test ()
   (format t "~&;;   Starting parse-time test...~%")
   (multiple-value-bind (second minute hour date month year)
@@ -299,7 +317,7 @@
                        (bad-result 'hour expected-hour returned-hour))
                      (unless (=& expected-minute returned-minute)
                        (bad-result 'minute expected-minute returned-minute))
-                     (unless (=& expected-second returned-second)
+                     (unless (= expected-second returned-second)
                        (bad-result 'second expected-second returned-second))
                      (unless (eql expected-zone returned-zone)
                        (bad-result 'zone expected-zone returned-zone))
@@ -312,7 +330,8 @@
                        (bad-result 'position expected-position returned-position)))
                  (brief-date-and-time
                   (encode-universal-time 
-                   returned-second returned-minute returned-hour
+                   (round-if-not-fixnum returned-second)
+                   returned-minute returned-hour
                    date month year)
                   :destination *standard-output*)))))
       (inserted-time-tests)))
@@ -338,9 +357,11 @@
                      (full-date-and-time
                       (if time-zone
                           (encode-universal-time 
-                           second hour minute date month year time-zone)
+                           (round-if-not-fixnum second) hour minute 
+                           date month year time-zone)
                           (encode-universal-time 
-                           second hour minute date month year))
+                           (round-if-not-fixnum second) hour minute 
+                           date month year))
                       :destination *standard-output*))
                    (terror "Incorrect ~s~{ ~s~} result for ~s: ~s"
                            'parse-date-and-time
@@ -438,6 +459,40 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun parse-duration-test ()
+  (format t "~&;;   Starting parse-duration test...~%")
+  (flet ((test-it (expected-result string &rest args)
+           (format t "~&;;     ~s~{ ~s~} => "
+                   string args)
+           (let ((result (multiple-value-list (parse-duration string))))
+             (unless (equal result expected-result)
+               (terror "Incorrect ~s result for ~s: ~
+                        ~s expected; ~s returned"
+                       'parse-duration
+                       string
+                       expected-result
+                       result))
+             (format t "~a" (brief-duration (first result))))))
+    (test-it '(120 9) "2 minutes")
+    (test-it '(-120 5) "-2min")
+    (test-it '(120 2) "2m")
+    (test-it '(31556952 41) "365 days, 5 hours, 49 minutes, 12 seconds")
+    (test-it '(31556952 15) "365d 5h 49m 12s")
+    (test-it '(31556952 12) "365d5h49m12s")
+    (test-it '(58 11) "1min -2secs")
+    (test-it '(58 5) "1m-2s")
+    (test-it '(1800 5) "1/2hr")
+    (test-it '(1800.0 5) "0.5hr")
+    (test-it '(5184000 8) "2 months")
+    (test-it '(1814400 5) "3 wks")
+    (test-it '(31556952 41) "365 days, 5 hours, 49 minutes, 12 seconds" 1)
+    (test-it '(2.1 4) "2.1s")
+    (test-it '(2.0 4) "2.0s")
+    )
+  (format t "~&;;   Parse-duration test completed.~%"))
+
+;;; ---------------------------------------------------------------------------
+
 (defun probe-directory-test ()
   ;;; Someday, add symbolic-link tests...
   (format t "~&;;   Starting probe-directory test...~%")
@@ -491,10 +546,10 @@
           (keys-only-ht-resized-size (hash-table-size keys-only-ht)))
       ;; Check for resizing:
       (unless (> ht-resized-size ht-original-size)
-        (format t "~&;;     Resizing did not expand hash table."))
+        (terror "Resizing did not expand hash table."))
       #+has-keys-only-hash-tables
       (unless (> keys-only-ht-resized-size keys-only-ht-original-size)
-        (format t "~&;;     Resizing did not expand keys-only hash table."))
+        (terror "Resizing did not expand keys-only hash table."))
       ;; Fill the hash-tables:
       (dotimes (i max-size)
         (declare (fixnum i))
@@ -533,7 +588,7 @@
           (if (plusp (- ht-grown-size ht-shrunk-size))
               (unless (= ht-shrunk-size ht-original-size)
                 (format t "~&;;     Resizing did not shrink hash table ~
-                                  to its original size."))
+                                    to its original size."))
               (format t "~&;;     Resizing did not shrink hash table."))
           #+has-keys-only-hash-tables
           (if (plusp (- keys-only-ht-grown-size keys-only-ht-shrunk-size))
@@ -552,10 +607,13 @@
   (infinite-values-test)
   ;; Check this extended-REPL operation:
   (cl-user::commands ':gbbopen)
+  ;; Date and time:
   (full-date-and-time-test)
   (parse-date-test)
   (parse-time-test)
   (parse-date-and-time-test)
+  (parse-duration-test)
+  ;; Hash-table extensions:
   (hash-table-extensions-test)
   ;; LLRB tests (from llrb-test.lisp):
   (basic-llrb-tree-test verbose)
