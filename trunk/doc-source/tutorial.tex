@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Wed Sep 14 14:41:41 2011; Edited-By: cork *-*
+%% *-* Last-Edit: Thu Dec 22 14:05:47 2011; Edited-By: cork *-*
 %% *-* Machine: phoenix.corkills.org *-*
 
 %% Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
@@ -360,17 +360,17 @@ extensions to the standard that are provided by GBBopen), we can easily run
 our code on any Common Lisp implementation that provides similar capabilities
 (such as threads, for example).
 
-If you would rather not explore the space of Common Lisp implementations for
-your platform, Peter Seibel (the author of \xsitelink{\textit{Practical Common
-    Lisp\/}}{http://www.gigamonkeys.com/book/}) provides
-\xsitelink{Lispbox}{http://www.gigamonkeys.com/lispbox/}.  Lispbox
-(``Lisp in a Box'') offers an easy to install, no-cost, Common Lisp
-environment for Linux/86, Macintosh OS X, and Windows.  Lispbox packages
-together a Common Lisp implementation,
-\xsitelink{Emacs}{http://www.gnu.org/software/emacs/emacs.html}, and the
-\xsitelink{SLIME}{http://common-lisp.net/project/slime/} Common Lisp
-development environment for Emacs.  For the less adventurous, installing
-Lispbox can be an appealing way to get started.
+% If you would rather not explore the space of Common Lisp implementations for
+% your platform, Peter Seibel (the author of \xsitelink{\textit{Practical Common
+%     Lisp\/}}{http://www.gigamonkeys.com/book/}) provides
+% \xsitelink{Lispbox}{http://www.gigamonkeys.com/lispbox/}.  Lispbox
+% (``Lisp in a Box'') offers an easy to install, no-cost, Common Lisp
+% environment for Linux/86, Macintosh OS X, and Windows.  Lispbox packages
+% together a Common Lisp implementation,
+% \xsitelink{Emacs}{http://www.gnu.org/software/emacs/emacs.html}, and the
+% \xsitelink{SLIME}{http://common-lisp.net/project/slime/} Common Lisp
+% development environment for Emacs.  For the less adventurous, installing
+% Lispbox can be an appealing way to get started.
 
 However you choose to obtain Common Lisp, you must have an installed and
 operating implementation for your system before proceeding to the next step.
@@ -2659,16 +2659,16 @@ command to load GBBopen's Emacs indentation customizations:
   (load "\var{<install-dir>\/}/gbbopen-indent")
 \end{example}
 
-\begin{notebox}{Lispbox users}
-If you are using
-\xsitelink{\textit{Lispbox}}{http://www.gigamonkeys.com/book/lispbox/}, you
-will have to enable loading of the \code{.emacs} initialization file, as it is
-disabled in the Lispbox startup file.  Edit the Lispbox startup file
-(\nobr{\code{lispbox.bat}} on Windows, \nobr{\code{lispbox.sh}} on Unix, and
-\nobr{\code{/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh}} on Mac
-OS) and remove the \nobr{\code{-{}-no-init-file}} option from the Emacs
-invocation line.
-\end{notebox}
+% \begin{notebox}{Lispbox users}
+% If you are using
+% \xsitelink{\textit{Lispbox}}{http://www.gigamonkeys.com/book/lispbox/}, you
+% will have to enable loading of the \code{.emacs} initialization file, as it is
+% disabled in the Lispbox startup file.  Edit the Lispbox startup file
+% (\nobr{\code{lispbox.bat}} on Windows, \nobr{\code{lispbox.sh}} on Unix, and
+% \nobr{\code{/Applications/Lispbox/Emacs.app/Contents/MacOS/lispbox.sh}} on Mac
+% OS) and remove the \nobr{\code{-{}-no-init-file}} option from the Emacs
+% invocation line.
+% \end{notebox}
 
 \subsubsection*{Adding the Common Lisp HyperSpec}
 
