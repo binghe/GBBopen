@@ -19,9 +19,9 @@ ECL 11.1.1 (all platforms)
    Incorrect GBBOPEN-TOOLS:PARSE-TIME GBBOPEN-TOOLS-USER::ZONE result for 
    "10:30 IST": -11/2 expected; -11/2 returned
 
-SBCL 1.0.44-54 (all platforms)
+SBCL 1.0.44-55 (all platforms)
  - :agenda-shell-test fails to trigger all KSAs when started by load/autorun; 
    works correctly when invoked after file loading
 
 ==============================================================================
-File updated: January 1, 2012
+File updated: January 16, 2012
