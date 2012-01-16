@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/atable.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul 29 19:48:17 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Mon Jan 16 10:40:16 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008-2010, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2008-2012, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -128,7 +128,7 @@
        ;; Lispworks
        #+lispworks 18
        ;; SBCL
-       #+(and sbcl darwin (not ppc)) 18
+       #+(and sbcl darwin (not ppc)) 48
        #+(and sbcl darwin ppc) 62
        #+(and sbcl (not darwin)) 32
        ;; SCL
@@ -325,7 +325,7 @@
        ;; Lispworks
        #+lispworks 3
        ;; SBCL
-       #+(and sbcl darwin (not ppc)) 12
+       #+(and sbcl darwin (not ppc)) 27
        #+(and sbcl darwin ppc) 42
        #+(and sbcl (not darwin)) 20
        ;; SCL
