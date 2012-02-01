@@ -12,7 +12,7 @@ Requirements:
        CLISP        Version 2.49 (configure --with-threads if possible)
        Clozure CL   Version 1.7 (r15188)
        CMUCL        Version 20c
-       ECL          Version 11.1.1 (configure with --enable-threads if 
+       ECL          Version 12.2.1 (configure with --enable-threads if 
                                     possible)
        Lispworks    Version 6.1
        SBCL         Version 1.0.55 (use sb-threads if possible)
@@ -37,7 +37,7 @@ Requirements:
    implementations.
 
 
-Current Status Notes (January 30, 2012)
+Current Status Notes (February 1, 2012)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of

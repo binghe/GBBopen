@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Apr 12 17:06:05 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Wed Feb  1 10:27:54 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -1145,10 +1145,11 @@
           (change-class instance deleted-instance-class 
                         :original-class unit-class)
           (when 
-              ;; NOTE: CMUCL (at least up through 19f) gets the following
-              ;; TYPEP check on a changed-class instance wrong. We work
-              ;; around that by not inlining TYPEP:
-              (locally #+cmu (declare (notinline typep))
+              ;; NOTE: CMUCL (at least up through 19f) and ECL 12.2.1 gets the
+              ;; following TYPEP check on a changed-class instance wrong. We
+              ;; work around that by not inlining TYPEP:
+              (locally #+(or cmu ecl)
+                       (declare (notinline typep))
                        (typep instance 'standard-unit-instance))
             (error "The deleted-instance-class ~s is a subclass of ~s"
                    (class-name deleted-instance-class)

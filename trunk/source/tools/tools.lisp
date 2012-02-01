@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Dec  6 10:58:55 2011 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Wed Feb  1 10:37:17 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -511,8 +511,8 @@
 ;;; ===========================================================================
 ;;;  Sortf & stable-sortf
 
-(define-modify-macro sortf (place &rest args) sort args)
-(define-modify-macro stable-sortf (place &rest args) stable-sort args)
+(define-modify-macro sortf (place &rest args) sort)
+(define-modify-macro stable-sortf (place &rest args) stable-sort)
 
 ;;; ===========================================================================
 ;;;  Make-hash-values-vector & sorted-maphash
