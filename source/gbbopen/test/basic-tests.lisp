@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun May 29 12:20:03 2011 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Sat Feb  4 07:03:14 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -234,24 +234,34 @@
   (setf n (min most-positive-fixnum (* n 100)))
   (let ((unit-instance (make-instance 'uc-2 :y 0))
         (clos-instance (make-instance 'not-a-unit :non-unit-slot 0)))
+    ;; CLOS reading:
     (fformat t "~&;; Running CLOS-slot-reading timing test (~:d read~:p)..."
              n)
     (let ((clos-time (brief-timer n (non-unit-slot-of clos-instance))))
       (format-ticks clos-time))
+    ;; non-link reading:
     (fformat t "~&;; Running nonlink-slot-reading timing test (~:d read~:p)..."
              n)
     (let ((ui-time (brief-timer n (x-of unit-instance))))
       (format-ticks ui-time))
+    ;; link reading:
     (fformat t "~&;; Running link-slot-reading timing test (~:d read~:p)..."
              n)
     (let ((ui-time (brief-timer n (link-2-of unit-instance))))
       (format-ticks ui-time))
+    ;; CLOS writing:
+    (fformat t "~&;; Running CLOS-slot-writing timing test ~
+                     (~:d write~:p)..."
+             n)
+    (let ((time (brief-timer n (setf (non-unit-slot-of clos-instance) i))))
+      (format-ticks time))
+    ;; non-link writing:
     (fformat t "~&;; Running nonlink-slot-writing timing test ~
                      (~:d write~:p)..."
              n)
     (let ((time (brief-timer n (setf (x-of unit-instance) i))))
       (format-ticks time))
-
+    ;; link writing:
     (fformat t "~&;; Running linkf timing test (~:d write~:p)..."
              n)
     (let ((time (brief-timer n (linkf (link-2-of unit-instance)
