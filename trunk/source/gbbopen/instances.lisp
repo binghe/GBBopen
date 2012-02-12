@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  1 10:27:54 2012 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Sun Feb 12 08:08:46 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -1121,6 +1121,17 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun change-deleted-instance-class (instance unit-class)
+  (let ((deleted-instance-class (deleted-instance-class instance)))
+    (change-class instance deleted-instance-class 
+                  :original-class unit-class)
+    (when (typep instance 'standard-unit-instance)
+      (error "The deleted-instance-class ~s is a subclass of ~s"
+             (class-name deleted-instance-class)
+             'standard-unit-instance))))
+
+;;; ---------------------------------------------------------------------------
+
 (defmethod delete-instance ((instance standard-unit-instance))
   (declare (inline class-of))
   (let ((space-instances (standard-unit-instance.%%space-instances%% instance))
@@ -1141,19 +1152,7 @@
       (setf (standard-unit-instance.%%space-instances%% instance) ':deleted))
      ;; Although the class change is a bit expensive, the extra safety in
      ;; detecting stale references to deleted unit-instances is worth it...
-     (t (let ((deleted-instance-class (deleted-instance-class instance)))
-          (change-class instance deleted-instance-class 
-                        :original-class unit-class)
-          (when 
-              ;; NOTE: CMUCL (at least up through 19f) and ECL 12.2.1 gets the
-              ;; following TYPEP check on a changed-class instance wrong. We
-              ;; work around that by not inlining TYPEP:
-              (locally #+(or cmu ecl)
-                       (declare (notinline typep))
-                       (typep instance 'standard-unit-instance))
-            (error "The deleted-instance-class ~s is a subclass of ~s"
-                   (class-name deleted-instance-class)
-                   'standard-unit-instance))))))
+     (t (change-deleted-instance-class instance unit-class))))
   instance)
 
 ;;; ---------------------------------------------------------------------------
