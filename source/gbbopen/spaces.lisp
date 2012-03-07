@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 24 09:15:59 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Wed Mar  7 07:20:39 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -1135,7 +1135,7 @@
                      (format t "~2&Unit Class~vtInstances~
                                ~%----------~:*~vt---------~%"
                              2nd-column-indent))
-                   (format t "~s~vt~9d ~c~%" 
+                   (format t "~s~vt~9:d ~c~%" 
                            (class-name unit-class)
                            2nd-column-indent
                            count
@@ -1146,7 +1146,7 @@
         (declare (dynamic-extent #'fn))
         (map-extended-unit-classes-sorted #'fn 't))
     (if header-displayed?
-          (format t "~&~vt---------~%~:*~vt~9d instance~:p"
+          (format t "~&~vt---------~%~:*~vt~9:d instance~:p"
                   2nd-column-indent
                   total-instances)                
           (format t "~&There are no space or unit instances in the ~
