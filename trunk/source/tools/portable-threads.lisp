@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug  6 11:50:18 2011 *-*
+;;;; *-* Last-Edit: Sun Mar 18 15:19:31 2012 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1338,7 +1338,7 @@
     #+digitool-mcl
     (eq (ccl::lock.value (lock-ccl-lock lock)) ccl:*current-process*)
     #+(and ecl threads)
-    (eq (mp:lock-holder lock) mp:*current-process*)
+    (eq (mp:lock-owner lock) mp:*current-process*)
     #+(and lispworks lispworks6)
     (mp:lock-owned-by-current-process-p lock)
     #+(and lispworks (not lispworks6))
@@ -1372,7 +1372,7 @@
          (eq (ccl::lock.value (lock-ccl-lock ,lock-sym))
              ccl:*current-process*)
          #+(and ecl threads)
-         (eq (mp:lock-holder ,lock-sym) mp:*current-process*)
+         (eq (mp:lock-owner ,lock-sym) mp:*current-process*)
          #+(and lispworks lispworks6)
          (mp:lock-owned-by-current-process-p ,lock-sym)
          #+(and lispworks (not lispworks6))
