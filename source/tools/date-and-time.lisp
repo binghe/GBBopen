@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/date-and-time.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb  6 11:42:56 2012 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Mon Aug 22 13:18:26 2011 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2010, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -27,9 +27,6 @@
 ;;;           PARSE-TIME functions.  (Corkill)
 ;;;  04-30-09 Added :ot REPL command.  (Corkill)
 ;;;  05-19-10 Added VERY-BRIEF-DATE.  (Corkill)
-;;;  02-01-12 Changed arguments from optional to keyword in BRIEF-DURATION,
-;;;           PRETTY-DURATION, BRIEF-RUN-TIME-DURATION, and
-;;;           PRETTY-RUN-TIME-DURATION.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -63,7 +60,8 @@
             iso8661-date-and-time       ; mis-named (remove soon!)
             message-log-date-and-time
             encode-date-and-time
-            encode-time-of-day          ; duplicated in portable-threads.lisp
+            encode-time-of-day          ; duplicated in
+                                        ; scheduled-periodic-functions.lisp
             parse-date                  ; also from module-manager.lisp
             parse-date-and-time
             parse-duration
@@ -71,7 +69,8 @@
             pretty-duration
             pretty-run-time-duration
             time-zone-offset            ; not documented yet
-            very-brief-date)))
+            very-brief-date
+            )))
 
 ;;; ===========================================================================
 ;;;  Time parsing and formatting
@@ -550,7 +549,6 @@
 (defun parse-time (string &key (start 0) 
                                (end (length string))
                                (junk-allowed nil)
-                               (allow-fractional-second nil)
                                (separators " :"))
   (declare (simple-string string))
   (flet ((skip-separators ()
@@ -577,24 +575,7 @@
             (skip-separators)
             (multiple-value-setq (second start)
               (parse-integer string :start start :end end :junk-allowed 't))
-            (when second 
-              (setf maybe-pos start)
-              (when (and allow-fractional-second
-                         (<& start end)
-                         (char= (schar string start) #\.))
-                (let (fraction
-                      (fraction-start (1+& start)))
-                  (multiple-value-setq (fraction start)
-                    (parse-integer string
-                                   :start fraction-start :end end 
-                                   :junk-allowed 't))
-                  (when fraction
-                    (when (plusp fraction)
-                      ;; Add the fractional seconds:
-                      (incf second 
-                            (/$ (float fraction) 
-                                (expt 10.0f0 (-& start fraction-start)))))
-                    (setf maybe-pos start))))))))
+            (when second (setf maybe-pos start)))))
       (skip-separators)
       ;; Check for 24:00:
       (when (and hour 
@@ -655,7 +636,6 @@
                             &key (start 0) 
                                  (end (length string))
                                  (junk-allowed nil)
-                                 (allow-fractional-second nil)
                                  (date-separators "-/ ,")
                                  (time-separators " :")
                                  (month-precedes-date *month-precedes-date*)
@@ -684,7 +664,6 @@
              (parse-time string 
                          :start start :end end 
                          :junk-allowed junk-allowed?
-                         :allow-fractional-second allow-fractional-second
                          :separators time-separators))))
       (cond (time-first
              (do-time 't) (do-date junk-allowed))
@@ -779,8 +758,8 @@
               (when (or (plusp& hundreds)
                         (plusp& seconds))
                 (decf& maximum-fields 2))
-              (when (plusp& minutes) (decf& maximum-fields))
               (when (plusp& hours) (decf& maximum-fields))
+              (when (plusp& minutes) (decf& maximum-fields))
               (when (plusp days) (decf& maximum-fields))
               (incf& maximum-fields)    ; adjust for easy plusp& checks below
               ;; Determine the actual fields to include, rounding for excluded
@@ -837,20 +816,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun brief-duration (duration-in-seconds
-                       &key (hhmmss-format nil)
-                            (always-include-seconds t)
-                            (maximum-fields 5)
-                            (destination nil))
-  ;;; Converts `seconds' to a brief time-duration string (rounded to the
-  ;;; nearest 100th of a second):
-  (if hhmmss-format
-      (%hhmmss-duration duration-in-seconds always-include-seconds destination)
-      (%brief-duration duration-in-seconds maximum-fields destination)))
-  
-;;; ---------------------------------------------------------------------------
-
-(defun %brief-duration (duration-in-seconds maximum-fields destination)
+(defun brief-duration (duration-in-seconds 
+                       &optional (maximum-fields 5)
+                                 (destination nil))
   ;;; Converts `seconds' to a brief time-duration string (rounded to the
   ;;; nearest 100th of a second):
   (multiple-value-bind (negative-p days-p days hours-p hours 
@@ -887,46 +855,9 @@
   
 ;;; ---------------------------------------------------------------------------
 
-(defun %hhmmss-duration (duration-in-seconds always-include-seconds-p destination)
-  ;;; Converts `seconds' to a very brief H:MM[:SS.S] time-duration string
-  ;;; (rounded to the nearest 100th of a second):
-  (let ((negative-p nil))
-    (when (minusp duration-in-seconds)
-      (setf negative-p 't)
-      (setf duration-in-seconds (abs duration-in-seconds)))
-    (multiple-value-bind (seconds remainder)
-        (truncate duration-in-seconds)
-      (multiple-value-bind (hundreds)
-          (round (* remainder 100))
-        ;; handle roundup!
-        (when (=& 100 hundreds)
-          (incf seconds)
-          (setf hundreds 0))
-        (multiple-value-bind (minutes seconds)
-            (truncate seconds 60)
-          (multiple-value-bind (hours minutes)
-              (truncate minutes 60)
-            (flet ((write-it (stream)
-                     (when negative-p (format stream "-"))
-                     ;; Always show hours & minutes:
-                     (format stream "~s:~2,'0d" hours minutes)
-                     (cond
-                      ((or always-include-seconds-p 
-                           (not (zerop& seconds)) (not (zerop& hundreds)))
-                       (format stream ":~2,'0d~:[~*~;.~2,'0d~]" 
-                               seconds
-                               (not (zerop& hundreds))
-                               hundreds)))))
-              (if destination
-                  (write-it destination)
-                  (with-output-to-string (stream)
-                    (write-it stream))))))))))
-  
-;;; ---------------------------------------------------------------------------
-
 (defun pretty-duration (duration-in-seconds 
-                        &key (maximum-fields 5)
-                             (destination nil))
+                        &optional (maximum-fields 5)
+                                  (destination nil))
   ;;; Converts `seconds' to a time duration string (rounded to the nearest
   ;;; 100th of a second):
   (multiple-value-bind (negative-p days-p days hours-p hours 
@@ -965,26 +896,26 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun brief-run-time-duration (internal-run-time 
-                                &key (maximum-fields 5)
-                                     (destination nil))
+                                &optional (maximum-fields 5)
+                                          (destination nil))
   ;;; Converts `internal-run-time' to a brief time-duration string (rounded to
   ;;; nearest 100th of a second).
   (brief-duration (/ internal-run-time 
                      #.(float internal-time-units-per-second))
-                  :maximum-fields maximum-fields
-                  :destination destination))
+                  maximum-fields
+                  destination))
 
 ;;; ---------------------------------------------------------------------------
 
 (defun pretty-run-time-duration (internal-run-time 
-                                 &key (maximum-fields 5)
-                                      (destination nil))
+                                 &optional (maximum-fields 5)
+                                           (destination nil))
   ;;; Converts `internal-run-time' to a time interval string (rounded to
   ;;; nearest 100th of a second).
   (pretty-duration (/ internal-run-time 
                       #.(float internal-time-units-per-second))
-                   :maximum-fields maximum-fields
-                   :destination destination))
+                   maximum-fields
+                   destination))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1130,6 +1061,7 @@
 (when (fboundp 'define-repl-command)
   (eval `(let ((*current-system-name* ':gbbopen-tools))
            (declare (special *current-system-name*))
+           
            (define-repl-command :ut (&rest args)
              "Describe universal-time value or encode string to universal time"
              (do-ut-repl-command (sole-element args))))))
