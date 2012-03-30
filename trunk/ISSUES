@@ -1,7 +1,7 @@
 
           Known Common Lisp Implementation Issues when using GBBopen
 
-Clozure CL 1.7 (all platforms)
+Clozure CL 1.8 (all platforms)
  - HASH-TABLE-COUNT on lock-free hash tables is very costly relative to
    GETHASH and as compared with HASH-TABLE-COUNT on other CL implementations.
    This slows journal loading (among other things) by an order of magnitude.
@@ -19,4 +19,4 @@ SBCL 1.0.44-55 (all platforms)
    works correctly when invoked after file loading
 
 ==============================================================================
-File updated: February 1, 2012
+File updated: March 30, 2012
