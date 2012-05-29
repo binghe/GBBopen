@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Aug 24 15:06:33 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Tue May 29 15:37:15 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2010, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -24,6 +24,8 @@
 ;;;           the latest Swank mechanisms.  (Corkill)
 ;;;  08-24-10 Redefine Swank's SIMPLE-REPL to provide command processing for
 ;;;           nil communication style.  (Corkill)
+;;;  05-29-12 Remove support for contrib/swank-listener-hooks (no longer
+;;;           (set *listener-eval-function* binding).  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
@@ -47,13 +49,6 @@
 	   '(:help si::tpl-help-command))))
 
 (compile-if-advantageous 'get-extended-repl-command-with-help)
-
-;;; ---------------------------------------------------------------------------
-
-(unless (eq *listener-eval-function* 'repl-eval)
-  (warn "Swank's ~s is not ~s." '*listener-eval-function* 'repl-eval))
-
-(setf *listener-eval-function* 'extended-repl-eval)
 
 ;;; ---------------------------------------------------------------------------
 
