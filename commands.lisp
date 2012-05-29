@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/commands.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 28 11:07:36 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Tue May 29 15:01:47 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -57,6 +57,7 @@
 ;;;  03-09-10 Added :gbbopen-tools-user command.  (Corkill)
 ;;;  02-02-11 Added :streaming command. (Corkill)
 ;;;  02-28-11 Added :network-streaming command. (Corkill)
+;;;  05-28-12 SBCL now prefers EXIT over QUIT.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -290,7 +291,8 @@
   ;; define them here on all platforms for SLIME interface:
   (define-repl-command (:exit :add-to-native-help
                              #+(or allegro
-                                   clisp)
+                                   clisp
+                                   sbcl)
                              :no-cl-user-function)
       (&rest args)
     "Exit Lisp" 
