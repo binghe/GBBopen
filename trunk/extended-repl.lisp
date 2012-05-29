@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Sep 13 14:36:01 2011 *-*
+;;;; *-* Last-Edit: Mon May 28 17:38:56 2012 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -17,7 +17,7 @@
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -39,6 +39,7 @@
 ;;;  10-15-09 Added XCL support.  (Corkill)
 ;;;  01-04-11 Added partial ABCL support.  (Corkill)
 ;;;  09-13-11 Completed ABCL support.  (Corkill)
+;;;  05-28-12 SBCL now prefers EXIT over QUIT.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
@@ -559,7 +560,8 @@
   (let* ((eof-marker (cons nil nil))
 	 (form (read in nil eof-marker)))
     (cond 
-     ((eq form eof-marker) (quit))
+     ((eq form eof-marker) 
+      (exit))
      (t (let ((repl-command (get-extended-repl-command form)))
 	  (flet ((do-command (symbol-or-fn args)
 		   (apply (the function (if (symbolp symbol-or-fn) 
@@ -598,7 +600,9 @@
   (apply
    ;; Avoid infinite #'quit recursion in Allegro:
    #+allegro #'exit
-   #-allegro #'quit
+   ;; SBCL prefers EXIT:
+   #+sbcl #'exit
+   #-(or allegro sbcl) #'quit
    args))
   
 (compile-if-advantageous 'extended-repl-quit-lisp)
