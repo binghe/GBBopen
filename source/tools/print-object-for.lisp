@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Mar 24 04:17:18 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Sat Jun 23 12:06:35 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2007-2008, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2007-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -197,9 +197,11 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Unbound value indicator
 
-(defmethod print-object-for-saving/sending ((obj (eql unbound-value-indicator))
+(defmethod print-object-for-saving/sending ((object
+                                             (eql unbound-value-indicator))
                                             stream)
-  (princ "#GU" stream))
+  (princ "#GU" stream)
+  object)
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Lists
@@ -221,6 +223,7 @@
           (write-char #\space stream)
           (print-object-for-saving/sending (car ptr) stream))
         (unless (null ptr)
+          ;; Dotted list:
           (write-char #\space stream)
           (write-char #\. stream)
           (write-char #\space stream)

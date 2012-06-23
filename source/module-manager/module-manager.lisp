@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jul 25 10:57:30 2011 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Sat Jun 23 11:51:17 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zachary Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -1540,20 +1540,21 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun compatible-ordering-p (seq1 seq2)
-  ;; Returns true if all items in `seq1' that are also present in `seq2'
+(defun compatible-ordering-p (list1 list2)
+  (declare (list list1 list2))
+  ;; Returns true if all items in `list1' that are also present in `list2'
   ;; are in the same relative order in both sequences; nil otherwise.
   (let ((pos 0))
     (declare (fixnum pos))
-    (dolist (item seq1 't)
-      (let ((item-pos (position item seq2)))
+    (dolist (item list1 't)
+      (let ((item-pos (position item list2)))
         (when item-pos
-          (with-full-optimization ()
-            (locally (declare (fixnum item-pos))
-              (cond ((< item-pos pos)
-                     (return nil))
-                    ((> item-pos pos)
-                     (setf pos item-pos))))))))))
+          (let ((item-pos item-pos))
+            (declare (fixnum item-pos))
+            (cond ((< item-pos pos)
+                   (return nil))
+                  ((> item-pos pos)
+                   (setf pos item-pos)))))))))
 
 ;;; ---------------------------------------------------------------------------
 
