@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Mar  7 07:20:39 2012 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Mon Jun 25 02:36:26 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2003-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -166,6 +166,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod hidden-nonlink-slot-names ((instance standard-space-instance))
+  #+ecl (declare (ignore instance))
   '(%%marks%% 
     '%%space-instances%%
     '%%evfn-unit-ht%% 
@@ -599,6 +600,7 @@
 ;;;  Duplicating space instances
 
 (defmethod unduplicated-slot-names ((instance standard-space-instance))
+  #+ecl (declare (ignore instance))
   (list* 'instance-counts
          'space-name                    ; recomputed from instance-name
          '%%storage%%
@@ -666,6 +668,7 @@
 ;;;   Saving/sending space instances
 
 (defmethod omitted-slots-for-saving/sending ((instance standard-space-instance))
+  #+ecl (declare (ignore instance))
   (list* 'instance-counts
          'space-name                    ; recomputed from instance-name
          '%%bb-widgets%%

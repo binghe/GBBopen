@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/links.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Apr  9 12:09:53 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Mon Jun 25 02:32:55 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -123,6 +123,7 @@
              (link-slot #+lispworks symbol
                         #-lispworks effective-link-definition))
   (declare (ignore nv))
+  #+ecl (declare (ignore class))
   (unless (or *%%allow-setf-on-link%%*
               ;; determine if the slot is a link slot (Lispworks):
               #+lispworks
