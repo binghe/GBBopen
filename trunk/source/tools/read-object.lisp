@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/read-object.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Aug 20 10:12:50 2011 *-*
+;;;; *-* Last-Edit: Mon Jun 25 02:57:55 2012 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2008-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -219,6 +219,7 @@
 ;;;  Unbound value reader
          
 (defmethod saved/sent-object-reader ((char (eql #\U)) stream)
+  #+ecl (declare (ignore char))
   (declare (ignore stream))
   unbound-value-indicator)
 
@@ -242,6 +243,7 @@
 ;;;  Non-simple vector reader
          
 (defmethod saved/sent-object-reader ((char (eql #\()) stream)
+  #+ecl (declare (ignore char))
   (let* ((dimension (read stream))
          (adjustable? (read stream))
          (fill-pointer (read stream))
@@ -260,6 +262,7 @@
 ;;;  Non-simple bit-vector reader
          
 (defmethod saved/sent-object-reader ((char (eql #\*)) stream)
+  #+ecl (declare (ignore char))
   (read-char stream)                    ; skip open parenthesis
   (let* ((dimension (read stream))
          (adjustable? (read stream))
@@ -281,6 +284,7 @@
 ;;;  Non-simple array reader
          
 (defmethod saved/sent-object-reader  ((char (eql #\A)) stream)
+  #+ecl (declare (ignore char))
   (read-char stream)                    ; skip open parenthesis
   (let* ((dimensions (read stream))
          (adjustable? (read stream))
@@ -298,6 +302,7 @@
 ;;;  Class (reference) reader
          
 (defmethod saved/sent-object-reader ((char (eql #\C)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (class-name)
       (read stream 't nil 't)
     (find-class (possibly-translate-class-name class-name) 't)))
@@ -306,6 +311,7 @@
 ;;;  Class-description reader
 
 (defmethod saved/sent-object-reader ((char (eql #\D)) stream)
+  #+ecl (declare (ignore char))
   ;; Check that we are in a with-saving/sending-block:
   (unless (boundp '*read-class-descriptions-ht*)
     (outside-reading-saved/sent-objects-block-error 'saved/sent-object-reader))
@@ -347,6 +353,7 @@
 ;;;  Function reader
          
 (defmethod saved/sent-object-reader ((char (eql #\F)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (function-name)
       (read stream 't nil 't)
     (coerce function-name 'function)))
@@ -355,6 +362,7 @@
 ;;;  Hash-table reader
 
 (defmethod saved/sent-object-reader ((char (eql #\H)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (ht-test ht-count ht-values &rest keys-and-values)
       (read stream 't nil 't)
       (cond 
@@ -405,6 +413,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod saved/sent-object-reader ((char (eql #\I)) stream)
+  #+ecl (declare (ignore char))
   ;; Check that we are in a with-saving/sending-block:
   (unless (boundp '*read-class-descriptions-ht*)
     (outside-reading-saved/sent-objects-block-error 'saved/sent-object-reader))
@@ -427,6 +436,7 @@
 ;;;  Package (reference) reader
          
 (defmethod saved/sent-object-reader ((char (eql #\P)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (package-name)
       (read stream 't nil 't)
     (ensure-package package-name)))

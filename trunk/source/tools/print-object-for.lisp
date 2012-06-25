@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 23 12:06:35 2012 *-*
+;;;; *-* Last-Edit: Mon Jun 25 03:28:50 2012 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -224,9 +224,7 @@
           (print-object-for-saving/sending (car ptr) stream))
         (unless (null ptr)
           ;; Dotted list:
-          (write-char #\space stream)
-          (write-char #\. stream)
-          (write-char #\space stream)
+          (princ " . " stream)
           (print-object-for-saving/sending ptr stream))
         (write-char #\) stream))))
   cons)
@@ -234,9 +232,18 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Strings (coalescable)
 
+#-ecl
 (defmethod print-object-for-saving/sending ((string string) stream)
   (princ "#G" stream)
   (prin1 string stream))
+
+;;; Latest ECL can't compile the above without error, until it is fixed:
+#+ecl
+(defmethod print-object-for-saving/sending ((string string) stream)
+  (write-char #\# stream)
+  (write-char #\G stream)
+  (prin1 string stream))
+
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Vectors
