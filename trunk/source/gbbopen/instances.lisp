@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/instances.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Feb 12 08:08:46 2012 *-*
+;;;; *-* Last-Edit: Mon Jun 25 02:44:40 2012 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -234,6 +234,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod initial-class-instance-number ((instance standard-unit-instance))
+  #+ecl (declare (ignore instance))
   0)
 
 (defmethod initial-class-instance-number ((unit-class-name symbol))
@@ -372,6 +373,7 @@
 
 (defmethod (setf link-instance-of) 
     (nv (link deleted/non-deleted-unit-instance))
+  #+ecl (declare (ignore link))
   ;; The default writer for a basic link to a unit instance is a noop:
   nv)
 
@@ -383,6 +385,7 @@
   link)
 
 (defmethod (setf link-instance-of) (nv (link standard-unit-instance))
+  #+ecl (declare (ignore link))
   ;; The default writer for a basic link to a unit instance is a noop:
   nv)
 
@@ -390,6 +393,7 @@
 ;;;  Duplicating unit instances
 
 (defmethod unduplicated-slot-names ((instance standard-unit-instance))
+  #+ecl (declare (ignore instance))
   (list* '%%marks%%
          'instance-name 
          (call-next-method)))
@@ -492,6 +496,7 @@
 ;;;  Saving/sending unit instances
 
 (defmethod omitted-slots-for-saving/sending ((instance standard-unit-instance))
+  #+ecl (declare (ignore instance))
   (cons '%%marks%% (call-next-method)))
 
 ;;; ---------------------------------------------------------------------------
@@ -641,6 +646,7 @@
 ;;;  Unit-instance-reference reader
 
 (defmethod saved/sent-object-reader ((char (eql #\R)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (class-name instance-name)
       (read stream t nil 't)
     ;; Handle old .bb files that used root-space-instance (remove eventually):
@@ -875,6 +881,7 @@
 
 (defmethod shared-initialize :around ((instance standard-unit-instance)
                                       slot-names &key)
+  #+ecl (declare (ignore instance))
   (declare (ignore slot-names))
   (cond 
    (*%%skip-gbbopen-shared-initialize-method-processing%%*
@@ -1040,6 +1047,7 @@
 (defmethod describe-instance-slot-value ((instance standard-unit-instance)
                                          slot-name value
                                          &optional (stream *standard-output*))
+  #+ecl (declare (ignore instance))
   (declare (ignore slot-name))
   (prin1 value stream))
 
@@ -1117,6 +1125,7 @@
 ;;;  Delete instace
 
 (defmethod deleted-instance-class ((instance standard-unit-instance))
+  #+ecl (declare (ignore instance))
   (load-time-value (find-class 'deleted-unit-instance)))
 
 ;;; ---------------------------------------------------------------------------
@@ -1261,6 +1270,7 @@
             ;; provides the slot name:
             (slot #+lispworks symbol
                   #-lispworks effective-nonlink-slot-definition))
+  #+ecl (declare (ignore class))
   ;; must look up the slot object in Lispworks:
   #+lispworks
   (setf slot (car (member slot (class-slots class)
@@ -1518,6 +1528,7 @@
 (defmethod change-class :around ((instance standard-object)
 				 (new-class standard-unit-class) 
                                  &key)
+  #+ecl (declare (ignore new-class))
   ;;; This :around method handles event-signalling on class changes from a
   ;;; non-unit class to a unit class (or simply calls next method on changes
   ;;; from a unit class to another class):

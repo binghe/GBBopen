@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/unit-metaclasses.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 28 15:55:10 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Mon Jun 25 02:47:04 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -145,6 +145,7 @@
 ;;;  Standard-unit-instance-updater reader
 
 (defmethod saved/sent-object-reader ((char (eql #\M)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (class-name instance-name-counter)
       (read stream t nil 't)
     (let ((unit-class (find-class class-name)))
@@ -440,6 +441,7 @@
 
 (defmethod direct-slot-definition-class ((class standard-unit-class)
                                          &rest initargs)
+  #+ecl (declare (ignore class))
   (cond
    ;; Direct link slot:
    ((getf initargs ':link)
@@ -498,6 +500,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod link-slot-p ((slot slot-definition))
+  #+ecl (declare (ignore slot))
   nil)
 
 (defmethod link-slot-p ((slot direct-link-definition))
@@ -523,6 +526,7 @@
 
 (defmethod effective-slot-definition-class ((class standard-unit-class)
                                             &rest initargs)
+  #+ecl (declare (ignore class))
   (if *%%inherited-link-slot%%*
       ;; We can't use load-time-value here, as links are not defined yet:
       (find-class 'effective-link-definition)

@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb 23 01:17:57 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Mon Jun 25 02:31:03 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -265,6 +265,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod omitted-slots-for-saving/sending ((control-shell control-shell))
+  #+ecl (declare (ignore control-shell))
   (list* 'event-buffer-lock
          ;; If we record the run-polling-functions value, then we risk
          ;; problems if an in-progress application without polling is
@@ -429,6 +430,7 @@
 
 (defmethod effective-slot-definition-class ((class standard-ksa-class)
                                             &key name &allow-other-keys)
+  #+ecl (declare (ignore class))
   (if (eq name 'rating)
       (load-time-value (find-class 'effective-rating-slot-definition))
       (call-next-method)))
@@ -456,6 +458,7 @@
            (nv (class standard-ksa-class) (ksa ksa) 
             (slot #-lispworks effective-rating-slot-definition
                   #+lispworks (eql 'rating)))
+  #+ecl (declare (ignore slot class))
   (cond 
    ;; If we are being called from initialize-instance:
    (*%%allow-setf-on-link%%* (call-next-method))
