@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/extensions/streaming.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Sep 17 12:30:20 2011 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Wed Jun 27 17:26:35 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2011-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -622,6 +622,7 @@
 ;;;  Delete unit instance reader
 
 (defmethod saved/sent-object-reader ((char (eql #\X)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (class-name instance-name)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
@@ -634,6 +635,7 @@
 ;;;  Unit-instance slot-update reader
 
 (defmethod saved/sent-object-reader ((char (eql #\S)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (class-name instance-name slot-name new-value)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
@@ -656,6 +658,7 @@
 ;;;  Unit-instance link reader
 
 (defmethod saved/sent-object-reader ((char (eql #\+)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (class-name instance-name slot-name other-instances)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
@@ -678,6 +681,7 @@
 ;;;  Unit-instance unlink reader
 
 (defmethod saved/sent-object-reader ((char (eql #\-)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (class-name instance-name slot-name other-instances)
       (read stream t nil 't)
     (setf class-name (possibly-translate-class-name class-name))
@@ -700,6 +704,7 @@
 ;;;  Add instance to space-instance reader
 
 (defmethod saved/sent-object-reader ((char (eql #\a)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (class-name instance-name 
                        space-instance-class-name space-instance-name)
       (read stream t nil 't)
@@ -719,6 +724,7 @@
 ;;;  Remove instance from space-instance reader
 
 (defmethod saved/sent-object-reader ((char (eql #\r)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (class-name instance-name 
                        space-instance-class-name space-instance-name)
       (read stream t nil 't)
@@ -738,6 +744,7 @@
 ;;;  Command form reader
 
 (defmethod saved/sent-object-reader ((char (eql #\.)) stream)
+  #+ecl (declare (ignore char))
   (destructuring-bind (form)
       (read stream t nil 't)
     (if (consp form)
@@ -824,6 +831,7 @@
 ;;;  Queued-streaming-block reader
          
 (defmethod saved/sent-object-reader ((char (eql #\Q)) stream)
+  #+ecl (declare (ignore char))
   ;; Skip the opening parenthesis:
   (read-char stream 't nil 't)
   (let* ((tag (read stream 't nil 't))
@@ -840,6 +848,7 @@
 ;;;  GBBopen streamer-command reader (remove soon!)
          
 (defmethod saved/sent-object-reader ((char (eql #\!)) stream)
+  #+ecl (declare (ignore char))
   (let ((form (read stream 't nil 't)))
     (case (first form)
       (otherwise (printv form)))))
