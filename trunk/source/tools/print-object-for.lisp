@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/print-object-for.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 25 03:28:50 2012 *-*
+;;;; *-* Last-Edit: Wed Jun 27 16:48:49 2012 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -232,18 +232,9 @@
 ;;; ---------------------------------------------------------------------------
 ;;;  Strings (coalescable)
 
-#-ecl
 (defmethod print-object-for-saving/sending ((string string) stream)
   (princ "#G" stream)
   (prin1 string stream))
-
-;;; Latest ECL can't compile the above without error, until it is fixed:
-#+ecl
-(defmethod print-object-for-saving/sending ((string string) stream)
-  (write-char #\# stream)
-  (write-char #\G stream)
-  (prin1 string stream))
-
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Vectors

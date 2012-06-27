@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/test/basic-tests.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Feb  4 07:03:14 2012 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Mon Jun 25 16:14:16 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -467,6 +467,7 @@
 (defmethod slot-value-using-class :before ((class checker-metaclass)
                                            instance
                                            slot)
+  #+ecl (declare (ignore class))
   (declare (ignore instance slot))
   (push 'slot-value-using-class *method-trail*))
 
@@ -474,6 +475,7 @@
                                                   (class checker-metaclass)
                                                   instance
                                                   slot)
+  #+ecl (declare (ignore class))
   (declare (ignore nv instance slot))
   (push 'setf-slot-value-using-class *method-trail*))
 
