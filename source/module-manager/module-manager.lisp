@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jun 23 11:51:17 2012 *-*
+;;;; *-* Last-Edit: Wed Jul  4 17:25:59 2012 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -393,8 +393,9 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defmacro printv (&rest forms)
-  (printv-expander forms))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro printv (&rest forms)
+    (printv-expander forms)))
 
 ;;; ===========================================================================
 ;;;  Feature-present-p and dotted-conc-name
@@ -944,9 +945,10 @@
            ;; We know the year and the month:
            (month
             (setf date 1st-numeric))
-           ;; If `month-precedes-date':
-           ((or (and month-precedes-date (<=& 1st-numeric 12))
-                (>& 2nd-numeric 12))
+           ;; If we have any unresolved numerics, decide what they mean based
+           ;; on value constraints and `month-precedes-date' value:
+           ((or (and 1st-numeric month-precedes-date (<=& 1st-numeric 12))
+                (and 2nd-numeric (>& 2nd-numeric 12)))
             (setf month 1st-numeric
                   date 2nd-numeric))
            ;; Otherwise, date precedes month:
