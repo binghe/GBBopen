@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Feb  1 10:37:17 2012 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Thu Jul  5 15:50:19 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -1006,9 +1006,12 @@
 ;;;   Shrink-vector
 ;;;
 ;;;   Destructively truncates a simple vector (when the CL implementation
-;;;   supports it--some implementations allocate a new vector anyway)
+;;;   supports it; CCL, CLISP, CMUCL, and SBCL return a new vector, rather
+;;;   than changing the original)
 
 (defun shrink-vector (vector length)
+  #+abcl
+  (system:shrink-vector vector length)
   #+allegro
   (excl::.primcall 'sys::shrink-svector vector length)
   ;; Can we do better on CLISP?
@@ -1032,6 +1035,8 @@
   (lisp::shrink-vector vector length))
 
 (defcm shrink-vector (vector length)
+  #+abcl
+  `(system:shrink-vector ,vector ,length)
   #+allegro
   `(excl::.primcall 'sys::shrink-svector ,vector ,length)
   #+clisp
