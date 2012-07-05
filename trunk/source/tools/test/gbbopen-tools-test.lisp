@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Dec  6 10:37:27 2011 *-*
+;;;; *-* Last-Edit: Thu Jul  5 15:49:44 2012 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2008-2011, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2008-2012, Dan Corkill <corkill@GBBopen.org> 
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -36,7 +36,7 @@
     `(let ((assumed-july-4th-year
             (if (or (<& month 7)
                     (and (=& month 7)
-                         (<& date 4)))
+                         (<=& date 4)))
                 year
                 (1+& year)))
            (assumed-july-1st-year
@@ -46,7 +46,7 @@
            (assumed-april-7th-year
             (if (or (<& month 4)
                     (and (=& month 4)
-                         (<& date 7)))
+                         (<=& date 7)))
                 year
                 (1+& year))))
       ,@body)))
@@ -529,6 +529,18 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defun shrink-vector-test ()
+  (format t "~&;;   Starting shrink-vector test...~%")
+  (let* ((vector (make-array '(100)))
+         (shrunk-vector (shrink-vector vector 10)))
+    (unless (= 10 (length shrunk-vector))
+      (terror "Unable to shrink vector"))
+    (unless (= 10 (length vector))
+      (warn "Shrunk vector is not eq to the original")))
+  (format t "~&;;   Shrink-vector test completed.~%"))
+
+;;; ---------------------------------------------------------------------------
+
 (defun hash-table-extensions-test (&optional (max-size 100000))
   (format t "~&;;   Starting hash-table extensions test...~%")
   (let* ((ht (make-hash-table :size 0))
@@ -618,6 +630,8 @@
   ;; LLRB tests (from llrb-test.lisp):
   (basic-llrb-tree-test verbose)
   (random-size-llrb-tree-test (min 200000 most-positive-fixnum))
+  ;; Other informative tests:
+  (shrink-vector-test)
   (format t "~&;;; All GBBopen-Tools tests completed.~%")
   (values))
 
