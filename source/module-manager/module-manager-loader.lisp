@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Sep 14 16:24:36 2011 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Thu Jul  5 11:17:29 2012 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zack Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -164,7 +164,8 @@
   ;;;   2. CL-implementation (string)
   ;;;   3. modern-mode-p indicator (boolean)
   ;;;   4. version (string or number)
-  (flet ((check (&rest args)
+  (flet (#+(or allegro clozure cmu ecl gcl lispworks sbcl scl xcl)
+         (check (&rest args)
            ;; Ensure that only one string matched:
            (when (cdr args)
              (error
@@ -214,18 +215,6 @@
      nil
      (let ((version (lisp-implementation-version)))
        (subseq version 0 (position #\Space version))))
-    ;; CMUCL:
-    #+cmu
-    (values (check                      ; ensure one feature match
-             #+(and (not x86) darwin) "macppc"
-             #+(and x86 darwin) "mac86"
-             #+(and x86 linux) "linux86"
-             #+(and x86 (not linux) (not darwin)) "windows"
-             #+sparc "sparc")
-            "cmucl"
-            nil
-            (let ((version (lisp-implementation-version)))
-              (subseq version 0 (position #\Space version))))
     ;; Clozure Common Lisp:
     #+clozure
     (values (check                      ; ensure one feature match
@@ -242,6 +231,18 @@
             (format nil "~a.~a"
                     ccl::*openmcl-major-version*
                     ccl::*openmcl-minor-version*))
+    ;; CMUCL:
+    #+cmu
+    (values (check                      ; ensure one feature match
+             #+(and (not x86) darwin) "macppc"
+             #+(and x86 darwin) "mac86"
+             #+(and x86 linux) "linux86"
+             #+(and x86 (not linux) (not darwin)) "windows"
+             #+sparc "sparc")
+            "cmucl"
+            nil
+            (let ((version (lisp-implementation-version)))
+              (subseq version 0 (position #\Space version))))
     ;; Corman Common Lisp:
     #+cormanlisp
     (values "windows"
