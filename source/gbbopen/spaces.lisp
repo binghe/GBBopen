@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/spaces.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 25 02:36:26 2012 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Fri Aug 10 13:04:48 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -336,8 +336,8 @@
                           (setf unit-class (type-of unit-class))))
                        (when subclass-indicator
                          (ecase subclass-indicator
-                           ((:plus-subclasses +))
-                           ((:no-subclasses =)
+                           ((+ :plus-subclasses))
+                           ((= :no-subclasses)
                             (setf subclass-indicator nil))))
                        (if subclass-indicator
                            (list unit-class subclass-indicator)
@@ -345,16 +345,19 @@
                     (standard-unit-instance (type-of spec))))
                 (check-for-allows-everything (result)
                   ;; Can we subsume with 't?
-                  (if (member '(standard-unit-instance :plus-subclasses)
-                              result
-                              :test #'equal)
+                  (if (flet ((test-it (element)
+                               (and (consp element)
+                                    (eq (first element) 'standard-unit-instance)
+                                    (memq (second element) '(+ :plus-subclasses)))))
+                        (declare (dynamic-extent #'test-it))
+                        (member-if #'test-it result))
                       't
                       result)))
            (if (and (list-length-2-p unit-classes-specifiers)
                     (let ((maybe-subclass-indicator 
                            (second unit-classes-specifiers)))
                       (memq maybe-subclass-indicator
-                            '(:plus-subclasses + :no-subclasses =))))
+                            '(+ = :plus-subclasses :no-subclasses))))
                ;; Make a list of the singleton specifier:
                (check-for-allows-everything
                 (list (do-spec unit-classes-specifiers)))
@@ -495,7 +498,7 @@
                                     ;; undocumented optional, for internal
                                     ;; error checking use
                                     &optional errorp)
-  (or (find-instance-by-name path '(standard-space-instance :plus-subclasses))
+  (or (find-instance-by-name path '(standard-space-instance +))
       (when errorp
         (error "Space instance ~s does not exist." path))))
 
@@ -514,7 +517,7 @@
 ;;; Deletes all space instances. Care must be taken when deleting instances
 ;;; that delete other instances by side-effect.  For example:
 ;;;   (map-instances-of-class #'delete-space-instance
-;;;                           '(standard-space-instance :plus-subclasses))
+;;;                           '(standard-space-instance +))
 ;;; will most likely violate the bottom-up deletion contract for space
 ;;; instances from the space-instance-path tree, because deleting a
 ;;; space-instance automatically deletes all of its children.  A very careful
