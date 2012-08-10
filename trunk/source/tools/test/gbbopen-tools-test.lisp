@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/test/gbbopen-tools-test.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  5 15:49:44 2012 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Fri Aug 10 12:44:46 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -217,10 +217,13 @@
        "10:30:20pm")
       (test-it `(20 30 10 ,date ,month ,year 4 t 12)
        "10:30:20 EDT")
+      #+NOT-YET
       (test-it `(20.4 30 10 ,date ,month ,year nil nil 10)
        "10:30:20.4" :allow-fractional-second t)
+      #+NOT-YET
       (test-it `(20.4 30 22 ,date ,month ,year nil nil 12)
        "10:30:20.4pm" :allow-fractional-second t)
+      #+NOT-YET
       (test-it `(20.4 30 10 ,date ,month ,year 4 t 14)
        "10:30:20.4 EDT" :allow-fractional-second t))))
 
