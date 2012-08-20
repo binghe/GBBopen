@@ -8,13 +8,13 @@ Requirements:
    extensions.  GBBopen is actively supported on the following Common Lisp
    implementations:
 
-       Allegro CL   Version 8.2
+       Allegro CL   Version 9.0
        CLISP        Version 2.49 (configure --with-threads if possible)
-       Clozure CL   Version 1.8 (r15290)
+       Clozure CL   Version 1.8
        CMUCL        Version 20c
-       ECL          Version 12.5.1
+       ECL          Version 12.7.1
        Lispworks    Version 6.1
-       SBCL         Version 1.0.57 (use sb-threads if possible)
+       SBCL         Version 1.0.58 (use sb-threads if possible)
        Scieneer CL  Version 1.3.8
 
    Known issues with the above implementations are summarized in the ISSUES
@@ -36,7 +36,7 @@ Requirements:
    implementations.
 
 
-Current Status Notes (July 3, 2012)
+Current Status Notes (August 19, 2012)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
@@ -229,20 +229,13 @@ using GBBopen through a series of exercises that cover GBBopen's concepts
 and features in a step-by-step sequence.
 
 
-Mailing Lists
+GBBopen Forum
 =============
 
-We strongly recommend that you subscribe to the GBBopen Announcements and the
-GBBopen Users mailing lists.  To subscribe, go to the "Mailing Lists" page on
-the GBBopen web site and click on the appropriate subscribe links.  The e-mail
-traffic is low, and the messages and advice will help you to write quality
-GBBopen applications easier and sooner.  (You can also browse the archived
-messages that are accessible from the "Mailing Lists" page.)
-
-If you need help or advice, the GBBopen Users list is the place to ask (should
-the GBBopen Tutorial and archived messages from the GBBopen Users list come up
-short).    There is also a GBBopen fan page on facebook for comments and 
-discussion (http://www.facebook.com/pages/Amherst-MA/GBBopen/156240293546).
+If you need help or advice, the GBBopen Forum is the place to ask (should the
+GBBopen Tutorial and Reference Manual come up short).  There is also a GBBopen
+fan page on facebook
+(http://www.facebook.com/pages/Amherst-MA/GBBopen/156240293546).
 
 
 Some Useful Things
