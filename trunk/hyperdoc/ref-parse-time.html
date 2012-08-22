@@ -16,7 +16,8 @@
 <p><table class="tight" width="100%">
 <tr valign="top"><td valign="baseline" align="left"%>
 <nobr><b><font color="#000000">parse-time</font></b></nobr></td><td valign="baseline"> &nbsp; </td><td valign="baseline" align="left" width="99%"><var>string</var>
-<nobr><code>&#38;key</code> <var>start end junk-allowed separators</var></nobr>
+<nobr><code>&#38;key</code> <var>start end junk-allowed 
+allow-fractional-second separators</var></nobr>
 <nobr><span 
     style="font-family: serif; font-style: normal">=&gt;</span> <var>second, minute, hour,</var></nobr>
 <var><nobr>time-zone,</nobr> <nobr>daylight-savings-p,</nobr> pos</var></td><td valign="baseline" align="right">[<i>Function</i>]
@@ -32,11 +33,14 @@
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>start</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Starting index into <var>string</var> (default is <code>0</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>end</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> Ending index into <var>string</var> (default is <code>nil</code>, meaning
 end of <var>string</var>)
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>allow-fractional-second</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id86">generalized&nbsp;boolean</a> (default 
+is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>junk-allowed</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A <a href="ref-glossary.html#id86">generalized&nbsp;boolean</a> (default is <code>nil</code>)
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>separators</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A sequence of characters that are skipped and separate the
 hour, minute, and second fields in <var>string</var>, if needed (default is 
 <nobr><code>" :"</code></nobr>)
-</td></tr><tr valign="top"><td valign="baseline" nowrap><i>second</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and up to 59, inclusive
+</td></tr><tr valign="top"><td valign="baseline" nowrap><i>second</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer (or float, if a fractional time was specified)
+between 0 and up to 59, inclusive
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>minute</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and up to 59, inclusive
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>hour</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> An integer between 0 and up to 23, inclusive
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>time-zone</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> A time zone: a rational multiple of 1/3600 between
@@ -50,8 +54,10 @@ hour, minute, and second fields in <var>string</var>, if needed (default is
 <nobr><var>position</var></nobr>
 </p>
 <p><span class="fndoclabel">Errors</span> <br />If <var>junk-allowed</var> is false, an error is signaled if a numeric field in
-<var>string</var> does not consist entirely of the representation of a integer,
-possibly surrounded on either side by characters in <nobr><var>separators</var></nobr>.
+<var>string</var> does not consist entirely of the representation of a integer
+(with the exception of the <var>second</var> field, which can have a factional
+value if <nobr><var>allow-fractional-second</var></nobr> is true), possibly surrounded
+on either side by characters in <nobr><var>separators</var></nobr>.
 </p>
 <p><span class="fndoclabel">Description</span> <br />If no hour, minute, or second values are specified in <var>string</var>, they
 default to zero.  The values returned for <nobr><var>time-zone</var></nobr> and
@@ -105,6 +111,20 @@ parse ended.
   7
   nil
   11
+  &gt; (parse-time "10:30:20")
+  20
+  30
+  10
+  nil
+  nil
+  8
+  &gt; (parse-time "10:30:20.4")
+  20.4
+  30
+  10
+  nil
+  nil
+  10
   &gt;
 </pre>
 </p>
