@@ -15,15 +15,20 @@ Requirements:
        ECL          Version 12.7.1
        Lispworks    Version 6.1
        SBCL         Version 1.0.58 (use sb-threads if possible)
-       Scieneer CL  Version 1.3.8
 
    Known issues with the above implementations are summarized in the ISSUES
    file.
 
+   Completion of Armed Bear Common Lisp (ABCL) support is awaiting active work
+   on MOP support that is being done for ABCL 1.1.  We are hopeful that this
+   work will enable full use of GBBopen under ABCL.
+
+   We continue to indirectly support Scieneer CL (Version 1.3.9) via
+   contributed source-code patches.  We do not have a Scieneer CL license and
+   therefore rely on those who do for maintenance and testing.
+
    Support for Digitool MCL (Version 5.1) has been discontinued. However,
    GBBopen may still function under MCL.
-
-   Initial investigation/porting for ABCL is underway.
 
    Ports of GBBopen to Corman Common Lisp (Version 3.0), and GCL
    (Version 2.7.0 with --enable-ansi) are incomplete (due to limitations
@@ -36,7 +41,7 @@ Requirements:
    implementations.
 
 
-Current Status Notes (August 19, 2012)
+Current Status Notes (August 22, 2012)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
