@@ -36,7 +36,7 @@ Part of the <a href="ref-module-manager-entities.html">Module Manager Facility</
 false (<code>nil</code>).
 <p></dd><dt><a name="id13"></a><b>broadcast&nbsp;streamer</b></dt><dd> 
 <a name="id14">An</a> object that is used as a saving or sending destination for multiple
-<a href="#gl:journal-streamer">journal&nbsp;</a> and <a href="#gl:network-streamer">network&nbsp;</a><a href="#gl:streamers">streamers</a>.
+<a href="#id107">journal&nbsp;</a> and <a href="#gl:network-streamer">network&nbsp;</a><a href="#gl:streamers">streamers</a>.
 <p></dd><dt><a name="id15"></a><b>circular&nbsp;list</b></dt><dd>
 <a name="id16">A</a> list that has no termination because it includes an earlier portion of
 itself in its successive sublists.
@@ -248,7 +248,7 @@ and end value representing the set of real numbers between them, inclusive.
 <a name="id105">A</a> file containing changes made to the <a href="#id9">blackboard&nbsp;repository</a> that can
 be loaded in order to perform the recorded changes.
 <p></dd><dt><a name="id106"></a><b>journal&nbsp;streamer</b></dt><dd> 
-<a name="gl:journal-streamer">An</a> object that is used as a saving destination for
+<a name="id107">An</a> object that is used as a saving destination for
 <a href="#gl:journaling">journaling</a> functions.
 <p></dd><dt><a name="gl:journaling"></a><b>journaling</b></dt><dd> 
 <a name="id109">Writing</a> changes made to the <a href="#id9">blackboard&nbsp;repository</a> to a file that can
@@ -512,14 +512,13 @@ indirect parent space-instance name, that uniquely identifies a
 An</a> object that is used as a saving or sending destination for
 <a href="#gl:journaling">journaling</a> or <a href="#gl:network-streaming">network-streaming</a> functions.
 <p></dd><dt><a name="id232"></a><b>streamer&nbsp;node</b></dt><dd> 
-<a name="gl:streamer-node"></a>
-<p>A logical &#8220;host&#8221; for sending and receiving streamed updates to
+<a name="id233">
+A</a> logical &#8220;host&#8221; for sending and receiving streamed updates to
 <a href="#gl:instances">unit&nbsp;instances</a> and to the <a href="#id9">blackboard&nbsp;repository</a>.  Each
 streaming node is resolved uniquely by <i>host</i> and <i>port</i> and
 should be defined with a unique <i>name</i>. Although multiple streaming
 nodes can be defined for the same Common Lisp image, typically only one
 streaming node is defined per image.
-</p>
 <p></dd><dt><a name="id234"></a><b>streamer&nbsp;queue</b></dt><dd> 
 <a name="id235">A</a> <a href="#gl:thread-local">thread&nbsp;local</a> queue of changes associated with a <a href="#gl:streamer">streamer</a>
 that are being held until in memory until the queue is written or cleared.
