@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/queue.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 25 02:25:39 2012 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Sun Sep  2 04:56:20 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -28,8 +28,10 @@
 ;;;
 ;;;  03-07-04 File created.  (Corkill)
 ;;;  03-15-04 Added unordered queue.  (Corkill)
-;;;  03-21-04 Added on-queue-p.  (Corkill)
-;;;  08-20-06 Added do-queue syntactic sugar.  (Corkill)
+;;;  03-21-04 Added ON-QUEUE-P.  (Corkill)
+;;;  08-20-06 Added DO-QUEUE syntactic sugar.  (Corkill)
+;;;  09-02-12 Added CLEAR-QUEUE and missing delete-instance queue method.
+;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -41,7 +43,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(do-queue
+  (export '(clear-queue                 ; to be documented soon 
+            do-queue
             first-queue-element
             insert-on-queue
             last-queue-element
@@ -60,6 +63,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
+(defgeneric clear-queue (queue))
 (defgeneric first-element-of (queue))
 (defgeneric first-queue-element (queue))
 (defgeneric insert-on-queue (element queue))
@@ -120,6 +124,13 @@
                                        &key)
   (setf (queue.header queue) queue)
   (linkf (queue.next queue) queue))
+
+;;; ---------------------------------------------------------------------------
+;;; Remove all queue-elements from a deleted queue:
+
+(defmethod delete-instance ((queue queue))
+  (clear-queue queue)
+  (call-next-method))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -234,6 +245,21 @@
         (setf (queue.header element) nil)))
     ;; Return the element
     element))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod clear-queue ((queue queue))
+  ;;; Rapidly remove all elements from `queue':
+  (flet ((remove-it (element)
+           (setf (queue.next element) nil)
+           (setf (queue.previous element) nil)
+           (setf (queue.header element) nil)))
+    (declare (dynamic-extent #'remove-it))
+    (let ((*%%allow-setf-on-link%%* 't))
+      (map-queue #'remove-it queue)
+      (setf (queue.length queue) 0)
+      (setf (queue.next queue) queue)
+      (setf (queue.previous queue) queue))))
 
 ;;; ---------------------------------------------------------------------------
 
