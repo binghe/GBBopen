@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:SWANK; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/slime-extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue May 29 15:37:15 2012 *-*
+;;;; *-* Last-Edit: Mon Sep  3 13:16:11 2012 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -25,7 +25,8 @@
 ;;;  08-24-10 Redefine Swank's SIMPLE-REPL to provide command processing for
 ;;;           nil communication style.  (Corkill)
 ;;;  05-29-12 Remove support for contrib/swank-listener-hooks (no longer
-;;;           (set *listener-eval-function* binding).  (Corkill)
+;;;           set *listener-eval-function* binding).  (Corkill)
+;;;  09-03-12 Conditionally support contrib/swank-listener-hooks.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
@@ -97,13 +98,18 @@
 (compile-if-advantageous 'repl-command-form)
 
 ;;; ---------------------------------------------------------------------------
+;;;  Conditional support for SLIME's contrib/slime-repl:
 
 (defun extended-repl-eval (string)
   (unless (repl-command-form string)
     ;; Normal REPL processing:
-    (repl-eval string)))
+    (funcall 'repl-eval string)))
 
 (compile-if-advantageous 'extended-repl-eval)
+
+(when (boundp '*listener-eval-function*)
+  (format t "~&;; Interfacing with SLIME contrib/slime-repl...~%")
+  (setf *listener-eval-function* 'extended-repl-eval))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  Extended redefinition of SWANK's SIMPLE-REPL that adds command processsing 
@@ -155,9 +161,10 @@
                package-specifier))
           ;; Don't return the results:
           (*send-repl-results-function* #'identity))
+      (declare (ignorable *send-repl-results-function*))
       (when *communication-style*       ; skip emacs-side setting in nil
                                         ; communication style
-        (repl-eval (format nil "(in-package ~s)" package-name)))
+        (funcall 'repl-eval (format nil "(in-package ~s)" package-name)))
       (let ((package (find-package package-name)))
         (when package
           (setf *package* package)))
