@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  5 11:17:29 2012 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Tue Sep  4 12:11:37 2012 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -61,6 +61,8 @@
 ;;;  09-27-06 Added Intel Mac *compiled-directory-name* features (sometimes
 ;;;           best guesses).  (Corkill)
 ;;;  11-11-08 Unified compiled-directory naming.  (Corkill)
+;;;  09-04-12 Add "-smp" designation to Allegro CL's CL-implementation-string,
+;;;           when appropriate.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -187,25 +189,28 @@
        (subseq version 0 (position #\- version))))
     ;; Franz Allegro:
     #+allegro
-    (values (check                      ; ensure one feature match
-             #+alpha "alpha"
-             #+alpha-64 "alpha-64"      ; just a guess
-             #+prism "hpux"
-             #+prism-64 "hpux-64"       ; just a guess
-             #+sparc "sparc"
-             #+sparc-64 "sparc-64"      ; just a guess
-             #+freebsd "freebsd"        ; just a guess
-             #+linux86 "linux86"
-             #+linux86-64 "linux86-64" 
-             #+(and x86 macosx) "mac86"
-             #+(and x86-64 macosx) "mac86-64" ; just a guess
-             #+(and x86 (not macosx) (not linux) (not freebsd)) "windows"
-             #+(and x86-64 (not macosx) (not linux) (not freebsd)) "windows-64"
-             #+powerpc "macppc"
-             #+powerpc-64 "macppc-64")  ; just a guess
-            "allegro"
-            (eq excl:*current-case-mode* ':case-sensitive-lower) 
-            excl::*common-lisp-version-number*)
+    (let ((platform
+           (check                       ; ensure one feature match
+            #+alpha "alpha"
+            #+alpha-64 "alpha-64"       ; just a guess
+            #+prism "hpux"
+            #+prism-64 "hpux-64"        ; just a guess
+            #+sparc "sparc"
+            #+sparc-64 "sparc-64"       ; just a guess
+            #+freebsd "freebsd"         ; just a guess
+            #+linux86 "linux86"
+            #+linux86-64 "linux86-64" 
+            #+(and x86 macosx) "mac86"
+            #+(and x86-64 macosx) "mac86-64" ; just a guess
+            #+(and x86 (not macosx) (not linux) (not freebsd)) "windows"
+            #+(and x86-64 (not macosx) (not linux) (not freebsd)) "windows-64"
+            #+powerpc "macppc"
+            #+powerpc-64 "macppc-64")))   ; just a guess
+      (values #+smp (concatenate 'string platform "-smp")
+              #-smp platform
+              "allegro"
+              (eq excl:*current-case-mode* ':case-sensitive-lower) 
+              excl::*common-lisp-version-number*))
     ;; CLISP:
     #+clisp
     (values 
