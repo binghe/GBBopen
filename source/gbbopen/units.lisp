@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Aug 14 12:37:49 2011 *-*
+;;;; *-* Last-Edit: Sun Oct 14 09:58:21 2012 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -86,7 +86,7 @@
       (memq (car option) '(:default-initargs 
 			   :documentation
 			   :metaclass
-			   #+(or ecl lispworks)
+			   #+(or ecl-no-longer lispworks)
 			   :optimize-slot-access))))
 
  ;;; ---------------------------------------------------------------------------
@@ -623,7 +623,7 @@
          env)
       ;; We must tell ECL and Lispworks to use accessor methods that call
       ;; slot-value-using-class:
-      #+(or ecl lispworks)
+      #+(or ecl-no-longer lispworks)
       (setf clos-class-options 
         (cons '(:optimize-slot-access nil) clos-class-options))
       `(#-clisp progn
