@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul 13 06:31:32 2011 *-*
+;;;; *-* Last-Edit: Sat Nov  3 20:48:51 2012 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -75,7 +75,7 @@
 ;;;  05-21-04 Export FIXNUMP, SINGLE-FLOAT-P, and DOUBLE-FLOAT-P.  (Corkill)
 ;;;  01-11-05 Added fixnum infinity values.  (Corkill)
 ;;;  06-08-05 Added CLISP support.  (sds)
-;;;  08-23-05 Added COERCE&, COERCE$, and COERCE$$.  (Corkill)
+;;;  08-23-05 Added COERCE&, COERCE$&, COERCE$, COERCE$$, and COERCE$$.  (Corkill)
 ;;;  10-31-05 Add non-*read-eval*, *print-readably* printing for infinity and 
 ;;;           NaN values for SBCL, Clozure CL, & CMUCL.  (Corkill)
 ;;;  11-02-05 Added CormanLisp support (faking infinity for now).  (Corkill)
@@ -89,6 +89,7 @@
 ;;;  06-29-08 Changed most operators from macros to functions with 
 ;;;           compiler-macros.  (Corkill)
 ;;;  08-03-09 Added declared-numeric COMPARE functions.  (Corkill)
+;;;  11-03-12 Added REM&, REM$&, REM$, REM$$, REM$$$.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -180,35 +181,35 @@
             bounded-value& ceiling& compare& decf& decf&-after evenp& 
             floor& fceiling& ffloor& fround& ftruncate& 
             incf& incf&-after max& min& minusp& 
-            abs& mod& oddp& plusp& round& truncate& zerop&
+            abs& mod& oddp& plusp& rem& round& truncate& zerop&
             ;; Declared short-float ops:
             $& /$& *$& +$& -$& 1+$& 1-$&
             /=$& <$& <=$& =$& >$& >=$& 
             bounded-value$& ceiling$& compare$& decf$& decf$&-after evenp$& 
             floor$& fceiling$& ffloor$& fround$& ftruncate$& 
             incf$& incf$&-after max$& min$& minusp$& 
-            abs$& mod$& oddp$& plusp$& round$& truncate$& zerop$&
+            abs$& mod$& oddp$& plusp$& rem$& round$& truncate$& zerop$&
             ;; Declared single-float ops:
             $ /$ *$ +$ -$ 1+$ 1-$
             /=$ <$ <=$ =$ >$ >=$ 
             bounded-value$ ceiling$ compare$ decf$ decf$-after evenp$ 
             floor$ fceiling$ ffloor$ fround$ ftruncate$
             incf$ incf$-after max$ min$ minusp$ 
-            abs$ mod$ oddp$ plusp$ round$ truncate$ zerop$
+            abs$ mod$ oddp$ plusp$ rem$ round$ truncate$ zerop$
             ;; Declared double-float ops:
             $$ /$$ *$$ +$$ -$$ 1+$$ 1-$$ 
             /=$$ <$$ <=$$ =$$ >$$ >=$$ 
             bounded-value$$ ceiling$$ compare$$ decf$$ decf$$-after evenp$$ 
             floor$$ fceiling$$ ffloor$$ fround$$ ftruncate$$
             incf$$ incf$$-after max$$ min$$ minusp$$ 
-            abs$$ mod$$ oddp$$ plusp$$ round$$ truncate$$ zerop$$
+            abs$$ mod$$ oddp$$ plusp$$ rem$$ round$$ truncate$$ zerop$$
             ;; Declared long-float ops:
             $$$ /$$$ *$$$ +$$$ -$$$ 1+$$$ 1-$$$ 
             /=$$$ <$$$ <=$$$ =$$$ >$$$ >=$$$ 
             bounded-value$$$ ceiling$$$ compare$$$ decf$$$ decf$$$-after evenp$$$ 
             floor$$$ fceiling$$$ ffloor$$$ fround$$$ ftruncate$$$
             incf$$$ incf$$$-after max$$$ min$$$ minusp$$$ 
-            abs$$$ mod$$$ oddp$$$ plusp$$$ round$$$ truncate$$$ zerop$$$
+            abs$$$ mod$$$ oddp$$$ plusp$$$ rem$$$ round$$$ truncate$$$ zerop$$$
             ;; Infinite values:
             infinity -infinity infinity& -infinity&
             infinity$ -infinity$ infinity$& -infinity$&
@@ -412,6 +413,7 @@
 (defdn & oddp)
 (defdn & abs t)
 (defdn & mod t)
+(defdn & rem t)
 (defdn & floor t (fixnum fixnum))
 (defdn & ceiling t (fixnum fixnum))
 (defdn & truncate t (fixnum fixnum))
@@ -487,6 +489,7 @@
 (defdn $& oddp)
 (defdn $& abs t)
 (defdn $& mod t)
+(defdn $& rem t)
 (defdn $& floor t (fixnum short-float))
 (defdn $& ceiling t (fixnum short-float))
 (defdn $& truncate t (fixnum short-float))
@@ -559,6 +562,7 @@
 (defdn $ oddp)
 (defdn $ abs t)
 (defdn $ mod t)
+(defdn $ rem t)
 (defdn $ floor t (fixnum single-float))
 (defdn $ ceiling t (fixnum single-float))
 (defdn $ truncate t (fixnum single-float))
@@ -631,6 +635,7 @@
 (defdn $$ oddp)
 (defdn $$ abs t)
 (defdn $$ mod t)
+(defdn $$ rem t)
 (defdn $$ floor t (fixnum double-float))
 (defdn $$ ceiling t (fixnum double-float))
 (defdn $$ truncate t (fixnum double-float))
@@ -703,6 +708,7 @@
 (defdn $$$ oddp)
 (defdn $$$ abs t)
 (defdn $$$ mod t)
+(defdn $$$ rem t)
 (defdn $$$ floor t (fixnum long-float))
 (defdn $$$ ceiling t (fixnum long-float))
 (defdn $$$ truncate t (fixnum long-float))
