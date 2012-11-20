@@ -13,8 +13,8 @@ Requirements:
        Clozure CL   Version 1.8
        CMUCL        Version 20d
        ECL          Version 12.7.1
-       Lispworks    Version 6.1
-       SBCL         Version 1.1.0 (use sb-threads if possible)
+       Lispworks    Version 6.1.1
+       SBCL         Version 1.1.1 (use sb-threads if possible)
 
    Known issues with the above implementations are summarized in the ISSUES
    file.
@@ -41,7 +41,7 @@ Requirements:
    implementations.
 
 
-Current Status Notes (October 29, 2012)
+Current Status Notes (November 20, 2012)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
