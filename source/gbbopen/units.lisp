@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/units.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sun Oct 14 09:58:21 2012 *-*
+;;;; *-* Last-Edit: Thu Dec 20 11:26:11 2012 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -44,6 +44,8 @@
 ;;;  06-08-05 Added CLISP support. (sds)
 ;;;  06-13-05 Moved GBBopen unit metaclass definitions to 
 ;;;           unit-metaclasses.lisp. (Corkill)
+;;;  12-20-12 Tightened CLISP eq-losage workaround symbol-name test used in 
+;;;           FIXUP-FUNCTION-VALUE-PART2. (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -437,6 +439,17 @@
 
 ;;; ---------------------------------------------------------------------------
 
+#+clisp
+(defun %same-symbol-names (a b)
+  ;; Test used in the workaround in FIXUP-FUNCTION-OBJECTS-PART2 for CLISP
+  ;; losing eq-ness of the uninterned fixup-symbols when loading the compiled
+  ;; file into the compiling image (still observed in CLISP 2.45).
+  (and (symbolp a)
+       (symbolp b)
+       (string= (symbol-name a) (symbol-name b))))
+
+;;; ---------------------------------------------------------------------------
+
 (defun fixup-function-objects-part2 (unit-class fixup-symbols)
   ;;; Part 2 of the function-fixup scheme.  Restores function initvals for
   ;;; :sort-function and :sort-key from *%%fixup-function-objects%%* based on
@@ -467,7 +480,7 @@
                 ;; fails) and then using the symbol from fixup-symbols:
                 #+clisp
                 (setf maybe-fn (find maybe-fn fixup-symbols 
-                                     :test #'string=)))
+                                     :test #'%same-symbol-names)))
         (setf (cdv.value-fn cdv)
               (symbol-value maybe-fn)))))
   ;; fixup :initial-space-instances option
@@ -485,7 +498,7 @@
                    ;; fixup-symbols:
                    #+clisp
                    (setf maybe-fn (find maybe-fn fixup-symbols 
-                                        :test #'string=))))
+                                        :test #'%same-symbol-names))))
       (setf (standard-unit-class.initial-space-instances unit-class)
             (symbol-value maybe-fn)))))
   
