@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov 16 13:08:29 2011 *-*
+;;;; *-* Last-Edit: Sat Jan  5 15:16:46 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2005-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2013, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -95,7 +95,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun mm-component-undefsystem (module-name)
-  (remhash module-name asdf::*defined-systems*))
+  (asdf:clear-system module-name))
 
 ;;; ===========================================================================
 ;;;  Module-Manager ASDF component
@@ -139,6 +139,7 @@
 ;;;  We have trivially completed all of the :gbbopen system operations by
 ;;;  loading this file:
 
+#|
 (defclass gbbopen (asdf:component)
   ())
 
@@ -159,6 +160,7 @@
 (defmethod asdf:perform ((op asdf:load-op) (component gbbopen)))
 
 (defmethod asdf:perform ((op asdf:load-source-op) (component gbbopen)))
+|#
 
 (mm-component-defsystem :gbbopen 't)
 
