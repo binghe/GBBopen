@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Feb 28 11:08:03 2011 *-*
-;;;; *-* Machine: twister.local *-*
+;;;; *-* Last-Edit: Fri Jan 11 15:11:59 2013 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2013, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -57,6 +57,7 @@
   (define-relative-directory :gbbopen-tools :gbbopen-root "tools")
   
   (define-module :gbbopen-tools
+    "The GBBopen Tools module contains useful Common Lisp additions and utilities."
     (:requires :module-manager-user)    ; required only for brief-date-and-time
     (:directory :gbbopen-tools)
     (:files "preamble"

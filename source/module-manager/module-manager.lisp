@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Jul  4 17:25:59 2012 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Fri Jan 11 17:07:07 2013 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zachary Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2013, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -265,6 +265,7 @@
             list-modules                ; not yet documented
             load-module
             load-module-file
+            module                      ; documentation doc-type name
             module-manager-implementation-version ; not documented
             module-directories          ; not yet documented
             module-loaded-p
@@ -315,8 +316,7 @@
 ;;;  Add missing slot-definition documentation method to Digitool MCL:
 
 #+digitool-mcl 
-(defmethod documentation ((object ccl::standard-slot-definition)
-                          &optional doc-type)
+(defmethod documentation ((object ccl::standard-slot-definition) doc-type)
   (declare (ignore doc-type))
   (when (and (slot-exists-p object 'documentation)
              (slot-boundp object 'documentation))
@@ -1391,6 +1391,7 @@
             (:copier nil))
   ;;; NOTE: Changes to slots must be reflected in ENSURE-MODULE:
   name
+  (documentation nil)
   (directory nil)
   (subdirectories)
   (requires nil)
@@ -1418,6 +1419,16 @@
       object)))
 
 ;;; ---------------------------------------------------------------------------
+;;;  Module object's aren't documented, so we use DOCUMENTATION methods to
+;;;  set and retrieve module documentation strings:
+
+(defmethod documentation (object (doc-type (eql 'module)))
+  (mm-module.documentation (get-module object)))
+
+(defmethod (setf documentation) (nv (object symbol) (doc-type (eql 'module)))
+  (setf (mm-module.documentation (get-module object)) nv))
+
+;;; ---------------------------------------------------------------------------
 
 (defmacro with-module-redefinitions (&body body)
   ;; skip requires-ordering checks as we go:
@@ -1435,7 +1446,9 @@
 (defmacro define-module (name &body args)
   (unless (keywordp name)
     (error "Module name, ~s, must be a keyword." name))
-  (let ((directory nil)
+  (let ((documentation (when (stringp (car args))
+                         (pop args)))
+        (directory nil)
         (directory-seen? nil)
         (subdirectories nil)
         (requires nil)
@@ -1508,8 +1521,8 @@
                     be evaluated outside of a load context."
                    '*load-truename*
                    'define-module))))
-    `(ensure-module ',name ',directory ',subdirectories ',requires 
-                    ',files ',after-form ',patches)))
+    `(ensure-module ',name ',documentation ',directory ',subdirectories 
+                    ',requires ',files ',after-form ',patches)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1603,8 +1616,8 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun ensure-module (name directory subdirectories requires files after-form
-                      patches)
+(defun ensure-module (name documentation directory subdirectories requires 
+                      files after-form patches)
   (unless (every #'keywordp requires)
     (error "The ~s option for module ~s contains a non-keyword module name."
            (cons ':requires requires)
@@ -1617,7 +1630,7 @@
       (unless (equal files (mm-module.files existing-module))
         (setf (mm-module.files-loaded existing-module) nil))
       ;; Update module with the given arguments:      
-      (setf (mm-module.directory existing-module) directory)
+      (setf (mm-module.documentation existing-module) documentation)
       (setf (mm-module.subdirectories existing-module) subdirectories)
       (setf (mm-module.requires existing-module) requires)
       (setf (mm-module.files existing-module) files)
@@ -1629,6 +1642,7 @@
      (t (setf (gethash name *mm-modules*)
               (make-mm-module 
                :name name 
+               :documentation documentation
                :directory directory
                :subdirectories subdirectories
                :requires requires
@@ -1641,7 +1655,7 @@
       (check-requires-ordering name))
   ;; Add an ADSF component definition, if gbbopen.asd has been loaded:
   (when (fboundp 'mm-component-defsystem)
-    (funcall 'mm-component-defsystem name))
+    (funcall 'mm-component-defsystem name documentation))
   ;; Return the module name (returned by define-module):
   name)
 
@@ -2297,6 +2311,7 @@
     (multiple-value-bind (source-directory compiled-directory)
         (module-source/compiled-directories module)
       (format t "~&Module ~s (~:[not ~;~]loaded~@[, frozen~])~
+                 ~@[~%  ~a~]~
                  ~%  Requires: ~w~
                  ~%  Fully expanded requires: ~w~
                  ~%  Source directory: ~a~
@@ -2306,6 +2321,7 @@
               module-name
               (mm-module.load-completed? module)
               (mm-module.frozen? module)
+              (mm-module.documentation module)
               (mm-module.requires module)
               (mapcar #'mm-module.name 
                       (determine-modules (mm-module.requires module) 't))
