@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Jan 14 10:43:02 2013; Edited-By: cork *-*
+%% *-* Last-Edit: Mon Jan 14 15:17:00 2013; Edited-By: cork *-*
 %% *-* Machine: phoenix.corkills.org *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -27478,6 +27478,46 @@ operators.
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Generic~Function}{clear-queue}%
+  {\var{queue\/}}
+\index{queue!removing all elements from}%
+
+\fnsyntax
+
+\fnpurpose Quickly remove all elements from \glref{queue}.
+
+\fnmethods
+\fnalternate{clear-queue}%
+  {\code{(}\var{queue\/} \code{queue)}}
+
+\fnpackage \code{:gbbopen}
+
+\fnmodule \code{:queue}
+
+\fnargs
+\begin{args}{queue}
+\arg[queue] A GBBopen \glref{queue}
+\end{args}
+
+\begin{alsos}{remove-from-queue}
+\also[insert-on-queue]
+\also[make-queue]
+\also[remove-from-queue]
+\end{alsos}
+
+\fnexample
+%
+Remove all \glref{pending~KSAs} that have been triggered but not yet executed:
+%
+\W\supp
+\begin{example}
+  (clear-queue pending-ksas)
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Macro}{do-queue}{(\var{var queue\/})
     \nobr{\var{declaration\/}\superstar{}}
     \nobr{\{\var{tag\/} \vbar{} \var{form\/}\}\superstar}}
@@ -27616,6 +27656,7 @@ is a standard \glref{queue}, \nobr{\var{queue-element\/}} is inserted at the
 end of the queue.
   
 \begin{alsos}{remove-from-queue}
+\also[clear-queue]
 \also[make-queue]
 \also[remove-from-queue]
 \end{alsos}
@@ -27949,6 +27990,7 @@ Return the queue on which \code{ksa} resides:
 as the header of ordered (sorted) GBBopen queues.
 
 \begin{alsos}{executed-ksas-of}
+\also[clear-queue]
 \also[executed-ksas-of]
 \also[make-queue]
 \also[obviated-ksas-of]
@@ -28021,6 +28063,7 @@ as the header of ordered (sorted) GBBopen queues.
 the header of GBBopen queues.
 
 \begin{alsos}{queue-element}
+\also[clear-queue]
 \also[ksa-queue]
 \also[make-queue]
 \also[ordered-queue]
@@ -28156,6 +28199,7 @@ queue \nobr{\code{pending-ksas}}:
 \fnreturns The supplied \var{queue-element}.
 
 \begin{alsos}{insert-on-queue}
+\also[clear-queue]
 \also[insert-on-queue]
 \end{alsos}
 
@@ -28205,6 +28249,7 @@ to be shown (default is \nil)
 \end{args}
 
 \begin{alsos}{pending-ksas-of}
+\also[clear-queue]
 \also[executed-ksas-of]
 \also[make-queue]
 \also[obviated-ksas-of]
@@ -31406,6 +31451,7 @@ stored in the \nobr{\code{executed-ksas}} link slot of \var{ksa}. This value
 is maintained by the Agenda Shell and should not be changed.
 
 \begin{alsos}{ordered-ksa-queue}
+\also[clear-queue]
 \also[ksa]
 \also[ksa-queue]
 \also[make-queue]
@@ -31752,6 +31798,7 @@ The class \textbf{ksa} is the default \glref{class} of
 the header of \glref{KSA} queues.
 
 \begin{alsos}{ordered-ksa-queue}
+\also[clear-queue]
 \also[executed-ksas-of]
 \also[ksa]
 \also[make-queue]
@@ -31801,6 +31848,7 @@ stored in the \nobr{\code{obviated-ksas}} link slot of \var{ksa}. This value
 is maintained by the Agenda Shell and should not be changed.
 
 \begin{alsos}{ordered-ksa-queue}
+\also[clear-queue]
 \also[executed-ksas-of]
 \also[ksa]
 \also[ksa-queue]
@@ -31894,6 +31942,7 @@ Return the \glref{obviation} cycle of \code{ksa}:
 the header of ordered (sorted) \glref{KSA} queues.
 
 \begin{alsos}{pending-ksas-of}
+\also[clear-queue]
 \also[ksa]
 \also[ksa-queue]
 \also[make-queue]
@@ -31943,6 +31992,7 @@ This \glref{generic~function} accesses the
 the Agenda Shell and should not be changed.
 
 \begin{alsos}{ordered-ksa-queue}
+\also[clear-queue]
 \also[executed-ksas-of]
 \also[ksa]
 \also[make-queue]

@@ -59,6 +59,9 @@ Important changes since GBBopen 1.5:
   * Changes to GBBopen Extensions
      - Experimental journaling and network-streaming
 
+  * Changes to Queue Management
+     - New CLEAR-QUEUE generic function
+
   * Changes to Agenda Shell
      - New CONTROL-SHELL-HIBERNATING/AWAKENED-EVENT abstract control-shell
        event and CONTROL-SHELL-AWAKENED-EVENT control-shell event
