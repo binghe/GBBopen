@@ -1,7 +1,7 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Aug 22 12:06:33 2011; Edited-By: cork *-*
-%% *-* Machine: phoenix *-*
+%% *-* Last-Edit: Mon Jan 14 10:43:02 2013; Edited-By: cork *-*
+%% *-* Machine: phoenix.corkills.org *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project.
@@ -243,7 +243,7 @@ The open-source licensing of GBBopen provides a number of important benefits:
 \W\xname{ref-copyright}
 \W\section*{Copyright}
 
-Copyright \copyright{} 2003--2011 by Daniel D. Corkill for the
+Copyright \copyright{} 2003--2013 by Daniel D. Corkill for the
 GBBopen Project.
 
 This manual may be reproduced and distributed in whole or in
@@ -2623,6 +2623,7 @@ the module):
 
 \begin{functiondoc}{Macro}{define-module}{%
     \var{\nobr{module-name}
+      \nobr{[\var{documentation\/}]}
       \nobr{module-option\/}\superstar}}
 \index{module!defining or redefining}%
 \index{defining!a module}%
@@ -2639,6 +2640,7 @@ the module):
 \fnargs
 \begin{args}{module-options}
 \arg[module-name] A \glref{keyword~symbol} naming a \glref{module}
+\arg[documentation] A documentation string (not evaluated)
 \arg[module-options] See below
 \end{args}
 
@@ -2730,6 +2732,11 @@ source-file directory.
 \W\supp\tabletop
 \compilemodulefileoptions
 
+The \nobr{\var{documentation\/}} string associated with a module can be
+accessed and set by using Common Lisp's \nobr{\code{documentation}} generic
+function with the module's \var{module-name} and the \nobr{\var{doc-type}}
+\code{module}.
+
 \begin{alsos}{define-relative-directory}
 \also[define-relative-directory]
 \also[define-root-directory]
@@ -2757,6 +2764,7 @@ Define a \glref{root~directory} and \glref{module} for \nobr{\code{:my-app}}:
     (make-pathname :directory "~/my-app"))
 
   (define-module :my-app
+    "My simple application module"
     (:requires :gbbopen-user)
     (:directory :my-app-root)
     (:files "preamble"
@@ -2772,6 +2780,7 @@ containing the \nobr{\textbf{define-module}} form:
 \W\supp
 \begin{example}
   (define-module :my-app
+    "My simple application module"
     (:requires :gbbopen-user)
     (:files "preamble"
             ("macros" :forces-recompile)
@@ -2780,19 +2789,19 @@ containing the \nobr{\textbf{define-module}} form:
             "epilogue"))
 \end{example}
 
-Add two \glref{patch} files to the \nobr{\code{:my-app}} \glref{module}:
+\codeindex{documentation}%
+\codeindex{(setf documentation)}%
+Retrieve and then modify the documentation string of \glref{module} \nobr{\code{:my-app}}:
 %
 \W\supp
 \begin{example}
-  (define-module :my-app
-    (:requires :gbbopen-user)
-    (:files "preamble"
-            ("macros" :forces-recompile)
-            "classes"
-            "my-app"
-            "epilogue")
-    (:patches "my-app-p001"
-              "my-app-p002"))
+  > (documentation ':my-app 'module)
+  "My simple application module"
+  > (setf (documentation ':my-app 'module) "My way cool application module")
+  "My way cool application module"
+  > (documentation ':my-app 'module)
+  "My way cool application module"
+  >
 \end{example}
 
 \end{functiondoc}
@@ -3005,9 +3014,12 @@ Describe the \code{:gbbopen-test} \glref{module} before it has been loaded:
 \begin{example}
   > (describe-module :gbbopen-test)
   Module :gbbopen-test (not loaded)
+    The GBBopen Test module performs basic regression (trip) tests 
+      on the GBBopen Core entities.
     Requires: (:gbbopen-user)
-    Fully expanded requires: (:module-manager :module-manager-user :portable-threads
-                              :gbbopen-tools :gbbopen-core :os-interface :gbbopen-user)
+    Fully expanded requires: (:module-manager :module-manager-user 
+                              :portable-threads :gbbopen-tools :gbbopen-core 
+                              :os-interface :gbbopen-user)
     Source directory: \nobr{\var{<install-dir>\/}/source/gbbopen/test/}
     Compiled directory: \nobr{\var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/test/}
     Forces recompile date: None
@@ -3023,9 +3035,12 @@ Describe the \code{:gbbopen-test} \glref{module} after it has been loaded:
 \begin{example}
   > (describe-module :gbbopen-test)
   Module :gbbopen-test (loaded)
+    The GBBopen Test module performs basic regression (trip) tests 
+      on the GBBopen Core entities.
     Requires: (:gbbopen-user)
-    Fully expanded requires: (:module-manager :module-manager-user :portable-threads
-                              :gbbopen-tools :gbbopen-core :os-interface :gbbopen-user)
+    Fully expanded requires: (:module-manager :module-manager-user
+                              :portable-threads :gbbopen-tools :gbbopen-core 
+                              :os-interface :gbbopen-user)
     Source directory: \nobr{\var{<install-dir>\/}/source/gbbopen/test/}
     Compiled directory: \nobr{\var{<install-dir>\/}/\var{<platform-dir>\/}/gbbopen/test/}
     Forces recompile date: None
@@ -5144,7 +5159,6 @@ Here is the compiler macro defined for \nobr{\textbf{\entlink{ensure-list}}}:
 
 \begin{functiondoc}{Macro}{define-class}{\var{class-name\/} 
     \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
-    \nobr{[\var{documentation\/}]}
     \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
     \nobr{\{\var{class-option\/}\}\superstar{}}
     \nobr{\returns{} \var{new-class\/}}}
@@ -5166,7 +5180,6 @@ Here is the compiler macro defined for \nobr{\textbf{\entlink{ensure-list}}}:
 \glref{class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{class} \nobr{\var{class-name\/}}
-\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-class] A new or modified \glref{class} object
@@ -5222,6 +5235,7 @@ direct superclass of the \glref{class} \nobr{\var{class-name\/}}
 \begin{args}{initarg-list}
 \arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
+\arg[documentation] A documentation string
 \arg[initarg-list] An \glref{initialization~argument~list}
 \arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \end{args}
@@ -17990,7 +18004,6 @@ or simply:
 \begin{functiondoc}{Macro}{define-unit-class}{%
     \nobr{\var{unit-class-name\/}}
     \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
-    \nobr{[\var{documentation\/}]}
     \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
     \nobr{\{\var{class-option\/}\}\superstar{}}
     \nobr{\returns{} \var{new-unit-class\/}}}
@@ -18012,7 +18025,6 @@ or simply:
 \glref{unit~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{unit~class} \var{unit-class-name\/}  
-\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-unit-class] A new or modified \glref{unit~class} object
@@ -18126,6 +18138,7 @@ one \glref{unit~class} name.  This error is signaled on class finalization.
 \arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
 \arg[dimension-name] A symbol specifying a \glref{dimension} 
+\arg[documentation] A documentation string
 \arg[initarg-list] An \glref{initialization~argument~list}
 \arg[instance-name-comparison-test] One of the four standardized hash
 table test function names: \code{eq}, \code{eql}, \nobr{\code{equal}}, or
@@ -21360,7 +21373,6 @@ or simply:
 
 \begin{functiondoc}{Macro}{define-event-class}{\var{event-class-name\/} 
     \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
-    \nobr{[\var{documentation\/}]}
     \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
     \nobr{\{\var{class-option\/}\}\superstar{}}
     \nobr{\returns{} \var{new-event-class\/}}}
@@ -21382,7 +21394,6 @@ or simply:
 \glref{event~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{event~class} \var{event-class-name\/}  
-\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-event-class] A new or modified \glref{event~class} object. 
@@ -21448,6 +21459,7 @@ direct superclass of the \glref{event~class} \var{event-class-name\/}
 \begin{args}{class-name}
 \arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
+\arg[documentation] A documentation string
 \arg[initarg-list] An \glref{initialization~argument~list}
 \arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \end{args}
@@ -23535,7 +23547,6 @@ is to happen if confirmed positively.
 \begin{functiondoc}{Macro}{define-space-class}%
    {\var{space-class-name\/} 
      \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
-     [\var{documentation\/}]
      \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
      \nobr{\{\var{class-option\/}\}\superstar{}}
      \nobr{\returns{} \var{new-space-class\/}}}
@@ -23557,7 +23568,6 @@ is to happen if confirmed positively.
 \glref{space~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{space~class} \var{space-class-name\/}  
-\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-space-class] A new or modified \glref{space~class} object
@@ -23670,6 +23680,7 @@ one \glref{space~class} name.  This error is signaled on class finalization.
 \begin{args}{instance-name-comparison-test}
 \arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
+\arg[documentation] A documentation string
 \arg[initarg-list] An \glref{initialization~argument~list}
 \arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[instance-name-comparison-test] One of the four standardized hash table
@@ -30799,7 +30810,6 @@ whenever a \code{hyp} \glref{unit~instance} is created:
 \begin{functiondoc}{Macro}{define-ks-class}%
    {\var{ks-class-name\/} 
      \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
-     [\var{documentation\/}] \\
      \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
      \nobr{\{\var{class-option\/}\}\superstar{}}
      \nobr{\returns{} \var{new-ks-class\/}}}
@@ -30821,7 +30831,6 @@ whenever a \code{hyp} \glref{unit~instance} is created:
 \glref{ks~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{ks~class} \nobr{\var{ks-class-name\/}}
-\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-ks-class] A new or modified \glref{ks~class} object
@@ -30934,6 +30943,7 @@ one \glref{ks~class} name.  This error is signaled on class finalization.
 \begin{args}{instance-name-comparison-test}
 \arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
+\arg[documentation] A documentation string
 \arg[initarg-list] An \glref{initialization~argument~list}
 \arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[instance-name-comparison-test] One of the four standardized hash table
@@ -30999,7 +31009,6 @@ Do the same, but with a mixin class:
 \begin{functiondoc}{Macro}{define-ksa-class}%
    {\var{ksa-class-name\/} 
      \nobr{\code{(}\{\var{superclass-name\/}\}\superstar\code{)}}
-     [\var{documentation\/}] \\
      \nobr{\code{(}\{\var{slot-specifier\/}\}\superstar\code{)}}
      \{\var{class-option\/}\}\superstar{}
      \nobr{\returns{} \var{new-ksa-class\/}}}
@@ -31021,7 +31030,6 @@ Do the same, but with a mixin class:
 \glref{ksa~class} 
 \arg[superclass-name] A non-\nil, \glref{non-keyword~symbol} that specifies a
 direct superclass of the \glref{ksa~class} \nobr{\var{ksa-class-name\/}}
-\arg[documentation] A documentation string (not evaluated)
 \arg[slot-specifiers] See below
 \arg[class-options] See below
 \arg[new-ksa-class] A new or modified \glref{ksa~class} object
@@ -31135,6 +31143,7 @@ finalization.
 \begin{args}{instance-name-comparison-test}
 \arg[class-name] A non-\nil, \glref{non-keyword~symbol} that names a
 \glref{class} 
+\arg[documentation] A documentation string
 \arg[initarg-list] An \glref{initialization~argument~list}
 \arg[slot-name] A non-\nil, \glref{non-keyword~symbol}
 \arg[instance-name-comparison-test] One of the four standardized hash table

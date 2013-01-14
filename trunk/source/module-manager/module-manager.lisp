@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 11 17:07:07 2013 *-*
+;;;; *-* Last-Edit: Fri Jan 11 17:39:23 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -2554,10 +2554,12 @@
   (define-root-directory :module-manager-root *load-truename* :up :up)
   
   (define-module :module-manager
+    "The Module Manager Facility provides a lightweight and easy to use mechanism for compiling and loading module files."
     (:directory :module-manager-root "module-manager")
     (:files ("module-manager" :forces-recompile)))
   
   (define-module :module-manager-user
+    "A user package (akin to COMMON-LISP-USER) that is useful for defining Module Manager modules."
     (:requires :module-manager)
     (:directory :module-manager-root "module-manager")
     (:files "module-manager-user")))
