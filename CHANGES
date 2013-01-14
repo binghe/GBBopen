@@ -29,7 +29,7 @@ Important changes since GBBopen 1.5:
      - Default value of *AUTOMATICALLY-CREATE-MISSING-DIRECTORIES* changed 
        from NIL to T
      - Documentation string added to DEFINE-MODULE, MODULE doc-type added to
-       DOCUMENTATION generic function to access and set module documentation
+       DOCUMENTATION methods to access and set module documentation
 
   * Changes to GBBopen Tools
      - New VERY-BRIEF-DATE function

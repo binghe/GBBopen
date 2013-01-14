@@ -1,9 +1,9 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/tutorial.tex *-*
-%% *-* Last-Edit: Wed Aug 22 16:16:20 2012; Edited-By: cork *-*
+%% *-* Last-Edit: Sat Dec 29 12:18:14 2012; Edited-By: cork *-*
 %% *-* Machine: phoenix.corkills.org *-*
 
-%% Copyright (C) 2005-2012, Dan Corkill <corkill@GBBopen.org>
+%% Copyright (C) 2005-2013, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project.
 %% Licensed under Apache License 2.0 (see LICENSE for license information).
 %%
@@ -190,7 +190,7 @@
 \W\xname{tutorial-copyright}
 \W\section*{Copyright}
 
-Copyright \copyright{} 2005--2012 by Daniel D. Corkill for the
+Copyright \copyright{} 2005--2013 by Daniel D. Corkill for the
 GBBopen Project.
 
 This tutorial may be reproduced and distributed in whole or in
@@ -911,7 +911,7 @@ your Common Lisp implementation and platform.
 \W\supp\notpretop
 \begin{smallexample}
 \textcolor{darkergray}{%
-  cl-user> \textcolor{black}{(asdf:operate 'asdf:load-op :gbbbopen)}
+  cl-user> \textcolor{black}{(asdf:operate 'asdf:load-op 'gbbbopen)}
   ;; Loading \var{<install-dir>\/}/initiate.lisp
   ;; GBBopen is installed in \var{<install-dir>\/}
   ;; Your "home" directory is \var{<homedir>\/}
@@ -1169,7 +1169,7 @@ session and evaluate the following forms:
 \indexit{clbuild}%
 \indexit{Quicklisp}%
 \begin{notebox}{ASDF, clbuild, and Quicklisp users}
-  Remember to \nobr{\code{(asdf:operate 'asdf:load-op :gbbbopen)}} or
+  Remember to \nobr{\code{(asdf:operate 'asdf:load-op 'gbbbopen)}} or
   \nobr{\code{(require :gbbopen)}} in place of loading
   \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}.
 \end{notebox}
@@ -1806,7 +1806,7 @@ session and evaluate the following forms:
 \indexit{clbuild}%
 \indexit{Quicklisp}%
 \begin{notebox}{ASDF, clbuild, and Quicklisp users}
-  Remember to \nobr{\code{(asdf:operate 'asdf:load-op :gbbbopen)}} or
+  Remember to \nobr{\code{(asdf:operate 'asdf:load-op 'gbbbopen)}} or
   \nobr{\code{(require :gbbopen)}} in place of loading
   \nobr{\code{\var{<install-dir>\/}/initiate.lisp}}.
 \end{notebox}
