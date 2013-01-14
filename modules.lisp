@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 11 15:11:59 2013 *-*
+;;;; *-* Last-Edit: Sat Jan 12 16:42:56 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -80,11 +80,13 @@
             "epilogue"))
   
   (define-module :gbbopen-tools-user
+    "A user package (akin to COMMON-LISP-USER) for Common Lisp and GBBopen Tools entities."
     (:requires :gbbopen-tools)
     (:directory :gbbopen-tools)
     (:files "gbbopen-tools-user"))
 
   (define-module :portable-threads
+    "The Portable Threads module provides a uniform interface to commonly used thread (multiprocessing) entities."
     (:requires :module-manager-user)       ; not really required, but we want
                                            ; :module-manager-user
                                            ; compiled/loaded if we are using
@@ -94,31 +96,37 @@
             "scheduled-periodic-functions"))
   
   (define-module :polling-functions
+    "The Polling Functions module provides 'event-loop' processing entities on Common Lisp implementations without thread support."
     (:requires :gbbopen-tools :portable-threads)
     (:directory :gbbopen-tools)
     (:files "polling-functions"))
   
   (define-module :os-interface
+    "The OS Interface module provides a uniform interface to commonly used operating-system entities."
     (:requires :gbbopen-tools)
     (:directory :gbbopen-tools)
     (:files ("os-interface")))
   
   (define-module :portable-sockets
+    "The Portable Sockets module provides a uniform interface to basic socket entities."
     (:requires :portable-threads)
     (:directory :gbbopen-tools)
     (:files ("portable-sockets")))
   
   (define-module :http-services
+    "The HTTP Services module provides basic (not yet documented) HTTP services."
     (:requires  :gbbopen-tools :portable-threads :portable-sockets)
     (:directory :gbbopen-tools)
     (:files ("http-services")))
   
   (define-module :queue
+    "The Queue Management module provides queue-management objects and operators."
     (:requires :polling-functions :gbbopen-core)
     (:directory :gbbopen)
     (:files ("queue" :forces-recompile)))
   
   (define-module :double-metaphone
+    "The Double Metaphone provides Double Metaphone phonetic-code generation."
     (:requires :gbbopen-tools)
     (:directory :gbbopen-tools)
     (:files ("double-metaphone")))
@@ -135,6 +143,7 @@
   (define-relative-directory :gbbopen :gbbopen-root "gbbopen")
   
   (define-module :gbbopen-core
+    "The GBBopen Core module provides the blackboard repository, unit and space classes and instances, inter-instance links, and event signaling."
     (:requires :gbbopen-tools :portable-threads :os-interface)
     (:directory :gbbopen)
     (:files "preamble"
@@ -163,6 +172,7 @@
             "epilogue"))
   
   (define-module :gbbopen-user
+    "A user package (akin to COMMON-LISP-USER) for Common Lisp, GBBopen Tools, and GBBopen entities."
     (:requires :gbbopen-core)
     (:directory :gbbopen)
     (:files "gbbopen-user"))
@@ -171,6 +181,7 @@
 ;;;  Agenda Shell Modules
 
   (define-module :agenda-shell
+    "The Agenda Shell module provides a responsive, agenda-based blackboard system control shell."
     (:requires :queue)
     (:directory :gbbopen "control-shells")
     (:files ("agenda-shell-metaclasses" :forces-recompile)
@@ -178,6 +189,7 @@
             "agenda-shell"))
   
   (define-module :agenda-shell-user
+    "A user package (akin to COMMON-LISP-USER) for Common Lisp, GBBopen Tools, GBBopen, and Agenda Shell entities."
     (:requires :agenda-shell :gbbopen-user)
     (:directory :gbbopen "control-shells")
     (:files "agenda-shell-user"))
@@ -214,7 +226,17 @@
   
 ;;; ---------------------------------------------------------------------------
 
+  (define-module :gbbopen-tools-test
+    "The GBBopen Tools Test module performs basic regression (trip) tests on GBBopen Tools entities."    
+    (:requires :gbbopen-tools-user)
+    (:directory :gbbopen-tools "test")
+    (:files ("llrb-tree-test" :reload :noautorun)
+            ("gbbopen-tools-test" :reload)))
+  
+;;; ---------------------------------------------------------------------------
+
   (define-module :gbbopen-test
+    "The GBBopen Test module performs basic regression (trip) tests on the GBBopen Core entities."    
     (:requires :gbbopen-user)
     (:directory :gbbopen "test")
     (:files ("basic-tests" :reload))
@@ -231,43 +253,40 @@
   
 ;;; ---------------------------------------------------------------------------
 
-  (define-module :agenda-shell-test
+  (define-module :agenda-shell-test 
+    "The Agenda Shell Test module performs basic regression (trip) tests on the Agenda control shell."
     (:requires :agenda-shell-user)
     (:directory :gbbopen "control-shells" "test")
     (:files ("agenda-shell-test" :reload)))
   
 ;;; ---------------------------------------------------------------------------
 
-  (define-module :portable-sockets-test
-    (:requires :portable-sockets)
-    (:directory :gbbopen-tools "test")
-    (:files ("portable-sockets-test" :reload)))
-  
-;;; ---------------------------------------------------------------------------
-
   (define-module :os-interface-test
+    "The OS Interface Sockets Test module performs basic regression (trip) tests on OS Interface entities."    
     (:requires :os-interface)
     (:directory :gbbopen-tools "test")
     (:files ("os-interface-test" :reload)))
   
 ;;; ---------------------------------------------------------------------------
 
+  (define-module :portable-sockets-test
+    "The Portable Sockets Test module performs basic regression (trip) tests on Portable Sockets entities."    
+    (:requires :portable-sockets)
+    (:directory :gbbopen-tools "test")
+    (:files ("portable-sockets-test" :reload)))
+  
+;;; ---------------------------------------------------------------------------
+
   (define-module :portable-threads-test
+    "The Portable Threads Test module performs basic regression (trip) tests on Portable Thread entities."    
     (:requires :portable-threads)
     (:directory :gbbopen-tools "test")
     (:files ("portable-threads-test" :reload)))
   
 ;;; ---------------------------------------------------------------------------
 
-  (define-module :gbbopen-tools-test
-    (:requires :gbbopen-tools-user)
-    (:directory :gbbopen-tools "test")
-    (:files ("llrb-tree-test" :reload :noautorun)
-            ("gbbopen-tools-test" :reload)))
-  
-;;; ---------------------------------------------------------------------------
-
   (define-module :double-metaphone-test
+    "The Double Metaphone Test module performs basic regression (trip) tests on Double Metaphone phonetic-code generation."    
     (:requires :double-metaphone :gbbopen-tools-user)
     (:directory :gbbopen-tools "test")
     (:files ("double-metaphone-test" :reload)))
