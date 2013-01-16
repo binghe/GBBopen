@@ -30,9 +30,11 @@ containing the keyword-symbol name and, optionally, an
 application-version-identifier string
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>directory-specification</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One of the following:
 </p>
-<p><ul class="tight"><li>A string specifying the <a href="ref-glossary.html#id204">root&nbsp;directory</a>
-<li>A pathname specifying the <a href="ref-glossary.html#id204">root&nbsp;directory</a>
+<p><ul class="tight"><li>A <a href="ref-glossary.html#gl:pathname">pathname</a> specifying the <a href="ref-glossary.html#id204">root&nbsp;directory</a>
 <li>A <a href="ref-glossary.html#gl:keywords">keyword</a> naming a previously defined <a href="ref-glossary.html#id204">root&nbsp;directory</a>
+<li>A string specifying the <a href="ref-glossary.html#id204">root&nbsp;directory</a> (only if a
+<nobr><var>documentation</var></nobr> string is supplied; otherwise, convert the
+<a href="ref-glossary.html#id204">root&nbsp;directory</a> string to a <a href="ref-glossary.html#gl:pathname">pathname</a>)
 <li>A symbol whose value is one of the above
 </ul>
 </td></tr><tr valign="top"><td valign="baseline" nowrap><i>subdirectories</i></td><td valign="baseline">&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="baseline"> One or more strings specifying, in order, subdirectories
@@ -59,6 +61,11 @@ source <a href="ref-glossary.html#id204">root&nbsp;directory</a> is changed.
 <nobr><var>&lt;platform-dir&gt;</var></nobr> compiled-directory name for all compiled module
 files that are defined relative to this <a href="ref-glossary.html#gl:Root">root-directory</a>.
 </p>
+<p>The <nobr><var>documentation</var></nobr> string associated with a
+<a href="ref-glossary.html#id204">root&nbsp;directory</a> can be accessed and set by using Common Lisp's
+<nobr><code>documentation</code></nobr> generic function with the directory's
+<var>name</var> and the <nobr><var>doc-type</var></nobr> <code>directory</code>.
+</p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-relative-directory.html"><b>define-relative-directory</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-get-directory.html"><b>get-directory</b></a>
@@ -69,13 +76,16 @@ files that are defined relative to this <a href="ref-glossary.html#gl:Root">root
 <p><span class="fndoclabel">Examples</span> <br />Define a <a href="ref-glossary.html#id204">root&nbsp;directory</a> named <nobr><code>:my-app-root</code></nobr>:
 <pre class="pretop">
   (define-root-directory :my-app-root 
+    "The installation directory for My App"
     (make-pathname :directory "~/my-app"))
 </pre>
 Define a <a href="ref-glossary.html#id204">root&nbsp;directory</a> named <nobr><code>:my-app-root</code></nobr> to be the
 directory containing the file containing the
 <nobr><b>define-root-directory</b></nobr> form:
 <pre>
-  (define-root-directory :my-app-root *load-truename*)
+  (define-root-directory :my-app-root 
+    "The installation directory for My App"
+    *load-truename*)
 </pre>
 Define a <a href="ref-glossary.html#id204">root&nbsp;directory</a> named <nobr><code>:my-app-root</code></nobr> to be the
 directory containing the file containing the
@@ -84,7 +94,21 @@ directory containing the file containing the
 in a separate &#8220;beta&#8221; compile tree:
 <pre>
   (define-root-directory '(:my-app-root #+my-app-prerelease "beta")
+    "The installation directory for My App"
     *load-truename*)
+</pre>
+</p>
+<p><a name="id1">Retrieve</a> and then modify the documentation string of the <a href="ref-glossary.html#id204">root&nbsp;directory</a>
+named <nobr><code>:my-app-root</code></nobr>:
+<pre class="pretop">
+  &gt; (documentation ':my-app-root 'directory)
+  "The installation directory for My App"
+  &gt; (setf (documentation ':my-app-root 'directory) 
+     "The installation directory for my way cool application")
+  "The installation directory for my way cool application"
+  &gt; (documentation ':my-app-root 'directory)
+  "The installation directory for my way cool application"
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

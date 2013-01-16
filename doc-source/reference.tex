@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Mon Jan 14 15:17:00 2013; Edited-By: cork *-*
+%% *-* Last-Edit: Tue Jan 15 21:18:32 2013; Edited-By: cork *-*
 %% *-* Machine: phoenix.corkills.org *-*
 
 %% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
@@ -2734,7 +2734,7 @@ source-file directory.
 
 The \nobr{\var{documentation\/}} string associated with a module can be
 accessed and set by using Common Lisp's \nobr{\code{documentation}} generic
-function with the module's \var{module-name} and the \nobr{\var{doc-type}}
+function with the module's \var{module-name\/} and the \nobr{\var{doc-type\/}}
 \code{module}.
 
 \begin{alsos}{define-relative-directory}
@@ -2846,6 +2846,11 @@ definition, that is either a \glref{root~directory} or another
 \glref{root~directory}).  If this \glref{root} directory location changes,
 every \glref{relative~directory} associated with it is adjusted automatically.
 
+The \nobr{\var{documentation\/}} string associated with a
+\glref{relative~directory} can be accessed and set by using Common Lisp's
+\nobr{\code{documentation}} generic function with the directory's \var{name\/}
+and the \nobr{\var{doc-type\/}} \code{directory}.
+
 \begin{alsos}{show-defined-directories}
 \also[define-root-directory]
 \also[get-directory]
@@ -2858,7 +2863,9 @@ every \glref{relative~directory} associated with it is adjusted automatically.
 %
 \W\supp
 \begin{example}
-  (define-relative-directory :my-tests :my-app-root "tests")
+  (define-relative-directory :my-tests 
+    "The tests directory for My App"
+    :my-app-root "tests")
 \end{example}
 %
 Define another relative directory named \nobr{\code{:my-performance-tests}}
@@ -2866,7 +2873,9 @@ below \nobr{\code{:my-tests}}:
 %
 \W\supp\notpretop
 \begin{example}
-  (define-relative-directory :my-performance-tests :my-tests "performance") 
+  (define-relative-directory :my-performance-tests 
+  "The performance-tests subdirectory for My App"
+  :my-tests "performance")
 \end{example}
 %
 Define a data directory sibling to the \nobr{\code{source}} directory of
@@ -2874,7 +2883,26 @@ Define a data directory sibling to the \nobr{\code{source}} directory of
 %
 \W\supp\notpretop
 \begin{example}
-  (define-relative-directory :app-data :my-app :up "data") 
+  (define-relative-directory :my-app-data 
+    "The data directory for My App"
+    :my-app :up "data")
+\end{example}
+
+\codeindex{documentation}%
+\codeindex{(setf documentation)}%
+Retrieve and then modify the documentation string of the
+\glref{relative~directory} named \nobr{\code{:my-tests}}:
+%
+\W\supp
+\begin{example}
+  > (documentation ':my-app-data 'directory)
+  "The data directory for My App"
+  > (setf (documentation ':my-app-data 'directory) 
+  "The data directory for my way cool application")
+  "The data directory for my way cool application"
+  > (documentation ':my-app-data 'directory)
+  "The data directory for my way cool application"
+  >
 \end{example}
 
 \end{functiondoc}
@@ -2904,9 +2932,11 @@ Define a data directory sibling to the \nobr{\code{source}} directory of
   application-version-identifier string
 \arg[directory-specification] One of the following:
 \begin{tightitemize}
-\item A string specifying the \glref{root~directory}
-\item A pathname specifying the \glref{root~directory}
+\item A \glref{pathname} specifying the \glref{root~directory}
 \item A \glref{keyword} naming a previously defined \glref{root~directory}
+\item A string specifying the \glref{root~directory} (only if a
+  \nobr{\var{documentation}} string is supplied; otherwise, convert the
+  \glref{root~directory} string to a \glref{pathname})
 \item A symbol whose value is one of the above
 \end{tightitemize}
 \arg[subdirectories] One or more strings specifying, in order, subdirectories
@@ -2933,6 +2963,11 @@ When an application-version-identifier string is supplied in
 \nobr{\var{<platform-dir>\/}} compiled-directory name for all compiled module
 files that are defined relative to this \glref{root-directory}.
 
+The \nobr{\var{documentation\/}} string associated with a
+\glref{root~directory} can be accessed and set by using Common Lisp's
+\nobr{\code{documentation}} generic function with the directory's
+\var{name\/} and the \nobr{\var{doc-type\/}} \code{directory}.
+
 \begin{alsos}{show-defined-directories}
 \also[define-relative-directory]
 \also[get-directory]
@@ -2946,6 +2981,7 @@ files that are defined relative to this \glref{root-directory}.
 \W\supp
 \begin{example}
   (define-root-directory :my-app-root 
+    "The installation directory for My App"
     (make-pathname :directory "~/my-app"))
 \end{example}
 %
@@ -2955,7 +2991,9 @@ directory containing the file containing the
 %
 \W\supp\notpretop
 \begin{example}
-  (define-root-directory :my-app-root *load-truename*)
+  (define-root-directory :my-app-root 
+    "The installation directory for My App"
+    *load-truename*)
 \end{example}
 %
 Define a \glref{root~directory} named \nobr{\code{:my-app-root}} to be the
@@ -2967,7 +3005,25 @@ in a separate ``beta'' compile tree:
 \W\supp\notpretop
 \begin{example}
   (define-root-directory '(:my-app-root #+my-app-prerelease "beta")
+    "The installation directory for My App"
     *load-truename*)
+\end{example}
+
+\codeindex{documentation}%
+\codeindex{(setf documentation)}%
+Retrieve and then modify the documentation string of the \glref{root~directory}
+named \nobr{\code{:my-app-root}}:
+%
+\W\supp
+\begin{example}
+  > (documentation ':my-app-root 'directory)
+  "The installation directory for My App"
+  > (setf (documentation ':my-app-root 'directory) 
+     "The installation directory for my way cool application")
+  "The installation directory for my way cool application"
+  > (documentation ':my-app-root 'directory)
+  "The installation directory for my way cool application"
+  >
 \end{example}
 
 \end{functiondoc}
@@ -3215,7 +3271,7 @@ the module):
 
 \fnsyntax 
 
-\fnpurpose Return the pathname based on a \glref{root~directory}, a
+\fnpurpose Return the \glref{pathname} based on a \glref{root~directory}, a
 \glref{relative~directory}, or a \glref{module}.
 
 \fnpackage \code{:module-manager}
@@ -3389,7 +3445,7 @@ that module has not been loaded):
 
 \fnsyntax 
 
-\fnpurpose Return the pathname of the \glref{root~directory} of a
+\fnpurpose Return the \glref{pathname} of the \glref{root~directory} of a
 \glref{root~directory}, a \glref{relative~directory}, or a \glref{module}.
 
 \fnpackage \code{:module-manager}
@@ -17519,7 +17575,7 @@ compact version number of a working copy.
 \arg[directory] One of the following:
 \begin{tightitemize}
 \item A string specifying a directory
-\item A pathname specifying a directory
+\item A \glref{pathname} specifying a directory
 \item A \glref{keyword} naming a \glref{root~directory}
 \end{tightitemize}
 (default is the GBBopen install directory)
@@ -26830,7 +26886,7 @@ class definition of \code{hyp}:
 \arg[saved-value] An object
 \end{args}
 
-\fnreturns Three values: the pathname of the saved blackboard-repository data
+\fnreturns Three values: the \glref{pathname} of the saved blackboard-repository data
 file, the time when the blackboard-repository data file was saved, and the
 save value specified when the repository was saved. If replacing a non-empty
 blackboard repository is not confirmed, \nil{} is returned.
@@ -27268,7 +27324,7 @@ repository is loaded (default is \nil)
 \arg[saved-repository-pathname] A \glref{pathname}
 \end{args}
 
-\fnreturns The pathname of the saved blackboard-repository data file.
+\fnreturns The \glref{pathname} of the saved blackboard-repository data file.
 
 \fndescription If \var{pathname\/} does not specify a file type, the type
 \code{bb} is added to it.  Then, \nobr{\code{(user-homedir-pathname)}} is used
@@ -29811,7 +29867,7 @@ Journal writing and reading is provided by the \code{:streaming} \glref{module}.
 \arg[saved-value] An object
 \end{args}
 
-\fnreturns Three values: the pathname of the journal
+\fnreturns Three values: the \glref{pathname} of the journal
 file, the time when the journal was started, and the
 save value specified when the journal was created. 
 

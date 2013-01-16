@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 11 17:39:23 2013 *-*
+;;;; *-* Last-Edit: Tue Jan 15 21:12:56 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -261,7 +261,7 @@
             freeze-module               ; not yet documented
             get-directory
             get-patch-description
-            get-root-directory          ; not yet documented
+            get-root-directory
             list-modules                ; not yet documented
             load-module
             load-module-file
@@ -1065,6 +1065,7 @@
             (:conc-name #.(dotted-conc-name 'mm-directory))
             (:copier nil))
   name
+  documentation
   (system-name *current-system-name*))
 
 (defstruct (mm-root-directory
@@ -1080,6 +1081,23 @@
             (:copier nil))
   root
   subdirectories)
+
+;;; ---------------------------------------------------------------------------
+
+(defun get-mm-directory (name)
+  ;; Internal function to get the mm-directory structure given a root or
+  ;; relative directory name (a noop, if an mm-directory is supplied as the
+  ;; name):
+  (if (typep name 'mm-directory)
+      name
+      (or (gethash name *mm-directories*)
+          (error "Directory ~s is not defined." name))))
+
+(defmethod documentation (object (doc-type (eql 'directory)))
+  (mm-module.documentation (get-mm-directory object)))
+
+(defmethod (setf documentation) (nv object (doc-type (eql 'directory)))
+  (setf (mm-module.documentation (get-mm-directory object)) nv))
 
 ;;; ===========================================================================
 ;;;  Directory operators
@@ -1209,9 +1227,11 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun define-root-directory (name spec &rest subdirectories)
-  (declare (dynamic-extent subdirectories))
-  (let ((application-version-modifier nil))
+(defun define-root-directory (name &rest args)
+  (let* ((documentation (when (stringp (first args)) (pop args)))
+         (spec (pop args))
+         (subdirectories args)
+         (application-version-modifier nil))
     (when (consp name)
       (setf application-version-modifier (second name))
       (setf name (first name)))
@@ -1221,21 +1241,26 @@
       (setf (gethash name *mm-directories*)
             (make-mm-root-directory
              :name name
+             :documentation documentation
              :path root-directory-path
              :application-version-modifier application-version-modifier)))))
 
 ;;; ---------------------------------------------------------------------------
 
-(defun define-relative-directory (name root &rest subdirectories)
-  (unless (keywordp name)
+(defun define-relative-directory (name &rest args)
+  (let* ((documentation (when (stringp (first args)) (pop args)))
+         (root (pop args))
+         (subdirectories args))
+    (unless (keywordp name)
     (non-keyword-directory-name-error name))
-  (unless (keywordp root)
-    (non-keyword-root/relative-directory-name-error root))
-  (setf (gethash name *mm-directories*)
-        (make-mm-relative-directory
-         :name name
-         :root root
-         :subdirectories subdirectories)))
+    (unless (keywordp root)
+      (non-keyword-root/relative-directory-name-error root))
+    (setf (gethash name *mm-directories*)
+          (make-mm-relative-directory
+           :name name
+           :documentation documentation
+           :root root
+           :subdirectories subdirectories))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -1425,7 +1450,7 @@
 (defmethod documentation (object (doc-type (eql 'module)))
   (mm-module.documentation (get-module object)))
 
-(defmethod (setf documentation) (nv (object symbol) (doc-type (eql 'module)))
+(defmethod (setf documentation) (nv object (doc-type (eql 'module)))
   (setf (mm-module.documentation (get-module object)) nv))
 
 ;;; ---------------------------------------------------------------------------
@@ -2551,7 +2576,9 @@
 
 (let ((*current-system-name* ':module-manager))
     
-  (define-root-directory :module-manager-root *load-truename* :up :up)
+  (define-root-directory :module-manager-root 
+      "The Module Manager software installation directory"      
+      *load-truename* :up :up)
   
   (define-module :module-manager
     "The Module Manager Facility provides a lightweight and easy to use mechanism for compiling and loading module files."
