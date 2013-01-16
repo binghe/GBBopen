@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/modules.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan 12 16:42:56 2013 *-*
+;;;; *-* Last-Edit: Tue Jan 15 20:49:40 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -49,12 +49,16 @@
 ;;;  Define the root GBBopen installation directory relative to this file:
 
   (let ((this-file-truename *load-truename*))
-    (define-root-directory :gbbopen-root this-file-truename))
+    (define-root-directory :gbbopen-root 
+        "The GBBopen software installation directory"
+      this-file-truename))
 
 ;;; ===========================================================================
 ;;;  GBBopen Tools Modules
 
-  (define-relative-directory :gbbopen-tools :gbbopen-root "tools")
+  (define-relative-directory :gbbopen-tools 
+      "The GBBopen Tools directory"
+      :gbbopen-root "tools")
   
   (define-module :gbbopen-tools
     "The GBBopen Tools module contains useful Common Lisp additions and utilities."
@@ -140,7 +144,9 @@
 ;;; ===========================================================================
 ;;;  GBBopen Core Modules   (Keep gbbopen.asd consistent with these!)
   
-  (define-relative-directory :gbbopen :gbbopen-root "gbbopen")
+  (define-relative-directory :gbbopen 
+      "The GBBopen Core directory"
+      :gbbopen-root "gbbopen")
   
   (define-module :gbbopen-core
     "The GBBopen Core module provides the blackboard repository, unit and space classes and instances, inter-instance links, and event signaling."

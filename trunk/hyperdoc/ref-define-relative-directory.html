@@ -45,6 +45,11 @@ definition, that is either a <a href="ref-glossary.html#id204">root&nbsp;directo
 <a href="ref-glossary.html#id204">root&nbsp;directory</a>).  If this <a href="ref-glossary.html#gl:Root">root</a> directory location changes,
 every <a href="ref-glossary.html#id196">relative&nbsp;directory</a> associated with it is adjusted automatically.
 </p>
+<p>The <nobr><var>documentation</var></nobr> string associated with a
+<a href="ref-glossary.html#id196">relative&nbsp;directory</a> can be accessed and set by using Common Lisp's
+<nobr><code>documentation</code></nobr> generic function with the directory's <var>name</var>
+and the <nobr><var>doc-type</var></nobr> <code>directory</code>.
+</p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-define-root-directory.html"><b>define-root-directory</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-get-directory.html"><b>get-directory</b></a>
@@ -54,17 +59,36 @@ every <a href="ref-glossary.html#id196">relative&nbsp;directory</a> associated w
 <p><span class="fndoclabel">Examples</span> <br />Define a relative directory below <nobr><code>:my-app-root</code></nobr> named
 <nobr><code>:my-tests</code></nobr>:
 <pre class="pretop">
-  (define-relative-directory :my-tests :my-app-root "tests")
+  (define-relative-directory :my-tests 
+    "The tests directory for My App"
+    :my-app-root "tests")
 </pre>
 Define another relative directory named <nobr><code>:my-performance-tests</code></nobr>
 below <nobr><code>:my-tests</code></nobr>:
 <pre>
-  (define-relative-directory :my-performance-tests :my-tests "performance") 
+  (define-relative-directory :my-performance-tests 
+  "The performance-tests subdirectory for My App"
+  :my-tests "performance")
 </pre>
 Define a data directory sibling to the <nobr><code>source</code></nobr> directory of
 <nobr><code>:my-app</code></nobr> <a href="ref-glossary.html#gl:module">module</a>:
 <pre>
-  (define-relative-directory :app-data :my-app :up "data") 
+  (define-relative-directory :my-app-data 
+    "The data directory for My App"
+    :my-app :up "data")
+</pre>
+</p>
+<p><a name="id1">Retrieve</a> and then modify the documentation string of the
+<a href="ref-glossary.html#id196">relative&nbsp;directory</a> named <nobr><code>:my-tests</code></nobr>:
+<pre class="pretop">
+  &gt; (documentation ':my-app-data 'directory)
+  "The data directory for My App"
+  &gt; (setf (documentation ':my-app-data 'directory) 
+  "The data directory for my way cool application")
+  "The data directory for my way cool application"
+  &gt; (documentation ':my-app-data 'directory)
+  "The data directory for my way cool application"
+  &gt;
 </pre>
 </p>
 <hr /><address><a target="_top" class="address"

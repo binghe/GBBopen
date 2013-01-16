@@ -30,6 +30,9 @@ Important changes since GBBopen 1.5:
        from NIL to T
      - Documentation string added to DEFINE-MODULE, MODULE doc-type added to
        DOCUMENTATION methods to access and set module documentation
+     - Documentation string added to DEFINE-RELATIVE-DIRECTORY and 
+       DEFINE-ROOT-DIRECTORY, DIRECTORY doc-type added to DOCUMENTATION 
+       methods to access and set root- and relative-directory documentation
 
   * Changes to GBBopen Tools
      - New VERY-BRIEF-DATE function
