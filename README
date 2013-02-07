@@ -10,7 +10,7 @@ Requirements:
 
        Allegro CL   Version 9.0
        CLISP        Version 2.49 (configure --with-threads if possible)
-       Clozure CL   Version 1.8
+       Clozure CL   Version 1.9
        CMUCL        Version 20d
        ECL          Version 12.12.1
        Lispworks    Version 6.1.1
@@ -41,7 +41,7 @@ Requirements:
    implementations.
 
 
-Current Status Notes (January 31, 2013)
+Current Status Notes (February 7, 2013)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
