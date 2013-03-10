@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Jan  5 15:16:46 2013 *-*
+;;;; *-* Last-Edit: Fri Jan 11 15:29:03 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -77,14 +77,16 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(defun mm-component-defsystem (module-name &optional no-components-p)
+(defun mm-component-defsystem (module-name documentation 
+                               &optional no-components-p)
   (eval `(asdf:defsystem ,module-name
              :description 
-               ,(if (eq ':gbbopen module-name)
-                    "The GBBopen blackboard-system framework"
-                    (format nil
-                            "GBBopen ~s module; part of the GBBopen blackboard-system framework"
-                            module-name))
+               ,(or documentation
+                    (if (eq ':gbbopen module-name)
+                        "The GBBopen blackboard-system framework"
+                        (format nil
+                                "GBBopen ~s module; part of the GBBopen blackboard-system framework"
+                                module-name)))
 	     :author "The GBBopen Project <gbbopen@GBBopen.org>"             
 	     :maintainer "Dan Corkill <corkill@GBBopen.org>"
              :version ,common-lisp-user::*gbbopen-version*
