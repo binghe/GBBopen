@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/gbbopen.asd *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Fri Jan 11 15:29:03 2013 *-*
+;;;; *-* Last-Edit: Sun Mar 10 22:28:01 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -135,7 +135,7 @@
 (format t "~&;; Defining an ASDF defsystem for each Module Manager module...~%")
 
 (dolist (module-name (list-modules 't))
-  (mm-component-defsystem module-name))
+  (mm-component-defsystem module-name nil))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  We have trivially completed all of the :gbbopen system operations by
@@ -164,7 +164,7 @@
 (defmethod asdf:perform ((op asdf:load-source-op) (component gbbopen)))
 |#
 
-(mm-component-defsystem :gbbopen 't)
+(mm-component-defsystem :gbbopen nil 't)
 
 ;;; ===========================================================================
 ;;;				  End of File
