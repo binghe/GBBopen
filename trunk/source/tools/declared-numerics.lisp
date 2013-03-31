@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/declared-numerics.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Sat Nov  3 20:48:51 2012 *-*
+;;;; *-* Last-Edit: Sun Mar 31 12:57:35 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1073,32 +1073,9 @@
  (defun lisp::output-float-infinity (x stream)
    (print-object x stream)))
 
-;; Check and record if running an older ECL:
+;; ECL bypasses print-object for float infinity printing, so we must
+;; redefine ECL's EXT::FLOAT-INFINITY-STRING to use #@format
 #+ecl
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (let ((old-ecl-out-float-infinity-symbol
-         (find-symbol "OUTPUT-FLOAT-INFINITY" :ext)))
-    (when (and old-ecl-out-float-infinity-symbol
-               (fboundp old-ecl-out-float-infinity-symbol))
-      (pushnew ':old-ecl-with-output-float-infinity *features*))))
-
-;; Older ECL verison:
-#+(and ecl old-ecl-with-output-float-infinity)
-(progn
-  ;; Old ECL allows redefinition of its EXT:OUTPUT-FLOAT-INFINITY function, but its
-  ;; compiler/loader uses different readtables so we can't use #@ format unless
-  ;; the INF-READER dispatch is in place:
-  (defvar *%saved-ecl-output-float-infinity-function%*
-      (symbol-function 'ext:output-float-infinity))
-  (defun ext:output-float-infinity (x stream)
-    ;; Redefine ECL's EXT:OUTPUT-FLOAT-INFINITY to call PRINT-OBJECT unless 
-    ;; INF-READER isn't established:
-    (if (eq 'inf-reader (get-dispatch-macro-character #\# #\@))
-        (print-object x stream)
-        (funcall *%saved-ecl-output-float-infinity-function%* x stream))))
-
-;; Later ECL versions (not as nice an interface):
-#+(and ecl (not old-ecl-with-output-float-infinity))
 (progn
   (defvar *%saved-ecl-float-infinity-string-function%*
       (symbol-function 'ext::float-infinity-string))
