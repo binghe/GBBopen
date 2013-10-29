@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/scheduled-periodic-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct 29 11:29:59 2013 *-*
+;;;; *-* Last-Edit: Tue Oct 29 13:33:17 2013 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -376,7 +376,8 @@
 
 #-threads-not-available
 (defun schedule-function-internal (name-or-scheduled-function marker context
-                                   invocation-time repeat-interval verbose)
+                                   context-supplied-p invocation-time 
+                                   repeat-interval verbose)
   (or (with-lock-held (*scheduled-functions-cv*)
         (let* ((next-scheduled-function (first *scheduled-functions*))
                (unscheduled-scheduled-function 
@@ -390,7 +391,8 @@
                   invocation-time)
             (setf (scheduled-function-repeat-interval scheduled-function)
                   repeat-interval)
-            (setf (scheduled-function-context scheduled-function) context)
+            (when context-supplied-p
+              (setf (scheduled-function-context scheduled-function) context))
             (setf (scheduled-function-verbose scheduled-function) verbose)
             (insert-scheduled-function scheduled-function verbose)
             ;; awaken scheduler if this scheduled-function was the next to be
@@ -410,12 +412,12 @@
 
 (defun schedule-function (name-or-scheduled-function invocation-time
                           &key marker
-                               context
+                               (context nil context-supplied-p)
                                repeat-interval
                                (verbose *schedule-function-verbose*))
   #+threads-not-available
   (declare (ignore name-or-scheduled-function invocation-time marker context
-                   repeat-interval verbose))
+                   context-supplied-p repeat-interval verbose))
   #-threads-not-available
   (progn
     (check-type invocation-time integer)
@@ -423,6 +425,7 @@
     (schedule-function-internal name-or-scheduled-function
                                 marker
                                 context
+                                context-supplied-p
                                 invocation-time 
                                 repeat-interval
                                 verbose)
@@ -434,14 +437,14 @@
 
 (defun schedule-function-relative (name-or-scheduled-function interval
                                    &key marker
-                                        context
+                                        (context nil context-supplied-p)
                                         repeat-interval 
                                         (verbose *schedule-function-verbose*))
   ;;; Syntactic sugar that simply adds `interval' to the current time before
   ;;; scheduling the scheduled-function.
   #+threads-not-available
   (declare (ignore name-or-scheduled-function interval marker context
-                   repeat-interval verbose))
+                   context-supplied-p repeat-interval verbose))
   #-threads-not-available
   (progn
     (check-type interval integer)
@@ -449,6 +452,7 @@
     (schedule-function-internal name-or-scheduled-function 
                                 marker
                                 context
+                                context-supplied-p
                                 (+ (get-universal-time) interval)
                                 repeat-interval
                                 verbose)
