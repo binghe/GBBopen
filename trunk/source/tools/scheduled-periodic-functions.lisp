@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/scheduled-periodic-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  8 06:24:44 2010 *-*
-;;;; *-* Machine: cyclone.cs.umass.edu *-*
+;;;; *-* Last-Edit: Tue Oct 29 11:29:59 2013 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -55,6 +55,7 @@
             schedule-function
             schedule-function-relative
             scheduled-function          ; structure (not documented)
+            scheduled-function-context
             scheduled-function-invocation-time
             scheduled-function-marker
             scheduled-function-marker-test
@@ -71,7 +72,7 @@
 
 (defstruct (scheduled-function
             (:constructor %make-scheduled-function
-                          (function name name-test marker marker-test))
+                          (function name name-test marker marker-test context))
             (:copier nil))
   name
   name-test
@@ -80,7 +81,8 @@
   function
   invocation-time
   repeat-interval
-  verbose)
+  verbose
+  context)
 
 (defmethod print-object ((obj scheduled-function) stream)
   (if *print-readably*
@@ -154,11 +156,12 @@
                                                     function))
                                          (name-test #'eql)
                                          marker
-                                         (marker-test #'eql))
+                                         (marker-test #'eql)
+                                         context)
   #+threads-not-available
-  (declare (ignore name name-test marker marker-test))
+  (declare (ignore name name-test marker marker-test context))
   #-threads-not-available
-  (%make-scheduled-function function name name-test marker marker-test)
+  (%make-scheduled-function function name name-test marker marker-test context)
   #+threads-not-available
   (threads-not-available 'make-scheduled-function))
 
@@ -372,7 +375,7 @@
 ;;; ---------------------------------------------------------------------------
 
 #-threads-not-available
-(defun schedule-function-internal (name-or-scheduled-function marker
+(defun schedule-function-internal (name-or-scheduled-function marker context
                                    invocation-time repeat-interval verbose)
   (or (with-lock-held (*scheduled-functions-cv*)
         (let* ((next-scheduled-function (first *scheduled-functions*))
@@ -387,6 +390,7 @@
                   invocation-time)
             (setf (scheduled-function-repeat-interval scheduled-function)
                   repeat-interval)
+            (setf (scheduled-function-context scheduled-function) context)
             (setf (scheduled-function-verbose scheduled-function) verbose)
             (insert-scheduled-function scheduled-function verbose)
             ;; awaken scheduler if this scheduled-function was the next to be
@@ -406,17 +410,19 @@
 
 (defun schedule-function (name-or-scheduled-function invocation-time
                           &key marker
+                               context
                                repeat-interval
                                (verbose *schedule-function-verbose*))
   #+threads-not-available
-  (declare (ignore name-or-scheduled-function invocation-time marker 
+  (declare (ignore name-or-scheduled-function invocation-time marker context
                    repeat-interval verbose))
   #-threads-not-available
   (progn
     (check-type invocation-time integer)
     (check-type repeat-interval (or null integer))
     (schedule-function-internal name-or-scheduled-function
-                                marker 
+                                marker
+                                context
                                 invocation-time 
                                 repeat-interval
                                 verbose)
@@ -428,12 +434,13 @@
 
 (defun schedule-function-relative (name-or-scheduled-function interval
                                    &key marker
+                                        context
                                         repeat-interval 
                                         (verbose *schedule-function-verbose*))
   ;;; Syntactic sugar that simply adds `interval' to the current time before
   ;;; scheduling the scheduled-function.
   #+threads-not-available
-  (declare (ignore name-or-scheduled-function interval marker
+  (declare (ignore name-or-scheduled-function interval marker context
                    repeat-interval verbose))
   #-threads-not-available
   (progn
@@ -441,6 +448,7 @@
     (check-type repeat-interval (or null integer))
     (schedule-function-internal name-or-scheduled-function 
                                 marker
+                                context
                                 (+ (get-universal-time) interval)
                                 repeat-interval
                                 verbose)

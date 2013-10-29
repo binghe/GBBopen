@@ -1,9 +1,9 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Jan 15 21:18:32 2013; Edited-By: cork *-*
-%% *-* Machine: phoenix.corkills.org *-*
+%% *-* Last-Edit: Tue Oct 29 11:45:36 2013; Edited-By: cork *-*
+%% *-* Machine: phoenix *-*
 
-%% Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org>
+%% Copyright (C) 2003-2013, Dan Corkill <corkill@GBBopen.org>
 %% Part of the GBBopen Project.
 %% Licensed under Apache License 2.0 (see LICENSE for license information).
 %%
@@ -15283,7 +15283,7 @@ as long as the control shell is running:
 %% ------------------------------------------------------------------------
 
 \begin{functiondoc}{Function}{make-scheduled-function}{\var{function\/} 
-    \nobr{\code{\&key} \var{name name-test marker marker-test\/}}
+    \nobr{\code{\&key} \var{name name-test marker marker-test context\/}}
     \nobr{\returns{} \var{scheduled-function\/}}}
 \index{scheduled function!creating}%
 \index{function!scheduled, creating}%
@@ -15310,6 +15310,7 @@ as long as the control shell is running:
   \glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
 \arg[marker] An object (default is \nil)
 \arg[marker-test] A \glref{function~designator} specifying a
+\arg[context] An object (default is \nil)
 \glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
 \arg[scheduled-function] A \glref{scheduled~function}
@@ -15320,7 +15321,7 @@ as long as the control shell is running:
 \fnerrors
 \nothreads{}
 
-\fndescription Unless the run time to perform \nobr{\var{function\/}} is
+\fndescription Unless the run time to performc is
 brief, it should spawn a new \glref{thread} in which to perform its activities
 so as to avoid delaying the invocation of a subsequent
 \glref{scheduled~function}.
@@ -15331,6 +15332,10 @@ be specified to distinguish \glref{scheduled~functions} with the same
 \nobr{\textbf{\entlink{schedule-function-relative}}}, and
 \nobr{\textbf{\entlink{unschedule-function}}}.
 
+The optional \var{context\/} object can be specified to store an invocation
+context in the \nobr{\var{scheduled-function\/}} argument that is passed to
+the scheduled \nobr{\var{function\/}} when it is invoked.
+
 \begin{alsos}{scheduled-function-scheduler-running-p}
 \also[*schedule-function-verbose*]
 \also[all-scheduled-functions]
@@ -15339,6 +15344,8 @@ be specified to distinguish \glref{scheduled~functions} with the same
 \also[resume-scheduled-function-scheduler]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-context]
+\also[scheduled-function-invocation-time]
 \also[scheduled-function-marker]
 \also[scheduled-function-marker-test]
 \also[scheduled-function-name]
@@ -15547,7 +15554,7 @@ Resume the \glref{scheduled-function} scheduler:
 \begin{functiondoc}{Function}{schedule-function}%
   {\var{\nobr{name-or-scheduled-function}
       \nobr{invocation-time\/}}
-    \nobr{\code{\&key} \var{marker repeat-interval verbose\/}}}
+    \nobr{\code{\&key} \var{context marker repeat-interval verbose\/}}}
 \index{scheduled function!scheduling}%
 \index{function!scheduled, scheduling}%
 \index{scheduling!a scheduled function}%
@@ -15566,6 +15573,7 @@ Resume the \glref{scheduled-function} scheduler:
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
 \arg[invocation-time] A \glref{Universal~Time}
+\arg[context] An object (default is \nil)
 \arg[marker] An object (default is \nil)
 \arg[repeat-interval] A positive integer (representing seconds) or
   \nil{} (default is \nil)
@@ -15618,7 +15626,7 @@ with the specified \nobr{\var{invocation-time\/}} and optional
 
 \bfindexit{make-scheduled-function}%
 \fnexamples Schedule a \glref{scheduled~function} that simply prints
-\nobr{\code{"Happy New Year!"}}  at midnight (local time) on January 1, 2010:
+\nobr{\code{"Happy New Year!"}}  at midnight (local time) on January 1, 2014:
 %
 \W\supp
 \begin{example}
@@ -15627,9 +15635,9 @@ with the specified \nobr{\var{invocation-time\/}} and optional
         #'(lambda (scheduled-function)
             (declare (ignore scheduled-function))
             (print "Happy New Year!")))
-       (encode-universal-time 0 0 0 1 1 2010))
+       (encode-universal-time 0 0 0 1 1 2014))
   > (all-scheduled-functions)
-  (#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
+  (#<scheduled-function nil [Jan 1, 2014 00:00:00]>)
   >
 \end{example}
 %
@@ -15672,7 +15680,7 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 
 \begin{functiondoc}{Function}{schedule-function-relative}%
   {\var{\nobr{name-or-scheduled-function} seconds\/} 
-    \nobr{\code{\&key} \var{marker repeat-interval verbose\/}}}
+    \nobr{\code{\&key} \var{context marker repeat-interval verbose\/}}}
 \index{scheduled function!scheduling}%
 \index{function!scheduled, scheduling}%
 \index{scheduling!a scheduled function}%
@@ -15692,6 +15700,7 @@ seconds from now.
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
 \arg[seconds] A positive integer
+\arg[context] An object (default is \nil)
 \arg[marker] An object (default is \nil)
 \arg[repeat-interval] A positive integer (representing seconds) or
   \nil{} (default is \nil)
@@ -15734,6 +15743,7 @@ time and optional \nobr{\var{repeat-interval}}, if specified.
 \also[make-scheduled-function]
 \also[restart-scheduled-function-scheduler]
 \also[schedule-function]
+\also[scheduled-function-context]
 \also[scheduled-function-invocation-time]
 \also[scheduled-function-marker]
 \also[scheduled-function-marker-test]
@@ -15792,6 +15802,56 @@ The form \nobr{\code{(schedule-function-relative}
 
 %% ------------------------------------------------------------------------
 
+\begin{functiondoc}{Function}{scheduled-function-context}%
+  {\nobr{\var{scheduled-function\/}}
+    \nobr{\returns{} \var{object\/}}}
+\index{function!scheduled, context}%
+
+\fnsyntax
+
+\fnpurpose Return the context object of a \glref{scheduled~function}.
+
+\fnpackage \code{:portable-threads}
+
+\fnmodule \code{:portable-threads}
+
+\fnargs
+\begin{args}{scheduled-function}
+\arg[scheduled-function] A \glref{scheduled~function}
+\arg[context] An object
+\end{args}
+
+\fnreturns The context object of \var{scheduled-function}. 
+
+\begin{alsos}{schedule-function-relative}
+\also[all-scheduled-functions]
+\also[make-scheduled-function]
+\also[schedule-function]
+\also[schedule-function-relative]
+\also[scheduled-function-invocation-time]
+\also[scheduled-function-marker]
+\also[scheduled-function-marker-test]
+\also[scheduled-function-name]
+\also[scheduled-function-name-test]
+\also[scheduled-function-repeat-interval]
+\end{alsos}
+
+\fnexample
+%
+Return the context object of \glref{scheduled~function}
+\nobr{\code{scheduled-function}}:
+%
+\W\supp
+\begin{example}
+  > (scheduled-function-context scheduled-function)
+  ("Lisa" "Bob")
+  >
+\end{example}
+
+\end{functiondoc}
+
+%% ------------------------------------------------------------------------
+
 \begin{functiondoc}{Function}{scheduled-function-invocation-time}%
   {\nobr{\var{scheduled-function\/}}
     \nobr{\returns{} \var{invocation-time\/}}}
@@ -15818,6 +15878,7 @@ The form \nobr{\code{(schedule-function-relative}
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-context]
 \also[scheduled-function-marker]
 \also[scheduled-function-marker-test]
 \also[scheduled-function-name]
@@ -15867,6 +15928,8 @@ Return the invocation-time of \glref{scheduled~function}
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-context]
+\also[scheduled-function-invocation-time]
 \also[scheduled-function-marker-test]
 \also[scheduled-function-name]
 \also[scheduled-function-name-test]
@@ -15919,10 +15982,12 @@ Return a list of the markers of all currently scheduled
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-context]
 \also[scheduled-function-invocation-time]
 \also[scheduled-function-marker]
 \also[scheduled-function-name]
 \also[scheduled-function-name-test]
+\also[scheduled-function-repeat-interval]
 \end{alsos}
 
 \bfindexit{all-scheduled-functions}%
@@ -15968,6 +16033,8 @@ Return a list of the marker-comparison predicates of all currently scheduled
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-context]
+\also[scheduled-function-invocation-time]
 \also[scheduled-function-marker]
 \also[scheduled-function-marker-test]
 \also[scheduled-function-name-test]
@@ -16019,10 +16086,12 @@ Return the names of all currently scheduled \glref{scheduled~functions}:
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-context]
 \also[scheduled-function-invocation-time]
 \also[scheduled-function-marker]
 \also[scheduled-function-name]
 \also[scheduled-function-name-test]
+\also[scheduled-function-repeat-interval]
 \end{alsos}
 
 \bfindexit{all-scheduled-functions}%
@@ -16073,10 +16142,13 @@ Return a list of the name-comparison predicates of all currently scheduled
 \also[make-scheduled-function]
 \also[schedule-function]
 \also[schedule-function-relative]
+\also[scheduled-function-context]
+\also[scheduled-function-invocation-time]
 \also[scheduled-function-marker]
 \also[scheduled-function-marker-test]
 \also[scheduled-function-name]
 \also[scheduled-function-name-test]
+\also[scheduled-function-repeat-interval]
 \end{alsos}
 
 \bfindexit{all-scheduled-functions}%
@@ -16415,7 +16487,7 @@ Unschedule all currently scheduled \glref{scheduled~functions}:
 \W\supp\notpretop
 \begin{example}
   > (\entlink{all-scheduled-functions})
-  (#<scheduled-function nil [Jan 1, 2010 00:00:00]>)
+  (#<scheduled-function nil [Jan 1, 2014 00:00:00]>)
   > (mapc #'unschedule-function (\entlink{all-scheduled-functions}))
   (#<scheduled-function nil [unscheduled]>)
   > (\entlink{all-scheduled-functions})
