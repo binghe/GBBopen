@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/scheduled-periodic-functions.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Oct 29 13:33:17 2013 *-*
+;;;; *-* Last-Edit: Wed Oct 30 16:02:13 2013 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2003-2011, Dan Corkill <corkill@GBBopen.org> 
+;;; Copyright (C) 2003-2013, Dan Corkill <corkill@GBBopen.org> 
 ;;;
 ;;; Developed and supported by the GBBopen Project (http://GBBopen.org) and
 ;;; donated to the CL Gardeners portable threads initiative
@@ -33,6 +33,8 @@
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;;;
 ;;;  12-18-09 Separated from portable-threads.lisp.  (Corkill)
+;;;  10-30-13 Retain scheduled-function in ALL-SCHEDULED-FUNCTIONS until after
+;;;           the scheduled execution has completed.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -204,7 +206,7 @@
                 ;; have been awakened due to unscheduling the only
                 ;; scheduled-function)--thanks to Wendall Marvel for reporting
                 ;; this bug:
-                (when *scheduled-functions* 
+                (when *scheduled-functions*
                   ;; recheck that it's actually time to run the first
                   ;; scheduled function (in case we have been awakened due to
                   ;; a schedule change rather than due to reaching the
@@ -215,14 +217,18 @@
                         (now (get-universal-time)))
                     (when (<= invocation-time now)
                       (setf scheduled-function-to-run
-                            (pop *scheduled-functions*))))))
+                            (car *scheduled-functions*))))))
                ;; no need to wait:
                (t (setf scheduled-function-to-run
-                        (pop *scheduled-functions*))))))))
+                        (car *scheduled-functions*))))))))
       ;; funcall the scheduled function (outside of the CV lock):
       (when scheduled-function-to-run
         (unwind-protect (invoke-scheduled-function scheduled-function-to-run)
           (with-lock-held (*scheduled-functions-cv*)
+            ;; Remove the scheduled function (potentially to be reinserted if repeated):
+            (setf *scheduled-functions* (delete scheduled-function-to-run *scheduled-functions*
+                                                :count 1
+                                                :test #'eq))
             (let ((repeat-interval (scheduled-function-repeat-interval
                                     scheduled-function-to-run)))
               (cond 
