@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Tue Oct 29 11:45:36 2013; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Oct 30 00:23:38 2013; Edited-By: cork *-*
 %% *-* Machine: phoenix *-*
 
 %% Copyright (C) 2003-2013, Dan Corkill <corkill@GBBopen.org>
@@ -15310,9 +15310,9 @@ as long as the control shell is running:
   \glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
 \arg[marker] An object (default is \nil)
 \arg[marker-test] A \glref{function~designator} specifying a
-\arg[context] An object (default is \nil)
 \glref{function~object} of two arguments that returns a
 \glref{generalized~boolean} (default is \nobr{\code{\#'eql}})
+\arg[context] An object (default is \nil)
 \arg[scheduled-function] A \glref{scheduled~function}
 \end{args}
 
@@ -15321,10 +15321,9 @@ as long as the control shell is running:
 \fnerrors
 \nothreads{}
 
-\fndescription Unless the run time to performc is
-brief, it should spawn a new \glref{thread} in which to perform its activities
-so as to avoid delaying the invocation of a subsequent
-\glref{scheduled~function}.
+\fndescription Unless the run time to perform the scheduled function is brief,
+it should spawn a new \glref{thread} in which to perform its activities so as
+to avoid delaying the invocation of a subsequent \glref{scheduled~function}.
 
 The optional \var{marker\/} and associated comparison \var{marker-test\/} can
 be specified to distinguish \glref{scheduled~functions} with the same
@@ -15333,8 +15332,8 @@ be specified to distinguish \glref{scheduled~functions} with the same
 \nobr{\textbf{\entlink{unschedule-function}}}.
 
 The optional \var{context\/} object can be specified to store an invocation
-context in the \nobr{\var{scheduled-function\/}} argument that is passed to
-the scheduled \nobr{\var{function\/}} when it is invoked.
+context in the \nobr{\var{scheduled-function\/}} object that is passed to the
+scheduled \nobr{\var{function\/}} when it is invoked.
 
 \begin{alsos}{scheduled-function-scheduler-running-p}
 \also[*schedule-function-verbose*]
@@ -15369,6 +15368,20 @@ when invoked:
           (declare (ignore scheduled-function))
           (print "Hello"))
       :name 'hello)
+  #<scheduled-function hello [unscheduled]>
+  >
+\end{example}
+
+Create a \glref{scheduled~function} that individualizes the \nobr{\code{"Hello"}}
+when invoked:
+%
+\W\supp
+\begin{example}
+  > (make-scheduled-function 
+      #'(lambda (scheduled-function)
+          (format t "~&Hello ~a~%" (\entlink{scheduled-function-context} scheduled-function)))
+      :name 'hello
+      :context "Bob")
   #<scheduled-function hello [unscheduled]>
   >
 \end{example}
