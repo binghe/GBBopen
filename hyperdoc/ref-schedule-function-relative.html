@@ -67,6 +67,9 @@ that matches both the <var>name</var> and <var>marker</var> values.  The selecte
 with an invocation time of <nobr><var>interval</var></nobr> seconds from the current
 time and optional <nobr><var>repeat-interval</var></nobr>, if specified.
 </p>
+<p>The optional <var>context</var> object can be specified to replace the invocation
+context in the <nobr><var>scheduled-function</var></nobr> object.
+</p>
 <p><span class="fndoclabel">See also</span>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-schedule-function-verbose-var.html"><b>*schedule-function-verbose*</b></a>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<a href="ref-all-scheduled-functions.html"><b>all-scheduled-functions</b></a>
@@ -106,6 +109,31 @@ time and optional <nobr><var>repeat-interval</var></nobr>, if specified.
             (<a href="ref-signal-event.html">signal-event</a> 'timer-interrupt-event)))
       30
       :repeat-interval 30)
+  &gt;
+</pre>
+</p>
+<p><a name="id3">Schedule</a> a <a href="ref-glossary.html#id206">scheduled&nbsp;function</a> that prints an individualized <nobr><code>"Hello"</code></nobr>
+message to Bob five seconds from now, repeating annoyingly every hour thereafter:
+<pre class="pretop">
+  &gt; (schedule-function-relative
+      (<a href="ref-make-scheduled-function.html">make-scheduled-function</a>
+        #'(lambda (scheduled-function)
+            (format t "~&amp;Hello ~a~&#37;" 
+              (<a href="ref-scheduled-function-context.html">scheduled-function-context</a> scheduled-function)))
+        :name 'hello
+        :context "Bob")
+      5
+      :repeat-interval 3600)
+  &gt;
+</pre>
+Verbosely change Bob's annoying repeating <nobr><code>"Hello"</code></nobr> message to
+greet Lisa only once, 10 seconds from now:
+<pre>
+  &gt; (schedule-function-relative 'hello 10
+      :context "Lisa"
+      :verbose 't)
+  ;; Unscheduling #&lt;scheduled-function hello [09:46:11]&gt;...
+  ;; Scheduling #&lt;scheduled-function hello [09:46:27]&gt;...
   &gt;
 </pre>
 </p>

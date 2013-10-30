@@ -93,13 +93,14 @@ when invoked:
   #&lt;scheduled-function hello [unscheduled]&gt;
   &gt;
 </pre>
-</p>
-<p>Create a <a href="ref-glossary.html#id206">scheduled&nbsp;function</a> that individualizes the <nobr><code>"Hello"</code></nobr>
+Create a <a href="ref-glossary.html#id206">scheduled&nbsp;function</a> that individualizes the <nobr><code>"Hello"</code></nobr>
 when invoked:
-<pre class="pretop">
+<pre>
   &gt; (make-scheduled-function 
       #'(lambda (scheduled-function)
-          (format t "~&amp;Hello ~a~      :name 'hello
+          (format t "~&amp;Hello ~a~&#37;" 
+            (<a href="ref-scheduled-function-context.html">scheduled-function-context</a> scheduled-function)))
+      :name 'hello
       :context "Bob")
   #&lt;scheduled-function hello [unscheduled]&gt;
   &gt;

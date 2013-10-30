@@ -1,6 +1,6 @@
 %% -*- Mode:TeX; Fonts:(hl12fb) -*-
 %% *-* File: /usr/local/gbbopen/doc-source/reference.tex *-*
-%% *-* Last-Edit: Wed Oct 30 00:23:38 2013; Edited-By: cork *-*
+%% *-* Last-Edit: Wed Oct 30 12:20:46 2013; Edited-By: cork *-*
 %% *-* Machine: phoenix *-*
 
 %% Copyright (C) 2003-2013, Dan Corkill <corkill@GBBopen.org>
@@ -10306,6 +10306,7 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
   >
 \end{example}
 
+
 \end{functiondoc}
 
 %% ------------------------------------------------------------------------
@@ -15161,7 +15162,7 @@ scheduler.
 \begin{example}
   > (setf *schedule-function-verbose* 't)
   t
-  > (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
+  > (schedule-function 'quitting-time (\entlink{encode-time-of-day} 0 30 17)
       :repeat-interval #.(* 24 60 60))
   ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
   ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
@@ -15286,6 +15287,9 @@ as long as the control shell is running:
     \nobr{\code{\&key} \var{name name-test marker marker-test context\/}}
     \nobr{\returns{} \var{scheduled-function\/}}}
 \index{scheduled function!creating}%
+\index{scheduled function!name}%
+\index{scheduled function!marker}%
+\index{scheduled function!context}%
 \index{function!scheduled, creating}%
 \index{creating!a scheduled function}%
 \index{making!a scheduled function}%
@@ -15371,15 +15375,16 @@ when invoked:
   #<scheduled-function hello [unscheduled]>
   >
 \end{example}
-
+%
 Create a \glref{scheduled~function} that individualizes the \nobr{\code{"Hello"}}
 when invoked:
 %
-\W\supp
+\W\supp\notpretop
 \begin{example}
   > (make-scheduled-function 
       #'(lambda (scheduled-function)
-          (format t "~&Hello ~a~%" (\entlink{scheduled-function-context} scheduled-function)))
+          (format t "~&Hello ~a~\%" 
+            (\entlink{scheduled-function-context} scheduled-function)))
       :name 'hello
       :context "Bob")
   #<scheduled-function hello [unscheduled]>
@@ -15567,8 +15572,11 @@ Resume the \glref{scheduled-function} scheduler:
 \begin{functiondoc}{Function}{schedule-function}%
   {\var{\nobr{name-or-scheduled-function}
       \nobr{invocation-time\/}}
-    \nobr{\code{\&key} \var{context marker repeat-interval verbose\/}}}
+    \nobr{\code{\&key} \var{marker context repeat-interval verbose\/}}}
 \index{scheduled function!scheduling}%
+\index{scheduled function!marker}%
+\index{scheduled function!context}%
+\index{scheduled function!repeat interval}%
 \index{function!scheduled, scheduling}%
 \index{scheduling!a scheduled function}%
 
@@ -15586,8 +15594,8 @@ Resume the \glref{scheduled-function} scheduler:
   symbol) naming a currently scheduled \glref{scheduled~function} or a
   \nobr{\code{scheduled-function}} object
 \arg[invocation-time] A \glref{Universal~Time}
-\arg[context] An object (default is \nil)
 \arg[marker] An object (default is \nil)
+\arg[context] An object (default is \nil)
 \arg[repeat-interval] A positive integer (representing seconds) or
   \nil{} (default is \nil)
 \arg[verbose] A \glref{generalized~boolean} 
@@ -15622,6 +15630,9 @@ that matches both the \var{name\/} and \var{marker} values.  The selected
 \nobr{\glref{scheduled~function}} is first unscheduled and then rescheduled
 with the specified \nobr{\var{invocation-time\/}} and optional
 \nobr{\var{repeat-interval}}, if specified.
+
+The optional \var{context\/} object can be specified to replace the invocation
+context in the \nobr{\var{scheduled-function\/}} object.
 
 \begin{alsos}{scheduled-function-scheduler-running-p}
 \also[*schedule-function-verbose*]
@@ -15668,7 +15679,8 @@ Schedule a \glref{scheduled~function} that prints \nobr{\code{"It's quitting
             (declare (ignore scheduled-function))
             (print "It's quitting time!"))
         :name 'quitting-time)
-       (\entlink{encode-time-of-day} 17 0 0) :repeat-interval #.(* 24 60 60))
+      (\entlink{encode-time-of-day} 0 0 17) 
+      :repeat-interval #.(* 24 60 60))
   >
 \end{example}
 %
@@ -15678,11 +15690,49 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 %
 \W\supp\notpretop
 \begin{example}
-  > (schedule-function 'quitting-time (\entlink{encode-time-of-day} 17 30 0)
+  > (schedule-function 'quitting-time (\entlink{encode-time-of-day} 0 30 17)
       :repeat-interval #.(* 24 60 60)
       :verbose 't)
   ;; Unscheduling #<scheduled-function quitting-time [17:00:00]>...
   ;; Scheduling #<scheduled-function quitting-time [17:30:00]> 
+  ;; as the next scheduled-function...
+  >
+\end{example}
+
+\bfindexit{encode-time-of-day}%
+\bfindexit{make-scheduled-function}%
+%
+Schedule a \glref{scheduled~function} that prints an individualized \nobr{\code{"Hello"}}
+message to Bob every day at 9am:
+%
+\W\supp
+\begin{example}
+  > (schedule-function
+      (\entlink{make-scheduled-function}
+        #'(lambda (scheduled-function)
+            (format t "~&Hello ~a~\%" 
+              (\entlink{scheduled-function-context} scheduled-function)))
+        :name 'hello
+        :context "Bob")
+      (\entlink{encode-time-of-day} 0 0 9)
+      :repeat-interval #.(* 24 60 60))
+  >
+\end{example}
+\bfindexit{encode-time-of-day}%
+\bfindexit{make-scheduled-function}%
+%
+Verbosely change the \glref{scheduled~function} to prints the individualized
+\nobr{\code{"Hello"}} message to Lisa every day at 8:30am (Bob will no longer
+be greeted):
+%
+\W\supp\notpretop
+\begin{example}
+  > (schedule-function 'hello (\entlink{encode-time-of-day} 0 30 8)
+      :repeat-interval #.(* 24 60 60)
+      :context "Lisa"
+      :verbose 't)
+  ;; Unscheduling #<scheduled-function hello [09:00:00]>...
+  ;; Scheduling #<scheduled-function hello [08:30:00]> 
   ;; as the next scheduled-function...
   >
 \end{example}
@@ -15694,9 +15744,13 @@ Verbosely change \nobr{\code{quitting-time}} to 5:30pm every day:
 \begin{functiondoc}{Function}{schedule-function-relative}%
   {\var{\nobr{name-or-scheduled-function} seconds\/} 
     \nobr{\code{\&key} \var{context marker repeat-interval verbose\/}}}
-\index{scheduled function!scheduling}%
+\index{scheduled function!scheduling relative to now}%
+\index{scheduled function!marker}%
+\index{scheduled function!context}%
+\index{scheduled function!repeat interval}%
 \index{function!scheduled, scheduling}%
-\index{scheduling!a scheduled function}%
+\index{function!scheduled, scheduling relative to now}%
+\index{scheduling!a scheduled function relative to now}%
 
 \fnsyntax
 
@@ -15750,6 +15804,9 @@ that matches both the \var{name\/} and \var{marker} values.  The selected
 with an invocation time of \nobr{\var{interval\/}} seconds from the current
 time and optional \nobr{\var{repeat-interval}}, if specified.
 
+The optional \var{context\/} object can be specified to replace the invocation
+context in the \nobr{\var{scheduled-function\/}} object.
+
 \begin{alsos}{scheduled-function-scheduler-running-p}
 \also[*schedule-function-verbose*]
 \also[all-scheduled-functions]
@@ -15801,6 +15858,38 @@ Schedule a \glref{scheduled~function} that signals a GBBopen
             (\entlink{signal-event} 'timer-interrupt-event)))
       30
       :repeat-interval 30)
+  >
+\end{example}
+
+\bfindexit{make-scheduled-function}%
+%
+Schedule a \glref{scheduled~function} that prints an individualized \nobr{\code{"Hello"}}
+message to Bob five seconds from now, repeating annoyingly every hour thereafter:
+%
+\W\supp
+\begin{example}
+  > (schedule-function-relative
+      (\entlink{make-scheduled-function}
+        #'(lambda (scheduled-function)
+            (format t "~&Hello ~a~\%" 
+              (\entlink{scheduled-function-context} scheduled-function)))
+        :name 'hello
+        :context "Bob")
+      5
+      :repeat-interval 3600)
+  >
+\end{example}
+%
+Verbosely change Bob's annoying repeating \nobr{\code{"Hello"}} message to
+greet Lisa only once, 10 seconds from now:
+%
+\W\supp\notpretop
+\begin{example}
+  > (schedule-function-relative 'hello 10
+      :context "Lisa"
+      :verbose 't)
+  ;; Unscheduling #<scheduled-function hello [09:46:11]>...
+  ;; Scheduling #<scheduled-function hello [09:46:27]>...
   >
 \end{example}
 
@@ -15857,7 +15946,7 @@ Return the context object of \glref{scheduled~function}
 \W\supp
 \begin{example}
   > (scheduled-function-context scheduled-function)
-  ("Lisa" "Bob")
+  "Bob"
   >
 \end{example}
 
