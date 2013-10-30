@@ -41,7 +41,7 @@ scheduler.
 <pre class="pretop">
   &gt; (setf *schedule-function-verbose* 't)
   t
-  &gt; (schedule-function 'quitting-time (<a href="ref-encode-time-of-day.html">encode-time-of-day</a> 17 30 0)
+  &gt; (schedule-function 'quitting-time (<a href="ref-encode-time-of-day.html">encode-time-of-day</a> 0 30 17)
       :repeat-interval #.(* 24 60 60))
   ;; Unscheduling #&lt;scheduled-function quitting-time [17:00:00]&gt;...
   ;; Scheduling #&lt;scheduled-function quitting-time [17:30:00]&gt; 

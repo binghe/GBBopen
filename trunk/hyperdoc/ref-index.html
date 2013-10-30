@@ -355,21 +355,14 @@ example of the use of that entity.
 <br /><b>:exit</b> REPL command (Exit Lisp), <i>see</i> the GBBopen Tutorial
 <br /><b>:fi</b> REPL command, 
 <a href="ref-find-instance-by-name.html#id2">362</a><br /><code>:fifo-queue</code>, <b>start-control-shell</b> initarg, <a href="ref-start-control-shell.html#id2"><font color="#007f00"><i>470</i></font></a>
-<br /><code>:fixnum-size-below-29</code>, feature, 
-<a href="ref-declared-numerics.html#id2">107</a><br /><code>:fixnum-size-supports-unsigned-byte-32</code>, feature, 
-<a href="ref-declared-numerics.html#id2">107</a><br /><code>:forces-recompile</code>, define-module file option, 
+<br /><code>:forces-recompile</code>, define-module file option, 
 <a href="ref-compile-module.html#id2">17</a>, 
 <a href="ref-define-module.html#id1">19</a><br /><b>:fsi</b> REPL command, 
 <a href="ref-find-space-instance-by-path.html#id1">343</a><br /><b>:full-safety</b>, 
 <a href="ref-full-safety.html">39</a><br /><code>:gbbopen-core</code> module, 
 <a href="ref-GBBopen-core-entities.html">251</a><br /><code>:gbbopen-tools</code> module, 
-<a href="ref-tools-entities.html">37</a>, <a href="ref-declared-numerics.html"><font color="#007f00"><i>107</i></font></a>
-, <a href="ref-search-tree-entities.html#id1"><font color="#007f00"><i>157</i></font></a>
-<br /><code>:has-double-float</code>, feature, 
-<a href="ref-declared-numerics.html#id1">107</a><br /><code>:has-long-float</code>, feature, 
-<a href="ref-declared-numerics.html#id1">107</a><br /><code>:has-short-float</code>, feature, 
-<a href="ref-declared-numerics.html#id1">107</a><br /><code>:has-single-float</code>, feature, 
-<a href="ref-declared-numerics.html#id1">107</a><br /><code>:hibernate-on-quiescence</code>, <b>start-control-shell</b>   initarg, <a href="ref-start-control-shell.html#id2"><font color="#007f00"><i>470</i></font></a>
+<a href="ref-tools-entities.html">37</a>, <a href="ref-search-tree-entities.html#id1"><font color="#007f00"><i>157</i></font></a>
+<br /><code>:hibernate-on-quiescence</code>, <b>start-control-shell</b>   initarg, <a href="ref-start-control-shell.html#id2"><font color="#007f00"><i>470</i></font></a>
 <br /><code>:initial-space-instances</code>, <a href="ref-make-duplicate-instance.html#id2"><font color="#007f00"><i>276</i></font></a>
 , <a href="ref-make-duplicate-instance-changing-class.html#id2"><font color="#007f00"><i>277</i></font></a>
 , <a href="ref-make-instance.html#id2"><font color="#007f00"><i>278</i></font></a>
@@ -660,7 +653,14 @@ example of the use of that entity.
 <a href="ref-fixnum-operators.html">108</a><br /><b>&#36;&#38;</b>, 
 <a href="ref-short-float-operators.html">109</a><br /><b>1-&#38;</b>, 
 <a href="ref-fixnum-operators.html">108</a><br /><b>1+&#38;</b>, 
-<a href="ref-fixnum-operators.html">108</a><br /><b>&#38;</b>, 
+<a href="ref-fixnum-operators.html">108</a><br /><code>:fixnum-size-below-29</code>, feature, 
+<a href="ref-declared-numerics.html#id2">107</a><br /><code>:fixnum-size-supports-unsigned-byte-32</code>, feature, 
+<a href="ref-declared-numerics.html#id2">107</a><br /><code>:gbbopen-tools</code> module, <a href="ref-declared-numerics.html"><font color="#007f00"><i>107</i></font></a>
+<br /><code>:has-double-float</code>, feature, 
+<a href="ref-declared-numerics.html#id1">107</a><br /><code>:has-long-float</code>, feature, 
+<a href="ref-declared-numerics.html#id1">107</a><br /><code>:has-short-float</code>, feature, 
+<a href="ref-declared-numerics.html#id1">107</a><br /><code>:has-single-float</code>, feature, 
+<a href="ref-declared-numerics.html#id1">107</a><br /><b>&#38;</b>, 
 <a href="ref-fixnum-operators.html">108</a></dd><dt><a href="#1" name="4">A</a></dt><dd>
 abbreviations
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time zone, 
@@ -1363,6 +1363,8 @@ date and time entities,
 <a href="ref-encode-time-of-day.html">129</a>, <a href="ref-schedule-function-verbose-var.html#id1"><font color="#007f00"><i>207</i></font></a>
 , <a href="ref-schedule-function.html#id2"><font color="#007f00"><i>214</i></font></a>
 , <a href="ref-schedule-function.html#id3"><font color="#007f00"><i>214</i></font></a>
+, <a href="ref-schedule-function.html#id4"><font color="#007f00"><i>214</i></font></a>
+, <a href="ref-schedule-function.html#id5"><font color="#007f00"><i>214</i></font></a>
 <br />end value, of an interval, 
 <a href="ref-interval-end.html">320</a>, 
 <a href="ref-interval-values.html">322</a><br /><code>ends</code> &nbsp;(ordered-dimension pattern operator), <a href="ref-do-instances-on-space-instances.html#id8"><font color="#007f00"><i>358</i></font></a>
@@ -1770,6 +1772,7 @@ date and time entities,
 <a href="ref-all-scheduled-functions.html">208</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduled, repeat-interval value, 
 <a href="ref-scheduled-function-repeat-interval.html">222</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduled, scheduling, 
 <a href="ref-schedule-function.html">214</a>, 
+<a href="ref-schedule-function-relative.html">215</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduled, scheduling relative to now, 
 <a href="ref-schedule-function-relative.html">215</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduled, test, 
 <a href="ref-scheduled-function-marker-test.html">219</a>, 
 <a href="ref-scheduled-function-name-test.html">221</a><br />function, <a href="ref-glossary.html#gl:function"><font color="#007f00"><i>473</i></font></a>
@@ -2261,8 +2264,11 @@ Macintosh Common Lisp
 , 
 <a href="ref-make-scheduled-function.html">210</a>, <a href="ref-schedule-function.html#id1"><font color="#007f00"><i>214</i></font></a>
 , <a href="ref-schedule-function.html#id2"><font color="#007f00"><i>214</i></font></a>
+, <a href="ref-schedule-function.html#id4"><font color="#007f00"><i>214</i></font></a>
+, <a href="ref-schedule-function.html#id5"><font color="#007f00"><i>214</i></font></a>
 , <a href="ref-schedule-function-relative.html#id1"><font color="#007f00"><i>215</i></font></a>
 , <a href="ref-schedule-function-relative.html#id2"><font color="#007f00"><i>215</i></font></a>
+, <a href="ref-schedule-function-relative.html#id3"><font color="#007f00"><i>215</i></font></a>
 <br /><b>make-space-instance</b>, <a href="ref-make-instance.html#id3"><font color="#007f00"><i>278</i></font></a>
 , <a href="ref-define-space-class.html#id9"><font color="#007f00"><i>334</i></font></a>
 , 
@@ -2965,14 +2971,23 @@ safety, disabling optimizations,
 <a href="ref-schedule-function.html">214</a><br /><b>schedule-function-relative</b>, 
 <a href="ref-schedule-function-relative.html">215</a><br />scheduled function
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;canceling scheduling, 
-<a href="ref-unschedule-function.html">226</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;creating, 
-<a href="ref-make-scheduled-function.html">210</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduler, checking paused status, 
+<a href="ref-unschedule-function.html">226</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context, 
+<a href="ref-make-scheduled-function.html">210</a>, 
+<a href="ref-schedule-function.html">214</a>, 
+<a href="ref-schedule-function-relative.html">215</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;creating, 
+<a href="ref-make-scheduled-function.html">210</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;marker, 
+<a href="ref-make-scheduled-function.html">210</a>, 
+<a href="ref-schedule-function.html">214</a>, 
+<a href="ref-schedule-function-relative.html">215</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name, 
+<a href="ref-make-scheduled-function.html">210</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat interval, 
+<a href="ref-schedule-function.html">214</a>, 
+<a href="ref-schedule-function-relative.html">215</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduler, checking paused status, 
 <a href="ref-scheduled-function-scheduler-paused-p.html">223</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduler, checking running status, 
 <a href="ref-scheduled-function-scheduler-running-p.html">224</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduler, pausing, 
 <a href="ref-pause-scheduled-function-scheduler.html">211</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduler, restarting, 
 <a href="ref-restart-scheduled-function-scheduler.html">212</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduler, resuming, 
 <a href="ref-resume-scheduled-function-scheduler.html">213</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduling, 
-<a href="ref-schedule-function.html">214</a>, 
+<a href="ref-schedule-function.html">214</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scheduling relative to now, 
 <a href="ref-schedule-function-relative.html">215</a><br />scheduled functions
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;obtaining all, 
 <a href="ref-all-scheduled-functions.html">208</a><br /><b>scheduled-function-context</b>, 
@@ -2989,7 +3004,7 @@ safety, disabling optimizations,
 <a href="ref-scheduled-function-scheduler-paused-p.html">223</a><br /><b>scheduled-function-scheduler-running-p</b>, 
 <a href="ref-scheduled-function-scheduler-running-p.html">224</a><br />scheduling
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a scheduled function, 
-<a href="ref-schedule-function.html">214</a>, 
+<a href="ref-schedule-function.html">214</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a scheduled function relative to now, 
 <a href="ref-schedule-function-relative.html">215</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;canceling a scheduled function, 
 <a href="ref-unschedule-function.html">226</a><br />search trees, 
 <a href="ref-search-tree-entities.html">157</a><br />searching
