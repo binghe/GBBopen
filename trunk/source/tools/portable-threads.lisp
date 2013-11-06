@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:PORTABLE-THREADS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/portable-threads.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov  6 06:01:04 2013 *-*
+;;;; *-* Last-Edit: Wed Nov  6 06:13:49 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -1091,9 +1091,8 @@
 
 #+(and sbcl sb-thread)
 (defstruct (recursive-lock 
-            (:include sb-thread:mutex))
-  #+SBCL-1.1.13-IS-BROKEN-WRT-DEFSTRUCT
-  (:copier nil))
+            (:include sb-thread:mutex)
+            (:copier nil)))
 
 #+threads-not-available
 (progn
