@@ -1,15 +1,15 @@
 
           Known Common Lisp Implementation Issues when using GBBopen
 
-CMUCL 20b-d (all platforms)
+CMUCL 20b-e (all platforms)
  - CMUCL's native WITH-TIMEOUT (used in :portable-threads) doesn't nest
    correctly; however we still expose the native version (in the hope that it
    will be fixed someday) rather than rolling our own.  Nested WITH-TIMEOUT
    users beware!!!!
 
-SBCL 1.0.44-58, 1.1.0-1.1.13 (all platforms)
+SBCL 1.0.44-58, 1.1.0-1.1.14 (all platforms)
  - :agenda-shell-test fails to trigger all KSAs when started by load/autorun; 
    works correctly when invoked after file loading
 
 ==============================================================================
-File updated: November 6, 2013
+File updated: December 1, 2013

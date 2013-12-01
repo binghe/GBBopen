@@ -11,10 +11,10 @@ Requirements:
        Allegro CL   Version 9.0
        CLISP        Version 2.49 (configure --with-threads if possible)
        Clozure CL   Version 1.9
-       CMUCL        Version 20d
+       CMUCL        Version 20e
        ECL          Version 12.12.1
        Lispworks    Version 6.1.1
-       SBCL         Version 1.1.13 (use sb-threads if possible)
+       SBCL         Version 1.1.14 (use sb-threads if possible)
 
    Known issues with the above implementations are summarized in the ISSUES
    file.
@@ -41,7 +41,7 @@ Requirements:
    implementations.
 
 
-Current Status Notes (November 6, 2013)
+Current Status Notes (December 1, 2013)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
