@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:AGENDA-SHELL; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon Jun 25 02:31:03 2012 *-*
+;;;; *-* Last-Edit: Wed May 14 09:45:33 2014 *-*
 ;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2004-2012, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2004-2014, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -43,6 +43,7 @@
 ;;;           OBVIATED-KSAS-OF control-shell-object readers, 
 ;;;           & CURRENT-CONTROL-SHELL.  (Corkill)
 ;;;  02-22-11 Renamed some events to better suggest their timing.  (Corkill)
+;;;  05-14-14 Add
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -139,6 +140,11 @@
 ;;;  Control-shell threads:
 
 (defvar *control-shell-threads* nil)
+
+;;; ---------------------------------------------------------------------------
+;;;  Control-shell lock:
+
+(defvar *control-shell-lock* (make-recursive-lock :name "Control Shell lock"))
 
 ;;; ---------------------------------------------------------------------------
 ;;;  *CS* is used to hold the "current" control-shell unit instance
@@ -1238,7 +1244,8 @@
   (let ((cycle (cs.cycle cs)))
     (setf (execution-cycle-of ksa) cycle)
     (incf (cs.executed-ksas-count cs))
-    (unlinkf (pending-activations-of ks) ksa)
+    (with-lock-held (*control-shell-lock*)
+      (unlinkf (pending-activations-of ks) ksa))
     #+OLD-EVENT-NAMES
     (signal-event-using-class
      (load-time-value (find-event-class 'ksa-execution-event))
@@ -1263,7 +1270,8 @@
     (setf (obviation-cycle-of ksa) cycle)
     (incf (cs.obviated-ksas-count cs))
     (remove-from-queue ksa)
-    (unlinkf (pending-activations-of ks) ksa)
+    (with-lock-held (*control-shell-lock*)
+      (unlinkf (pending-activations-of ks) ksa))
     #+OLD-EVENT-NAMES
     (signal-event-using-class
      (load-time-value (find-event-class 'ksa-obviation-event))
