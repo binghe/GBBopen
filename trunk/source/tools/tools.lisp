@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:GBBOPEN-TOOLS; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/tools/tools.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Thu Jul  5 15:50:19 2012 *-*
-;;;; *-* Machine: phoenix *-*
+;;;; *-* Last-Edit: Fri May 23 10:29:49 2014 *-*
+;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2014, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -71,6 +71,7 @@
 ;;;  09-09-10 Added WHITESPACE-CHAR-P.  (Corkill)
 ;;;  09-13-10 Added SORTED-MAPHASH.  (Corkill)
 ;;;  08-20-11 Added MAKE-HASH-VALUES-VECTOR.  (Corkill)
+;;;  05-23-14 Complain if n in LIST-LENGTH> is negative.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -1106,6 +1107,8 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun list-length> (n list)
+  (assert (not (minusp& n)) (n) 
+    "The length-comparison argument n must not be negative; ~s was supplied." n)
   (dotimes (i (1+& n) 't)
     (declare (fixnum i))
     (unless (consp list)
