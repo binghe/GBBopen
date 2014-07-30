@@ -7,9 +7,9 @@ CMUCL 20b-e (all platforms)
    will be fixed someday) rather than rolling our own.  Nested WITH-TIMEOUT
    users beware!!!!
 
-SBCL 1.0.44-58, 1.1.0-1.2.1 (all platforms)
+SBCL 1.0.44-58, 1.1.0-1.2.2 (all platforms)
  - :agenda-shell-test fails to trigger all KSAs when started by load/autorun; 
    works correctly when invoked after file loading
 
 ==============================================================================
-File updated: June 30, 2014
+File updated: July 30, 2014
