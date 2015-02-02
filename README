@@ -14,7 +14,7 @@ Requirements:
        CMUCL        Version 20e
        ECL          Version 13.5.1
        Lispworks    Version 6.1.1
-       SBCL         Version 1.2.7 (use sb-threads if possible)
+       SBCL         Version 1.2.8 (use sb-threads if possible)
 
    Known issues with the above implementations are summarized in the ISSUES
    file.
@@ -41,7 +41,7 @@ Requirements:
    implementations.
 
 
-Current Status Notes (January 3, 2015)
+Current Status Notes (February 2, 2015)
 --------------------
 
 Implementation work is progressing on a regular basis.  See the list of
