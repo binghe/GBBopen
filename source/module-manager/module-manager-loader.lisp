@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Sep  4 12:11:37 2012 *-*
+;;;; *-* Last-Edit: Wed Nov  6 10:45:34 2013 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zack Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2012, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2015, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -63,6 +63,7 @@
 ;;;  11-11-08 Unified compiled-directory naming.  (Corkill)
 ;;;  09-04-12 Add "-smp" designation to Allegro CL's CL-implementation-string,
 ;;;           when appropriate.  (Corkill)
+;;;  02-18-15 Fixed Clozure :win32-target feature (Roman Brenes)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -229,7 +230,7 @@
              #+linuxppc-target "linuxppc"
              #+linuxx8632-target "linux86"
              #+linuxx8664-target "linux86-64" ; Thanks to Matthew Danish
-             #+windows-target "windows"
+             #+win32-target "windows"
              #+win64-target "windows-64")
             "clozure"
             nil
@@ -264,11 +265,15 @@
     ;; ECL (Embedable Common Lisp):
     #+ecl
     (values (check                      ; ensure one feature match
-             #+(and (or i686 i586 pentium4 pentium3) linux) "linux86" 
-             #+(and (or i686 i586 pentium4 pentium3) darwin) "mac86" 
-             #+(and (or i686 i586 pentium4 pentium3) 
+             #+(and (or x86 i686 i586 pentium4 pentium3) linux) "linux86" 
+             #+(and (or x86_64 i686 i586 pentium4 pentium3) linux) "linux86-64" 
+             #+(and (or x86 i686 i586 pentium4 pentium3) darwin) "mac86" 
+             #+(and (or x86_64 i686 i586 pentium4 pentium3) darwin) "mac86-64" 
+             #+(and (or x86 i686 i586 pentium4 pentium3) 
                     (not (or linux darwin))) "windows"
-             #+(and (not (or i686 i586 pentium4 pentium3)) darwin) "macppc")
+             #+(and (or x86_64 i686 i586 pentium4 pentium3) 
+                    (not (or linux darwin))) "windows-64"
+             #+(and (not (or x86 x86_64 i686 i586 pentium4 pentium3)) darwin) "macppc")
             "ecl"
             nil
             ;; Strip away any CVS info:
