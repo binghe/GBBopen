@@ -1,8 +1,8 @@
 ;;;; -*- Mode:Common-Lisp; Package:COMMON-LISP-USER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/extended-repl.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Mon May 28 17:38:56 2012 *-*
-;;;; *-* Machine: phoenix.corkills.org *-*
+;;;; *-* Last-Edit: Mon Apr 20 02:23:44 2015 *-*
+;;;; *-* Machine: phoenix *-*
 
 ;;;; **************************************************************************
 ;;;; **************************************************************************
@@ -17,7 +17,7 @@
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2012, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2015, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -40,6 +40,8 @@
 ;;;  01-04-11 Added partial ABCL support.  (Corkill)
 ;;;  09-13-11 Completed ABCL support.  (Corkill)
 ;;;  05-28-12 SBCL now prefers EXIT over QUIT.  (Corkill)
+;;;  04-20-15 Fix typo in load-swank placeholder on Lispworks (thanks Martti
+;;;           Halminen for report). (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
@@ -688,7 +690,7 @@
     (defun swank-loader::load-swank (&rest args) args))
   ;; Add the advice:
   (defadvice (swank-loader::load-swank extended-repl :after)
-      ()
+      (&rest args)
     (load-slime-extended-repl)))
 
 ;;; ===========================================================================
