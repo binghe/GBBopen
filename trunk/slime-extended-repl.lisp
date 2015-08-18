@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill 
 ;;;
-;;; Copyright (C) 2005-2012, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2005-2015, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -27,10 +27,11 @@
 ;;;  05-29-12 Remove support for contrib/swank-listener-hooks (no longer
 ;;;           set *listener-eval-function* binding).  (Corkill)
 ;;;  09-03-12 Conditionally support contrib/swank-listener-hooks.  (Corkill)
+;;;  07-18-15 Change to :swank package to :swank-repl.  (Corkill via Rubinstein)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 
-(in-package :swank)
+(in-package :swank-repl)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (import '(cl-user::compile-if-advantageous)))
