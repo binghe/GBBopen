@@ -14,7 +14,7 @@
 ;;;
 ;;; Written by: Dan Corkill
 ;;;
-;;; Copyright (C) 2002-2011, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2015, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -54,6 +54,7 @@
 ;;;  03-29-08 Add PROCESS-GBBOPEN-MODULES-DIRECTORY rescanning.  (Corkill)
 ;;;  04-27-08 Added shared-gbbopen-modules directory support.  (Corkill)
 ;;;  07-14-10 Added FUNCALL-IN-PACKAGE.  (Corkill)
+;;;  07-18-15 Change to :swank package to :swank-repl.  (Corkill via Rubinstein)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -187,7 +188,7 @@
 
 (defun set-repl-package (package-specifier)
   ;; Sets *package* as well as updating LEP and SLIME Emacs interfaces:
-  (let ((swank-package (find-package ':swank))
+  (let ((swank-package (find-package ':swank-repl))
         (requested-package (find-package package-specifier)))
     (cond
      ;; No such package:
