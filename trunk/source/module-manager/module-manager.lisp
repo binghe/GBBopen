@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Tue Jan 15 21:12:56 2013 *-*
+;;;; *-* Last-Edit: Wed May  6 15:01:36 2015 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -15,7 +15,7 @@
 ;;; Written by: Dan Corkill (incorporating some original ideas by 
 ;;;                          Kevin Gallagher and Zachary Rubinstein)
 ;;;
-;;; Copyright (C) 2002-2013, Dan Corkill <corkill@GBBopen.org>
+;;; Copyright (C) 2002-2016, Dan Corkill <corkill@GBBopen.org>
 ;;; Part of the GBBopen Project.
 ;;; Licensed under Apache License 2.0 (see LICENSE for license information).
 ;;;
@@ -95,6 +95,8 @@
 ;;;  05-15-08 Added PARSE-DATE.  (Corkill)
 ;;;  06-23-08 Added BRIEF-DATE.  (Corkill)
 ;;;  03-06-09 Added ending bounding-index second return value to PARSE-DATE.
+;;;           (Corkill)
+;;;  09-26-16 Allow directory redefinition in ENSURE-MODULE (per Zack).
 ;;;           (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -275,6 +277,7 @@
             printv                      ; part of tools, but placed here
             printv-expander             ; part of tools, but placed here (not
                                         ; documented)
+            probe-directory             ; not yet documented
             show-defined-directories
             show-modules                ; not yet documented
             start-patch
@@ -1093,9 +1096,11 @@
       (or (gethash name *mm-directories*)
           (error "Directory ~s is not defined." name))))
 
+#-(and lispworks (not lispworks6))
 (defmethod documentation (object (doc-type (eql 'directory)))
   (mm-module.documentation (get-mm-directory object)))
 
+#-(and lispworks (not lispworks6))
 (defmethod (setf documentation) (nv object (doc-type (eql 'directory)))
   (setf (mm-module.documentation (get-mm-directory object)) nv))
 
@@ -1656,6 +1661,7 @@
         (setf (mm-module.files-loaded existing-module) nil))
       ;; Update module with the given arguments:      
       (setf (mm-module.documentation existing-module) documentation)
+      (setf (mm-module.directory existing-module) directory)
       (setf (mm-module.subdirectories existing-module) subdirectories)
       (setf (mm-module.requires existing-module) requires)
       (setf (mm-module.files existing-module) files)
