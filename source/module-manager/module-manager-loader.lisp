@@ -1,7 +1,7 @@
 ;;;; -*- Mode:Common-Lisp; Package:MODULE-MANAGER; Syntax:common-lisp -*-
 ;;;; *-* File: /usr/local/gbbopen/source/module-manager/module-manager-loader.lisp *-*
 ;;;; *-* Edited-By: cork *-*
-;;;; *-* Last-Edit: Wed Nov  6 10:45:34 2013 *-*
+;;;; *-* Last-Edit: Wed May  6 15:08:18 2015 *-*
 ;;;; *-* Machine: phoenix.corkills.org *-*
 
 ;;;; **************************************************************************
@@ -63,7 +63,8 @@
 ;;;  11-11-08 Unified compiled-directory naming.  (Corkill)
 ;;;  09-04-12 Add "-smp" designation to Allegro CL's CL-implementation-string,
 ;;;           when appropriate.  (Corkill)
-;;;  02-18-15 Fixed Clozure :win32-target feature (Roman Brenes)
+;;;  02-18-15 Fixed Clozure :win32-target feature.  (Roman Brenes)
+;;;  05--6-15 Updated to Lispworks 7.0.  (Corkill)
 ;;;
 ;;; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -312,9 +313,9 @@
              #+(and :darwin :x86 :lispworks-32bit) "mac86"
              ;; LispWorks (64-bit) for Macintosh (running on X86):
              #+(and :darwin :x86 :lispworks-64bit) "mac86-64"
-             ;; LispWorks (32-bit) for Macintosh (running on PowerPC):
+             ;; LispWorks (32-bit) for Macintosh (running on PowerPC; dropped with LW 7):
              #+(and :darwin :powerpc :lispworks-32bit) "macppc"
-             ;; LispWorks (64-bit) for Macintosh (running on PowerPC):
+             ;; LispWorks (64-bit) for Macintosh (running on PowerPC; dropped with LW 7):
              #+(and :darwin :powerpc :lispworks-64bit) "macppc-64")
             "lispworks"
             nil
